@@ -148,6 +148,6 @@ This guide covers the 12 production-ready RA/QM compliance skills for HealthTech
 
 ---
 
-**Last Updated:** November 5, 2025
+**Last Updated:** June 2026
 **Skills Deployed:** 12/12 RA/QM skills production-ready
 **Focus:** Medical device compliance (ISO 13485, MDR, FDA, ISO 27001, GDPR)
