@@ -1,0 +1,195 @@
+# CS-Orchestrator Routing Rules
+# Maps keywords and intent patterns to cs-* agents
+# Tier 1: Exact keyword matching (fast, deterministic)
+# Tier 2: Intent patterns (semantic, for ambiguous requests)
+# Last Updated: June 2026
+
+version: "1.0"
+agents:
+  cs-content-creator:
+    path: agents/marketing/cs-content-creator.md
+    model: sonnet
+    tier1_keywords:
+      - blog
+      - article
+      - blog post
+      - content
+      - copy
+      - copywriting
+      - seo
+      - brand voice
+      - social post
+      - social media post
+      - newsletter
+      - email copy
+      - landing page copy
+      - press release
+      - announcement post
+      - write a
+      - draft a
+    tier2_patterns:
+      - "create written content"
+      - "produce marketing copy"
+      - "optimize text for search"
+
+  cs-demand-gen-specialist:
+    path: agents/marketing/cs-demand-gen-specialist.md
+    model: sonnet
+    tier1_keywords:
+      - campaign
+      - demand gen
+      - demand generation
+      - lead gen
+      - lead generation
+      - acquisition
+      - funnel
+      - paid ads
+      - ads strategy
+      - growth
+      - pipeline
+      - MQL
+      - SQL
+      - conversion
+      - paid search
+      - paid social
+      - ABM
+    tier2_patterns:
+      - "generate leads"
+      - "build a marketing funnel"
+      - "increase top-of-funnel traffic"
+
+  cs-product-manager:
+    path: agents/product/cs-product-manager.md
+    model: sonnet
+    tier1_keywords:
+      - roadmap
+      - backlog
+      - sprint
+      - user story
+      - RICE
+      - OKR
+      - prioritize
+      - feature
+      - feature request
+      - product strategy
+      - product vision
+      - epics
+      - acceptance criteria
+      - release plan
+      - product discovery
+      - customer discovery
+    tier2_patterns:
+      - "decide what to build"
+      - "align the team on priorities"
+      - "plan the next quarter"
+
+  cs-ceo-advisor:
+    path: agents/c-level/cs-ceo-advisor.md
+    model: opus
+    tier1_keywords:
+      - CEO
+      - strategy
+      - company vision
+      - board
+      - board meeting
+      - investor
+      - fundraise
+      - fundraising
+      - Series A
+      - Series B
+      - company direction
+      - executive decision
+      - OKR company
+      - competitive strategy
+      - market positioning
+    tier2_patterns:
+      - "make a company-level decision"
+      - "prepare for investors"
+      - "define long-term direction"
+
+  cs-cto-advisor:
+    path: agents/c-level/cs-cto-advisor.md
+    model: opus
+    tier1_keywords:
+      - CTO
+      - architecture
+      - tech stack
+      - technical debt
+      - engineering team
+      - system design
+      - scalability
+      - build vs buy
+      - infrastructure
+      - platform
+      - microservices
+      - monolith
+      - API design
+      - tech roadmap
+      - engineering culture
+    tier2_patterns:
+      - "make a technical architectural decision"
+      - "scale the engineering team"
+      - "evaluate technology choices"
+
+# Multi-agent coordination patterns
+multi_agent_patterns:
+
+  campaign_full:
+    name: "Full Campaign Plan"
+    type: sequential
+    pattern: [cs-demand-gen-specialist, cs-content-creator]
+    trigger_keywords:
+      - full campaign
+      - end-to-end campaign
+      - campaign with content
+      - campaign assets
+      - campaign and copy
+    handoff: "Pass campaign brief and target audience from demand-gen to content-creator"
+
+  strategic_decision:
+    name: "Strategic Technical Decision"
+    type: parallel
+    pattern: [cs-ceo-advisor, cs-cto-advisor]
+    trigger_keywords:
+      - build vs buy
+      - strategic technical decision
+      - tech strategy board
+      - board presentation tech
+      - make or buy
+      - platform decision
+    synthesis: "Combine business case (CEO) and technical assessment (CTO) into unified recommendation"
+
+  product_launch:
+    name: "Product Launch"
+    type: sequential
+    pattern: [cs-product-manager, cs-content-creator]
+    trigger_keywords:
+      - product launch
+      - feature launch
+      - feature announcement
+      - go-to-market
+      - GTM
+      - launch plan
+    handoff: "Pass positioning, target segments, and messaging pillars from product-manager to content-creator"
+
+  market_analysis:
+    name: "Market Analysis"
+    type: parallel
+    pattern: [cs-demand-gen-specialist, cs-product-manager]
+    trigger_keywords:
+      - market analysis
+      - competitive analysis
+      - market opportunity
+      - market sizing
+    synthesis: "Combine demand-side (channels, acquisition) and product-side (positioning, roadmap) views"
+
+# Fallback behaviour when no keyword matches
+fallback:
+  action: ask_clarifying_question
+  question: "Which area does this fall into: content creation, campaign planning, product management, CEO strategy, or CTO technical advisory?"
+  options:
+    - cs-content-creator
+    - cs-demand-gen-specialist
+    - cs-product-manager
+    - cs-ceo-advisor
+    - cs-cto-advisor
