@@ -73,5 +73,5 @@ git commit -m "feat(agents): implement cs-new-agent from template"
 
 ---
 
-**Last Updated:** November 5, 2025
+**Last Updated:** June 2026
 **Purpose:** Consistent templates for rapid agent and workflow development

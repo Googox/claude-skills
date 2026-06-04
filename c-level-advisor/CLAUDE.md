@@ -138,6 +138,6 @@ python cto-advisor/scripts/roadmap_generator.py priorities.csv
 
 ---
 
-**Last Updated:** November 5, 2025
+**Last Updated:** June 2026
 **Skills Deployed:** 2/2 C-level skills production-ready
 **Focus:** Strategic decision-making and executive leadership

@@ -171,6 +171,6 @@ cat standards/git/git-workflow-standards.md
 
 ---
 
-**Last Updated:** November 5, 2025
+**Last Updated:** June 2026
 **Standards Count:** 5 comprehensive standards
 **Enforcement:** Required for all skills and agents

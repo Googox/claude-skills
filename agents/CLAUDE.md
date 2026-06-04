@@ -1,12 +1,12 @@
 # Agent Development Guide
 
-This guide provides comprehensive instructions for creating **cs-* prefixed agents** that seamlessly integrate with the 42 production skills in this repository.
+This guide provides comprehensive instructions for creating **cs-* prefixed agents** that seamlessly integrate with the 86 production skills in this repository.
 
 ## Agent Architecture
 
 ### What are cs-* Agents?
 
-**cs-* agents** are specialized Claude Code agents that orchestrate the 42 existing skills. Each agent:
+**cs-* agents** are specialized Claude Code agents that orchestrate the 86 existing skills. Each agent:
 - References skills via relative paths (`../../marketing-skill/`)
 - Executes Python automation tools from skill packages
 - Follows established workflows and templates
@@ -358,6 +358,6 @@ After creating an agent:
 
 ---
 
-**Last Updated:** November 5, 2025
-**Current Sprint:** sprint-11-05-2025 (Skill-Agent Integration Phase 1-2)
+**Last Updated:** June 2026
+**Current Sprint:** sprint-11-06-2025 (CS- Orchestrator Framework — in progress)
 **Related:** See [main CLAUDE.md](../CLAUDE.md) for repository overview
