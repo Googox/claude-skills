@@ -1,10 +1,13 @@
 {
+  "language": "german",
+  "cleanupPeriodDays": 90,
   "permissions": {
     "allow": [
       "mcp__5c59a741-7084-4188-a9af-4546d6957875__search_threads",
       "mcp__5c59a741-7084-4188-a9af-4546d6957875__get_thread",
       "mcp__5c59a741-7084-4188-a9af-4546d6957875__list_labels",
       "mcp__5c59a741-7084-4188-a9af-4546d6957875__list_drafts",
+      "mcp__5c59a741-7084-4188-a9af-4546d6957875__create_draft",
       "mcp__f9560b50-7433-4f35-b83d-5aff260238d9__list_calendars",
       "mcp__f9560b50-7433-4f35-b83d-5aff260238d9__list_events",
       "mcp__f9560b50-7433-4f35-b83d-5aff260238d9__get_event",
@@ -14,6 +17,7 @@
       "mcp__ced01181-861e-4906-ab56-c4389119e8b1__get_comments",
       "mcp__ced01181-861e-4906-ab56-c4389119e8b1__get_teams",
       "mcp__ced01181-861e-4906-ab56-c4389119e8b1__get_users",
+      "mcp__ced01181-861e-4906-ab56-c4389119e8b1__notion-create-pages",
       "mcp__8f2d65aa-2677-4cb9-a737-0c262e56a201__get_campaign_analytics",
       "mcp__8f2d65aa-2677-4cb9-a737-0c262e56a201__get_campaign_asset_metrics",
       "mcp__8f2d65aa-2677-4cb9-a737-0c262e56a201__get_campaign_contacts_by_type",
@@ -34,10 +38,37 @@
       "mcp__4c66a764-a169-49c4-9f7a-54180cb29c32__get_company_data",
       "mcp__4c66a764-a169-49c4-9f7a-54180cb29c32__search_jobs",
       "mcp__4c66a764-a169-49c4-9f7a-54180cb29c32__get_job_details",
-      "mcp__4c66a764-a169-49c4-9f7a-54180cb29c32__get_resume"
+      "mcp__4c66a764-a169-49c4-9f7a-54180cb29c32__get_resume",
+      "Bash(python3 -m py_compile*)",
+      "Bash(python3 -c *)",
+      "Bash(jq*)"
     ]
   },
   "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "BRANCH=$(git branch --show-current 2>/dev/null || echo 'kein Git'); CHANGES=$(git status --short 2>/dev/null | wc -l | tr -d ' '); printf '{\"systemMessage\":\"Branch: %s | %s ungespeicherte Aenderungen\"}' \"$BRANCH\" \"$CHANGES\"",
+            "timeout": 5,
+            "statusMessage": "Projekt-Status wird geladen..."
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -r '.tool_input.command // \"\"' | { read -r CMD; echo \"$CMD\" | grep -qE 'git push (--force|-f )|git reset --hard|git clean -f|git checkout -- \\.' && printf '{\"hookSpecificOutput\":{\"hookEventName\":\"PreToolUse\",\"permissionDecision\":\"ask\",\"permissionDecisionReason\":\"Destruktiver Befehl erkannt - bitte explizit bestaetigen\"}}' || true; } 2>/dev/null || true",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
     "PostToolUse": [
       {
         "matcher": "Write|Edit",
@@ -53,6 +84,17 @@
             "command": "jq -r '.tool_input.file_path // .tool_response.filePath // empty' | { read -r f && case \"$f\" in *.yaml|*.yml) python3 -c \"import yaml,sys; yaml.safe_load(open(sys.argv[1]))\" \"$f\" && echo \"✓ YAML valid: $f\";; *.json) python3 -m json.tool \"$f\" > /dev/null && echo \"✓ JSON valid: $f\";; esac; } 2>/dev/null || true",
             "timeout": 15,
             "statusMessage": "YAML/JSON wird validiert..."
+          }
+        ]
+      }
+    ],
+    "PreCompact": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "printf '{\"systemMessage\": \"Kontext wird komprimiert. Offene TODOs und wichtige Entscheidungen werden in der Zusammenfassung festgehalten.\"}'",
+            "timeout": 5
           }
         ]
       }
