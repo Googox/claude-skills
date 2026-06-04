@@ -1,5 +1,40 @@
 {
   "permissions": {
-    "allow": []
+    "allow": [
+      "mcp__5c59a741-7084-4188-a9af-4546d6957875__search_threads",
+      "mcp__5c59a741-7084-4188-a9af-4546d6957875__get_thread",
+      "mcp__5c59a741-7084-4188-a9af-4546d6957875__list_labels",
+      "mcp__5c59a741-7084-4188-a9af-4546d6957875__list_drafts",
+      "mcp__f9560b50-7433-4f35-b83d-5aff260238d9__list_calendars",
+      "mcp__f9560b50-7433-4f35-b83d-5aff260238d9__list_events",
+      "mcp__f9560b50-7433-4f35-b83d-5aff260238d9__get_event",
+      "mcp__f9560b50-7433-4f35-b83d-5aff260238d9__suggest_time",
+      "mcp__ced01181-861e-4906-ab56-c4389119e8b1__search",
+      "mcp__ced01181-861e-4906-ab56-c4389119e8b1__fetch",
+      "mcp__ced01181-861e-4906-ab56-c4389119e8b1__get_comments",
+      "mcp__ced01181-861e-4906-ab56-c4389119e8b1__get_teams",
+      "mcp__ced01181-861e-4906-ab56-c4389119e8b1__get_users",
+      "mcp__8f2d65aa-2677-4cb9-a737-0c262e56a201__get_campaign_analytics",
+      "mcp__8f2d65aa-2677-4cb9-a737-0c262e56a201__get_campaign_asset_metrics",
+      "mcp__8f2d65aa-2677-4cb9-a737-0c262e56a201__get_campaign_contacts_by_type",
+      "mcp__8f2d65aa-2677-4cb9-a737-0c262e56a201__get_crm_objects",
+      "mcp__8f2d65aa-2677-4cb9-a737-0c262e56a201__search_crm_objects",
+      "mcp__8f2d65aa-2677-4cb9-a737-0c262e56a201__query_crm_data",
+      "mcp__8f2d65aa-2677-4cb9-a737-0c262e56a201__search_owners",
+      "mcp__8f2d65aa-2677-4cb9-a737-0c262e56a201__get_organization_details",
+      "mcp__8f2d65aa-2677-4cb9-a737-0c262e56a201__get_user_details",
+      "mcp__8f2d65aa-2677-4cb9-a737-0c262e56a201__get_properties",
+      "mcp__8f2d65aa-2677-4cb9-a737-0c262e56a201__search_properties",
+      "mcp__0b3a87ea-6e00-4875-b1d6-c25f6164a800__ask-question-about-accounts",
+      "mcp__0b3a87ea-6e00-4875-b1d6-c25f6164a800__find-and-enrich-company",
+      "mcp__0b3a87ea-6e00-4875-b1d6-c25f6164a800__find-and-enrich-contacts-at-company",
+      "mcp__0b3a87ea-6e00-4875-b1d6-c25f6164a800__find-and-enrich-list-of-contacts",
+      "mcp__0b3a87ea-6e00-4875-b1d6-c25f6164a800__query-objects",
+      "mcp__0b3a87ea-6e00-4875-b1d6-c25f6164a800__get-task-context",
+      "mcp__4c66a764-a169-49c4-9f7a-54180cb29c32__get_company_data",
+      "mcp__4c66a764-a169-49c4-9f7a-54180cb29c32__search_jobs",
+      "mcp__4c66a764-a169-49c4-9f7a-54180cb29c32__get_job_details",
+      "mcp__4c66a764-a169-49c4-9f7a-54180cb29c32__get_resume"
+    ]
   }
 }
