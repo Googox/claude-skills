@@ -4,7 +4,7 @@
 # Tier 2: Intent patterns (semantic, for ambiguous requests)
 # Last Updated: June 2026
 
-version: "1.0"
+version: "2.0"
 agents:
   cs-content-creator:
     path: agents/marketing/cs-content-creator.md
@@ -182,6 +182,119 @@ multi_agent_patterns:
       - market opportunity
       - market sizing
     synthesis: "Combine demand-side (channels, acquisition) and product-side (positioning, roadmap) views"
+
+  cs-senior-engineer:
+    path: agents/engineering/cs-senior-engineer.md
+    model: sonnet
+    tier1_keywords:
+      - code review
+      - pull request review
+      - PR review
+      - refactor
+      - scaffold
+      - new project
+      - new service
+      - microservice
+      - API design
+      - architecture review
+      - tech stack evaluation
+      - code quality
+      - unit test
+      - fullstack
+      - backend
+      - frontend
+    tier2_patterns:
+      - "review my code"
+      - "help me build a new service"
+      - "evaluate which technology to use"
+
+  cs-devops:
+    path: agents/engineering/cs-devops.md
+    model: sonnet
+    tier1_keywords:
+      - CI/CD
+      - pipeline
+      - deployment
+      - release
+      - tech debt
+      - technical debt
+      - dependency audit
+      - dependencies
+      - vulnerability
+      - CVE
+      - observability
+      - SLO
+      - SLA
+      - alert
+      - alerting
+      - monitoring
+      - dashboard
+      - terraform
+      - infrastructure
+      - DevOps
+      - platform engineering
+      - changelog
+    tier2_patterns:
+      - "set up continuous deployment"
+      - "improve our release process"
+      - "audit our dependencies"
+
+  cs-scrum-master:
+    path: agents/project-management/cs-scrum-master.md
+    model: sonnet
+    tier1_keywords:
+      - sprint health
+      - sprint review
+      - retrospective
+      - retro
+      - velocity
+      - capacity planning
+      - project health
+      - project risk
+      - risk register
+      - Jira
+      - Confluence
+      - agile
+      - scrum
+      - resource planning
+      - team capacity
+      - impediment
+      - blocker
+      - delivery risk
+    tier2_patterns:
+      - "how is our sprint going"
+      - "plan team capacity for next quarter"
+      - "facilitate our retrospective"
+
+  cs-regulatory-specialist:
+    path: agents/ra-qm/cs-regulatory-specialist.md
+    model: opus
+    tier1_keywords:
+      - ISO 13485
+      - MDR
+      - FDA
+      - GDPR
+      - DSGVO
+      - ISO 27001
+      - ISMS
+      - CAPA
+      - audit
+      - QMS
+      - regulatory
+      - compliance
+      - CE marking
+      - 510(k)
+      - notified body
+      - risk management
+      - ISO 14971
+      - non-conformity
+      - quality management
+      - medical device
+      - document control
+    tier2_patterns:
+      - "prepare for a regulatory audit"
+      - "assess our compliance posture"
+      - "manage quality issues"
 
 # Fallback behaviour when no keyword matches
 fallback:

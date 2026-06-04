@@ -16,19 +16,22 @@ This guide provides comprehensive instructions for creating **cs-* prefixed agen
 
 ### Production Agents
 
-**5 Agents Currently Available** (as of November 5, 2025):
+**9 Agents Currently Available** (as of June 2026):
 
-| Agent | Domain | Description | Skills Used | Lines |
-|-------|--------|-------------|-------------|-------|
-| [cs-content-creator](marketing/cs-content-creator.md) | Marketing | AI-powered content creation with brand voice consistency and SEO optimization | content-creator | 327 |
-| [cs-demand-gen-specialist](marketing/cs-demand-gen-specialist.md) | Marketing | Demand generation and customer acquisition specialist | marketing-demand-acquisition | 289 |
-| [cs-ceo-advisor](c-level/cs-ceo-advisor.md) | C-Level | Strategic leadership advisor for CEOs covering vision, strategy, board management | ceo-advisor | 360 |
-| [cs-cto-advisor](c-level/cs-cto-advisor.md) | C-Level | Technical leadership advisor for CTOs covering tech strategy and team scaling | cto-advisor | 412 |
-| [cs-product-manager](product/cs-product-manager.md) | Product | Product management agent for RICE prioritization and customer discovery | product-manager-toolkit | 407 |
+| Agent | Domain | Description | Skills Used |
+|-------|--------|-------------|-------------|
+| [cs-orchestrator](orchestrator/cs-orchestrator.md) | All | Unified entry point — routes tasks to the right agent, coordinates multi-agent workflows | All agents |
+| [cs-content-creator](marketing/cs-content-creator.md) | Marketing | AI-powered content creation with brand voice consistency and SEO optimization | content-creator |
+| [cs-demand-gen-specialist](marketing/cs-demand-gen-specialist.md) | Marketing | Demand generation and customer acquisition specialist | marketing-demand-acquisition |
+| [cs-ceo-advisor](c-level/cs-ceo-advisor.md) | C-Level | Strategic leadership advisor for CEOs covering vision, strategy, board management | ceo-advisor |
+| [cs-cto-advisor](c-level/cs-cto-advisor.md) | C-Level | Technical leadership advisor for CTOs covering tech strategy and team scaling | cto-advisor |
+| [cs-product-manager](product/cs-product-manager.md) | Product | Product management agent for RICE prioritization and customer discovery | product-manager-toolkit |
+| [cs-senior-engineer](engineering/cs-senior-engineer.md) | Engineering | Code review, architecture, scaffolding, and tech stack evaluation | senior-fullstack, code-reviewer, senior-architect |
+| [cs-devops](engineering/cs-devops.md) | Engineering | CI/CD, observability, tech debt tracking, dependency auditing, release management | tech-debt-tracker, observability-designer, release-manager |
+| [cs-scrum-master](project-management/cs-scrum-master.md) | PM | Sprint health, retrospectives, velocity analysis, capacity planning | scrum-master, senior-pm |
+| [cs-regulatory-specialist](ra-qm/cs-regulatory-specialist.md) | RA/QM | ISO 13485, MDR, FDA, GDPR, CAPA, risk management for regulated industries | quality-manager-iso13485, mdr-745-specialist, capa-officer |
 
-**Total**: 1,795 lines of comprehensive agent documentation
-
-**Template Available**: [templates/agent-template.md](../templates/agent-template.md) (318 lines) - Use this to create new agents
+**Template Available**: [templates/agent-template.md](../templates/agent-template.md) — Use this to create new agents
 
 ### Agent vs Skill
 

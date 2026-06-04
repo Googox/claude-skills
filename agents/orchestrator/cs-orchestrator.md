@@ -28,6 +28,10 @@ The orchestrator supports two routing tiers:
 | [cs-product-manager](../product/cs-product-manager.md) | Product | roadmap, backlog, sprint, user story, RICE, OKR, prioritize, feature |
 | [cs-ceo-advisor](../c-level/cs-ceo-advisor.md) | C-Level | CEO, strategy, vision, board, investor, fundraise, company direction |
 | [cs-cto-advisor](../c-level/cs-cto-advisor.md) | C-Level | CTO, architecture, tech stack, engineering team, technical debt, system design |
+| [cs-senior-engineer](../engineering/cs-senior-engineer.md) | Engineering | code review, PR review, scaffold, refactor, architecture review, API design |
+| [cs-devops](../engineering/cs-devops.md) | Engineering | CI/CD, pipeline, release, tech debt, dependencies, observability, SLO, alerting |
+| [cs-scrum-master](../project-management/cs-scrum-master.md) | PM | sprint health, retrospective, velocity, capacity planning, Jira, agile |
+| [cs-regulatory-specialist](../ra-qm/cs-regulatory-specialist.md) | RA/QM | ISO 13485, MDR, FDA, GDPR, CAPA, audit, QMS, compliance, medical device |
 
 ## Routing Rules
 
@@ -45,7 +49,11 @@ Keyword scan (Tier 1)
     ├── campaign/lead/demand ──────► cs-demand-gen-specialist
     ├── roadmap/backlog/sprint ────► cs-product-manager
     ├── CEO/strategy/board ────────► cs-ceo-advisor
-    └── CTO/architecture/tech ─────► cs-cto-advisor
+    ├── CTO/architecture/tech ─────► cs-cto-advisor
+    ├── code review/scaffold ──────► cs-senior-engineer
+    ├── CI/CD/release/debt ────────► cs-devops
+    ├── sprint health/retro ───────► cs-scrum-master
+    └── ISO/MDR/FDA/CAPA ──────────► cs-regulatory-specialist
 ```
 
 ### Multi-Agent Patterns
@@ -229,6 +237,10 @@ Orchestrator routing:
 - [cs-product-manager](../product/cs-product-manager.md) — Product management and prioritization
 - [cs-ceo-advisor](../c-level/cs-ceo-advisor.md) — CEO strategic advisory
 - [cs-cto-advisor](../c-level/cs-cto-advisor.md) — CTO technical advisory
+- [cs-senior-engineer](../engineering/cs-senior-engineer.md) — Code review, architecture, scaffolding
+- [cs-devops](../engineering/cs-devops.md) — CI/CD, observability, tech debt, releases
+- [cs-scrum-master](../project-management/cs-scrum-master.md) — Sprint health, retros, capacity planning
+- [cs-regulatory-specialist](../ra-qm/cs-regulatory-specialist.md) — ISO 13485, MDR, FDA, GDPR, CAPA
 
 ## References
 
