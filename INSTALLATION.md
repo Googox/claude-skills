@@ -629,6 +629,99 @@ rm -rf .cursor/skills/fullstack-engineer/
 
 ---
 
+## Ruflo Integration
+
+[Ruflo](https://github.com/ruvnet/ruflo) is the leading multi-agent orchestration framework for Claude. Integrating claude-skills with Ruflo gives you access to swarm intelligence, adaptive memory, and 98+ specialized agents — with the 9 cs-* agents from this library available as first-class Ruflo swarm participants.
+
+### Quick Setup (Recommended)
+
+```bash
+# Clone repository
+git clone https://github.com/googox/claude-skills.git
+cd claude-skills
+
+# Run the Ruflo integration script
+./scripts/ruflo-install.sh
+```
+
+This single command:
+- Registers Ruflo as an MCP server in Claude Code
+- Installs all 9 cs-* agents to `~/.ruflo/agents/`
+- Makes the full skills marketplace discoverable via `.claude-plugin/marketplace.json`
+
+### Step-by-Step
+
+**Step 1: Register Ruflo MCP server**
+
+```bash
+claude mcp add ruflo -- npx ruflo@latest mcp start
+```
+
+Restart Claude Code after this step to activate the MCP server.
+
+**Step 2: Install cs-* agents**
+
+```bash
+./scripts/ruflo-install.sh --agents-only
+```
+
+This copies all 9 cs-* agents to `~/.ruflo/agents/` where Ruflo can spawn them.
+
+**Step 3: Initialize Ruflo in your project (optional)**
+
+```bash
+npx ruflo@latest init
+```
+
+### Using cs-* Agents in Ruflo Swarms
+
+Once installed, the agents are available in Ruflo workflows:
+
+```bash
+# Single agent dispatch
+/spawn cs-orchestrator "Plan our Q3 marketing campaign"
+
+# Multi-agent swarm
+/swarm "Full product launch: strategy + engineering review + campaign"
+
+# Direct agent call
+/agent cs-regulatory-specialist "Run ISO 13485 gap analysis"
+```
+
+**Available cs-* agents for Ruflo:**
+
+| Agent | Specialty |
+|-------|-----------|
+| `cs-orchestrator` | Routes tasks to the right specialist automatically |
+| `cs-content-creator` | Blog posts, emails, social media, landing pages |
+| `cs-demand-gen-specialist` | Campaign strategy, channel mix, paid media |
+| `cs-product-manager` | RICE scoring, user stories, PRD, OKRs |
+| `cs-senior-engineer` | Code review, architecture, API scaffolding |
+| `cs-devops` | CI/CD, observability, dependency audits |
+| `cs-scrum-master` | Sprint health, velocity, retrospectives |
+| `cs-ceo-advisor` | Strategic decisions, investor communications |
+| `cs-cto-advisor` | Tech strategy, build vs. buy, tech debt |
+| `cs-regulatory-specialist` | ISO 13485, MDR, FDA, GDPR compliance |
+
+### Skills Marketplace in Ruflo
+
+The `.claude-plugin/marketplace.json` is automatically discovered by Ruflo. All 86 skills and 9 agents are available in Ruflo's plugin system:
+
+```bash
+# In Claude Code with Ruflo MCP active:
+/plugin install cs-agents@claude-code-skills
+/plugin install marketing-skills@claude-code-skills
+/plugin install engineering-tools@claude-code-skills
+```
+
+### Dry Run (Preview)
+
+```bash
+./scripts/ruflo-install.sh --dry-run
+```
+
+---
+
 ## OpenAI Codex Installation
 
 OpenAI Codex users can install skills using the methods below. This repository provides full Codex compatibility through a `.codex/skills/` directory with symlinks to all 43 skills.
