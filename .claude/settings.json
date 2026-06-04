@@ -36,5 +36,37 @@
       "mcp__4c66a764-a169-49c4-9f7a-54180cb29c32__get_job_details",
       "mcp__4c66a764-a169-49c4-9f7a-54180cb29c32__get_resume"
     ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -r '.tool_input.file_path // .tool_response.filePath // empty' | { read -r f && echo \"$f\" | grep -qE '\\.py$' && python3 -m py_compile \"$f\" && echo \"✓ Python-Syntax OK: $f\" || true; } 2>/dev/null || true",
+            "timeout": 15,
+            "statusMessage": "Python-Syntax wird geprüft..."
+          },
+          {
+            "type": "command",
+            "command": "jq -r '.tool_input.file_path // .tool_response.filePath // empty' | { read -r f && case \"$f\" in *.yaml|*.yml) python3 -c \"import yaml,sys; yaml.safe_load(open(sys.argv[1]))\" \"$f\" && echo \"✓ YAML valid: $f\";; *.json) python3 -m json.tool \"$f\" > /dev/null && echo \"✓ JSON valid: $f\";; esac; } 2>/dev/null || true",
+            "timeout": 15,
+            "statusMessage": "YAML/JSON wird validiert..."
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "git diff --quiet HEAD 2>/dev/null && printf '{\"systemMessage\":\"\"}' || printf '{\"systemMessage\":\"\\u26a0 Uncommittete \\u00c4nderungen vorhanden \\u2014 bitte committen und pushen!\"}'",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
   }
 }
