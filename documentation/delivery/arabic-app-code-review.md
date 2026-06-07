@@ -1,151 +1,151 @@
 # Code Review: arabicapp/everything-claude-code
 
 **Repository:** https://github.com/arabicapp/everything-claude-code  
-**Reviewed:** 2026-06-07  
-**Reviewer:** Claude Code (claude-sonnet-4-6)
+**Geprüft am:** 2026-06-07  
+**Prüfer:** Claude Code (claude-sonnet-4-6)
 
 ---
 
-## Executive Summary
+## Zusammenfassung
 
-`everything-claude-code` is a well-structured Claude Code configuration toolkit containing agents, slash commands, rules, hooks, and MCP configs. It ships 12 agent definitions, 23 slash commands, 8 rule files, and a hooks configuration — all aimed at enforcing consistent development workflows via Claude Code.
+`everything-claude-code` ist ein gut strukturiertes Claude Code Konfigurations-Toolkit, das Agents, Slash-Befehle, Regeln, Hooks und MCP-Konfigurationen enthält. Es liefert 12 Agent-Definitionen, 23 Slash-Befehle, 8 Regeldateien und eine Hooks-Konfiguration — allesamt darauf ausgerichtet, konsistente Entwicklungsabläufe über Claude Code durchzusetzen.
 
-Overall quality is **good**. The content is opinionated, practical, and internally consistent. The main issues are in completeness, structural gaps, and a few consistency/safety concerns detailed below.
-
----
-
-## Verdict: CONDITIONAL APPROVE
-
-No blocking security vulnerabilities. Several high-priority structural improvements and medium-priority consistency fixes are needed before the toolkit reaches production-grade reliability.
+Die Gesamtqualität ist **gut**. Die Inhalte sind klar positioniert, praxisnah und in sich konsistent. Die Hauptprobleme liegen in Vollständigkeit, strukturellen Lücken und einigen Konsistenz- bzw. Sicherheitsbedenken, die nachfolgend beschrieben werden.
 
 ---
 
-## Findings by Severity
+## Urteil: BEDINGT GENEHMIGT
 
-### HIGH — Structural / Completeness
-
-**H1 — README is shallow and misleading**
-
-The README reads like auto-generated marketing copy ("Download the latest release, execute the installer"). There is no installer — this is a configuration toolkit that users copy files from. The README:
-- Does not explain the actual installation (copying files into `.claude/`)
-- Does not list or describe the agents, commands, or rules
-- Mentions "Windows installer" and "system menu" which do not apply
-- Does not link the longform guide (`the-longform-guide.md`) prominently
-
-The `the-longform-guide.md` file is excellent and is the real documentation. The README should surface it immediately. The README as written will confuse new users about what this repo actually is.
-
-**H2 — hooks.json lacks raw content exposure; summary is insufficient for review**
-
-The `hooks/hooks.json` file could not be reviewed in raw form — the web fetch summary described behavior but not exact shell commands. Hooks that execute shell commands (formatting, type-checking, git operations) carry inherent injection risk if any hook argument is interpolated from file paths or user input. The file should include comments (or a companion `hooks.md`) documenting each hook's exact command and explaining why it is safe.
-
-**H3 — No `.claude/CLAUDE.md` (project instructions) for consumers**
-
-The toolkit provides rules in `rules/*.md` but there is no single `CLAUDE.md` file that Claude Code would automatically load. Users must manually wire up the rules. A top-level `CLAUDE.md` that imports or references the rule files would make the toolkit self-activating when dropped into a project.
-
-**H4 — Test coverage requirement (80%) has no tooling scaffold**
-
-`rules/testing.md` mandates 80% coverage but the repo ships no test runner configuration, no example test files, and no CI workflow enforcing the threshold. Without tooling, the rule is aspirational rather than enforceable.
+Keine blockierenden Sicherheitslücken. Vor dem Erreichen von Produktionsreife sind mehrere strukturelle Verbesserungen mit hoher Priorität sowie Konsistenzfixes mit mittlerer Priorität erforderlich.
 
 ---
 
-### MEDIUM — Consistency / Quality
+## Befunde nach Schweregrad
 
-**M1 — `the-shortform-guide.md` not reviewed; its relationship to the longform guide is unclear**
+### HOCH — Struktur / Vollständigkeit
 
-The shortform guide exists but its purpose relative to the longform guide is not explained anywhere. Users may not know which to read first. These two should be cross-linked.
+**H1 — README ist oberflächlich und irreführend**
 
-**M2 — Agent files follow different depth conventions**
+Das README liest sich wie automatisch generierter Marketing-Text ("Lade die neueste Version herunter, führe die Installationsdatei aus"). Es gibt kein Installationsprogramm — dies ist ein Konfigurations-Toolkit, aus dem Nutzer Dateien kopieren. Das README:
+- Erklärt die eigentliche Installation nicht (Dateien in `.claude/` kopieren)
+- Listet oder beschreibt weder Agents, Befehle noch Regeln
+- Erwähnt "Windows-Installer" und "Systemmenü", was nicht zutrifft
+- Verlinkt den ausführlichen Leitfaden (`the-longform-guide.md`) nicht prominent
 
-`code-reviewer.md` and `security-reviewer.md` include detailed approval thresholds and structured workflows. `architect.md` is shallower — four bullet principles with no workflow, no tools list, no approval criteria. Inconsistent depth reduces reliability: users cannot predict what level of guidance any given agent will provide.
+Die Datei `the-longform-guide.md` ist ausgezeichnet und stellt die eigentliche Dokumentation dar. Das README sollte sie sofort in den Vordergrund stellen. Das README in seiner jetzigen Form wird neue Nutzer darüber verwirren, was dieses Repository überhaupt ist.
 
-**M3 — `orchestrate.md` references agents by name but agent files use different naming**
+**H2 — hooks.json ohne Rohinhalts-Einsicht; Zusammenfassung für Review unzureichend**
 
-The orchestrate command refers to `planner`, `explorer`, `tdd-guide`, `code-reviewer`, `security-reviewer`, `architect`. The `agents/` directory does contain most of these, but `explorer` is not in the listed agent files. Either a file is missing or the command references a non-existent agent.
+Die Datei `hooks/hooks.json` konnte nicht in Rohform geprüft werden — die Web-Zusammenfassung beschrieb das Verhalten, aber nicht die genauen Shell-Befehle. Hooks, die Shell-Befehle ausführen (Formatierung, Typprüfung, Git-Operationen), tragen ein inhärentes Injection-Risiko, wenn Hook-Argumente aus Dateipfaden oder Nutzereingaben interpoliert werden. Die Datei sollte Kommentare (oder eine Begleitdatei `hooks.md`) enthalten, die jeden Hook-Befehl genau dokumentieren und erklären, warum er sicher ist.
 
-**M4 — `.claude/package-manager.json` hardcodes `bun` with a specific timestamp**
+**H3 — Keine `.claude/CLAUDE.md` (Projektanweisungen) für Anwender**
 
-This file records `"packageManager": "bun"` set at a specific ISO timestamp. This is likely a generated file from a `setup-pm` command — but shipping it with a hardcoded value means every consumer of the toolkit will silently inherit `bun` as their package manager, even if their project uses `npm` or `pnpm`. The file should either be `.gitignore`d or ship as a template with `null` values.
+Das Toolkit stellt Regeln in `rules/*.md` bereit, aber es gibt keine einzelne `CLAUDE.md`-Datei, die Claude Code automatisch laden würde. Nutzer müssen die Regeln manuell einbinden. Eine oberste `CLAUDE.md`, die die Regeldateien importiert oder referenziert, würde das Toolkit beim Einfügen in ein Projekt selbstaktivierend machen.
 
-**M5 — `rules/hooks.md` presumably documents hook conventions but was not surfaced in the listing**
+**H4 — Testabdeckungsanforderung (80 %) ohne Tooling-Grundlage**
 
-The `rules/` directory lists `hooks.md` but it was not fetched. Hook configurations are the most operationally risky part of this toolkit. The hooks rule should be prominently cross-referenced from `hooks/hooks.json`.
-
-**M6 — `commands/` lists 23 files but only 22 were returned in directory listing**
-
-The directory listing showed 22 files in the count but 23 were mentioned. Minor discrepancy worth confirming — could indicate a hidden file or listing truncation.
-
----
-
-### LOW — Best Practices
-
-**L1 — No versioning / changelog**
-
-The repo has 77 commits but no `CHANGELOG.md` or version tags. Users who copy these configs into projects have no way to know what changed between pulls.
-
-**L2 — `eslint.config.js` and `commitlint.config.js` present but only for the repo itself, not as templates**
-
-These linting configs govern the repo's own markdown and JS. They are not documented as templates consumers should copy. A note in the README or a `templates/` folder would clarify intent.
-
-**L3 — `rules/performance.md` not reviewed**
-
-Performance rules were listed but not fetched. Based on patterns in other rule files, likely consistent — but should be verified for any overly prescriptive numeric thresholds (e.g., "maximum 100ms response time") that would not apply universally.
-
-**L4 — Agent files lack YAML frontmatter**
-
-Compared to the `googox/claude-skills` convention (which uses YAML frontmatter for `name`, `description`, `skills`, `domain`, `model`, `tools`), these agent files are plain markdown with no machine-readable metadata. This is not strictly wrong, but means they cannot participate in plugin/marketplace discovery systems.
+`rules/testing.md` schreibt 80 % Abdeckung vor, aber das Repository enthält keine Test-Runner-Konfiguration, keine Beispiel-Testdateien und keinen CI-Workflow zur Durchsetzung dieser Grenze. Ohne Tooling bleibt die Regel ein Wunsch, kein durchsetzbarer Standard.
 
 ---
 
-## Strengths
+### MITTEL — Konsistenz / Qualität
 
-- **Orchestration pattern is solid.** The handoff-document approach for chaining agents (context → findings → recommendations → next agent) is clean and avoids context bleed between agent phases.
-- **Security rules are specific and actionable.** `rules/security.md` names exact vulnerable patterns with correct remediation (env vars, parameterized queries, bcrypt) rather than vague advice.
-- **Hooks design is thoughtful.** PreCompact/SessionStart memory persistence, auto-formatting on save, and console.log detection address real Claude Code session pain points.
-- **Token optimization guidance in the longform guide is excellent.** The subagent model-routing strategy (Haiku/Sonnet/Opus by task complexity) and mgrep token reduction are concrete, measurable advice.
-- **`coding-style.md` checklist is practical.** The 50-line function / 800-line file / 4-level nesting limits are enforceable and reasonable.
-- **`code-reviewer.md` approval thresholds are clear.** Approve / Warning / Block with explicit severity mapping removes ambiguity from review decisions.
+**M1 — `the-shortform-guide.md` nicht geprüft; Verhältnis zum Langform-Leitfaden unklar**
+
+Der Kurzform-Leitfaden existiert, aber sein Zweck im Verhältnis zum Langform-Leitfaden wird nirgendwo erklärt. Nutzer wissen möglicherweise nicht, welchen sie zuerst lesen sollen. Beide Dokumente sollten aufeinander verweisen.
+
+**M2 — Agent-Dateien folgen unterschiedlichen Tiefenkonventionen**
+
+`code-reviewer.md` und `security-reviewer.md` enthalten detaillierte Genehmigungsschwellen und strukturierte Abläufe. `architect.md` ist flacher — vier Aufzählungspunkte ohne Workflow, Werkzeugliste oder Genehmigungskriterien. Inkonsistente Tiefe reduziert die Verlässlichkeit: Nutzer können nicht vorhersagen, welches Maß an Orientierung ein gegebener Agent bieten wird.
+
+**M3 — `orchestrate.md` referenziert Agents namentlich, aber Agent-Dateien verwenden abweichende Namen**
+
+Der Orchestrierungsbefehl verweist auf `planner`, `explorer`, `tdd-guide`, `code-reviewer`, `security-reviewer`, `architect`. Das Verzeichnis `agents/` enthält die meisten davon, aber `explorer` ist nicht in den aufgelisteten Agent-Dateien vorhanden. Entweder fehlt eine Datei oder der Befehl referenziert einen nicht existierenden Agent.
+
+**M4 — `.claude/package-manager.json` hardcodet `bun` mit einem spezifischen Zeitstempel**
+
+Diese Datei enthält `"packageManager": "bun"` mit einem spezifischen ISO-Zeitstempel. Wahrscheinlich ist sie eine generierte Datei des `setup-pm`-Befehls — aber durch den Hardcode-Wert übernehmen alle Toolkit-Nutzer stillschweigend `bun` als ihren Paketmanager, selbst wenn ihr Projekt `npm` oder `pnpm` verwendet. Die Datei sollte entweder per `.gitignore` ausgeschlossen oder als Vorlage mit `null`-Werten ausgeliefert werden.
+
+**M5 — `rules/hooks.md` dokumentiert vermutlich Hook-Konventionen, wurde aber nicht abgerufen**
+
+Das Verzeichnis `rules/` listet `hooks.md`, diese wurde jedoch nicht abgerufen. Hook-Konfigurationen sind der betrieblich riskanteste Teil dieses Toolkits. Die Hooks-Regel sollte prominent von `hooks/hooks.json` aus referenziert werden.
+
+**M6 — `commands/` listet 23 Dateien, aber im Verzeichnislisting wurden nur 22 zurückgegeben**
+
+Das Verzeichnislisting zeigte 22 Dateien in der Zählung, aber 23 wurden erwähnt. Geringfügige Abweichung, die es zu klären gilt — könnte auf eine versteckte Datei oder einen abgeschnittenen Listing-Output hinweisen.
 
 ---
 
-## Recommendations
+### NIEDRIG — Best Practices
 
-| Priority | Action |
-|----------|--------|
-| HIGH | Rewrite README to accurately describe the toolkit, show actual installation (file copy), and link the longform guide |
-| HIGH | Audit `hooks.json` raw commands for injection safety; add companion documentation |
-| HIGH | Add a top-level `CLAUDE.md` that assembles the rules for automatic loading |
-| HIGH | Add CI workflow (GitHub Actions) enforcing the 80% test coverage mandate |
-| MEDIUM | Add `explorer.md` agent or update `orchestrate.md` to remove/replace the reference |
-| MEDIUM | `.gitignore` `.claude/package-manager.json` or template it with null values |
-| MEDIUM | Standardize agent file depth: each should include workflow, tools, and approval criteria |
-| LOW | Add `CHANGELOG.md` and semver tags |
-| LOW | Add YAML frontmatter to agent files for machine-readable discovery |
+**L1 — Keine Versionierung / kein Changelog**
+
+Das Repository hat 77 Commits, aber keine `CHANGELOG.md` oder Versions-Tags. Nutzer, die diese Konfigurationen in Projekte kopieren, haben keine Möglichkeit zu erkennen, was sich zwischen den Pulls geändert hat.
+
+**L2 — `eslint.config.js` und `commitlint.config.js` vorhanden, aber nur für das Repository selbst, nicht als Vorlagen**
+
+Diese Linting-Konfigurationen regeln das eigene Markdown und JS des Repositories. Sie sind nicht als Vorlagen dokumentiert, die Nutzer kopieren sollten. Ein Hinweis im README oder ein `templates/`-Ordner würde die Absicht klären.
+
+**L3 — `rules/performance.md` nicht geprüft**
+
+Performance-Regeln wurden aufgelistet, aber nicht abgerufen. Basierend auf Mustern in anderen Regeldateien wahrscheinlich konsistent — sollte aber auf übermäßig spezifische numerische Schwellen geprüft werden (z. B. "maximale Antwortzeit 100 ms"), die nicht universell anwendbar wären.
+
+**L4 — Agent-Dateien ohne YAML-Frontmatter**
+
+Im Vergleich zur `googox/claude-skills`-Konvention (die YAML-Frontmatter für `name`, `description`, `skills`, `domain`, `model`, `tools` verwendet) sind diese Agent-Dateien einfaches Markdown ohne maschinenlesbare Metadaten. Das ist nicht grundsätzlich falsch, bedeutet aber, dass sie nicht an Plugin- oder Marketplace-Entdeckungssystemen teilnehmen können.
 
 ---
 
-## File Coverage
+## Stärken
 
-| File / Directory | Reviewed | Notes |
-|-----------------|----------|-------|
-| `README.md` | Yes | Misleading — see H1 |
-| `the-longform-guide.md` | Yes | Excellent |
-| `agents/architect.md` | Yes | Shallow — see M2 |
-| `agents/code-reviewer.md` | Yes | Strong |
-| `agents/security-reviewer.md` | Yes | Strong |
-| `agents/` (9 remaining files) | No | Spot-checked via directory listing |
-| `hooks/hooks.json` | Partial | Summary only — see H2 |
-| `rules/security.md` | Yes | Strong |
-| `rules/coding-style.md` | Yes | Strong |
-| `rules/git-workflow.md` | Yes | Good |
-| `rules/testing.md` | Yes | No tooling scaffold — see H4 |
-| `rules/patterns.md` | Yes | Good |
-| `rules/hooks.md` | No | Listed but not fetched |
-| `rules/performance.md` | No | Listed but not fetched |
-| `rules/agents.md` | No | Listed but not fetched |
-| `commands/code-review.md` | Yes | Good |
-| `commands/orchestrate.md` | Yes | Missing `explorer` agent — see M3 |
-| `commands/` (21 remaining) | No | Not fetched |
-| `.claude/package-manager.json` | Yes | Hardcoded bun — see M4 |
-| `package.json` | Yes | Dev-only deps, appropriate |
-| `eslint.config.js` | No | |
-| `commitlint.config.js` | No | |
+- **Orchestrierungsmuster ist solide.** Der Übergabedokument-Ansatz für die Verkettung von Agents (Kontext → Befunde → Empfehlungen → nächster Agent) ist sauber und vermeidet Kontext-Überläufe zwischen Agent-Phasen.
+- **Sicherheitsregeln sind spezifisch und umsetzbar.** `rules/security.md` benennt exakte verwundbare Muster mit korrekter Behebung (Umgebungsvariablen, parametrisierte Abfragen, bcrypt) statt vager Ratschläge.
+- **Hooks-Design ist durchdacht.** PreCompact/SessionStart-Speicherpersistenz, automatische Formatierung beim Speichern und console.log-Erkennung adressieren reale Claude Code Sitzungsprobleme.
+- **Token-Optimierungsempfehlungen im Langform-Leitfaden sind ausgezeichnet.** Die Subagent-Modell-Routing-Strategie (Haiku/Sonnet/Opus nach Aufgabenkomplexität) und die mgrep-Token-Reduktion sind konkrete, messbare Ratschläge.
+- **`coding-style.md`-Checkliste ist praxisnah.** Die Grenzen von 50 Zeilen pro Funktion / 800 Zeilen pro Datei / 4 Verschachtelungsebenen sind durchsetzbar und sinnvoll.
+- **`code-reviewer.md`-Genehmigungsschwellen sind klar.** Genehmigen / Warnung / Blockieren mit explizitem Schweregrad-Mapping beseitigt Mehrdeutigkeit bei Review-Entscheidungen.
+
+---
+
+## Empfehlungen
+
+| Priorität | Maßnahme |
+|-----------|----------|
+| HOCH | README umschreiben: Toolkit korrekt beschreiben, tatsächliche Installation (Datei-Kopieren) zeigen, Langform-Leitfaden verlinken |
+| HOCH | `hooks.json`-Rohbefehle auf Injection-Sicherheit prüfen; Begleitdokumentation hinzufügen |
+| HOCH | Oberste `CLAUDE.md` hinzufügen, die die Regeln für automatisches Laden zusammenstellt |
+| HOCH | CI-Workflow (GitHub Actions) hinzufügen, der die 80%-Testabdeckungsanforderung durchsetzt |
+| MITTEL | `explorer.md`-Agent hinzufügen oder `orchestrate.md` aktualisieren, um den Verweis zu entfernen/ersetzen |
+| MITTEL | `.claude/package-manager.json` per `.gitignore` ausschließen oder als Vorlage mit null-Werten ausliefern |
+| MITTEL | Agent-Datei-Tiefe standardisieren: Jede sollte Workflow, Werkzeuge und Genehmigungskriterien enthalten |
+| NIEDRIG | `CHANGELOG.md` und Semver-Tags hinzufügen |
+| NIEDRIG | YAML-Frontmatter zu Agent-Dateien für maschinenlesbare Entdeckung hinzufügen |
+
+---
+
+## Dateiabdeckung
+
+| Datei / Verzeichnis | Geprüft | Anmerkungen |
+|--------------------|---------|-------------|
+| `README.md` | Ja | Irreführend — siehe H1 |
+| `the-longform-guide.md` | Ja | Ausgezeichnet |
+| `agents/architect.md` | Ja | Oberflächlich — siehe M2 |
+| `agents/code-reviewer.md` | Ja | Stark |
+| `agents/security-reviewer.md` | Ja | Stark |
+| `agents/` (9 weitere Dateien) | Nein | Stichprobenartig via Verzeichnislisting |
+| `hooks/hooks.json` | Teilweise | Nur Zusammenfassung — siehe H2 |
+| `rules/security.md` | Ja | Stark |
+| `rules/coding-style.md` | Ja | Stark |
+| `rules/git-workflow.md` | Ja | Gut |
+| `rules/testing.md` | Ja | Keine Tooling-Grundlage — siehe H4 |
+| `rules/patterns.md` | Ja | Gut |
+| `rules/hooks.md` | Nein | Aufgelistet, aber nicht abgerufen |
+| `rules/performance.md` | Nein | Aufgelistet, aber nicht abgerufen |
+| `rules/agents.md` | Nein | Aufgelistet, aber nicht abgerufen |
+| `commands/code-review.md` | Ja | Gut |
+| `commands/orchestrate.md` | Ja | Fehlender `explorer`-Agent — siehe M3 |
+| `commands/` (21 weitere) | Nein | Nicht abgerufen |
+| `.claude/package-manager.json` | Ja | Hardcodiertes bun — siehe M4 |
+| `package.json` | Ja | Nur Dev-Abhängigkeiten, angemessen |
+| `eslint.config.js` | Nein | |
+| `commitlint.config.js` | Nein | |
