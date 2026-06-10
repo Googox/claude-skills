@@ -165,6 +165,17 @@
       },
       "keywords": ["scrum", "agile", "sprint", "retrospective"],
       "category": "project-management"
+    },
+    {
+      "name": "cartomap",
+      "source": "./cartomap",
+      "description": "Geospatial mapping skill for GeoJSON/TopoJSON authoring, cartographic dataset integration (cartomap/nl, cartomap/world), choropleth workflows, and spatial data validation",
+      "version": "1.0.0",
+      "author": {
+        "name": "Claude Skills"
+      },
+      "keywords": ["geospatial", "cartography", "geojson", "topojson", "maps", "spatial-data", "d3", "geopandas"],
+      "category": "engineering"
     }
   ]
 }

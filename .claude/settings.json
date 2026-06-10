@@ -1,5 +1,11 @@
 {
   "permissions": {
     "allow": []
-  }
+  },
+  "enabledPlugins": [
+    {
+      "marketplace": "cartomap",
+      "plugin": "cartomap"
+    }
+  ]
 }

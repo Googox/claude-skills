@@ -1,0 +1,15 @@
+{
+  "name": "cartomap",
+  "description": "Geospatial mapping skill for GeoJSON/TopoJSON authoring, cartographic dataset integration (cartomap/nl, cartomap/world), choropleth workflows, and spatial data validation",
+  "version": "1.0.0",
+  "author": {
+    "name": "Claude Skills",
+    "url": "https://github.com/googox/claude-skills"
+  },
+  "homepage": "https://github.com/googox/claude-skills/tree/main/cartomap",
+  "repository": "https://github.com/googox/claude-skills",
+  "license": "MIT",
+  "skills": "./",
+  "keywords": ["geospatial", "cartography", "geojson", "topojson", "maps", "spatial-data", "d3", "geopandas"],
+  "category": "engineering"
+}
