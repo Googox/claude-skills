@@ -1,0 +1,63 @@
+{
+  "_comment": "HeyGen Hyperframes Campaign Template — fill in all <...> placeholders, then run: python3 scripts/hyperframe_builder.py plan campaign.json",
+
+  "name": "<Campaign Name — e.g. 'Q3 Product Launch Ad'>",
+  "aspect_ratio": "9:16",
+  "resolution": "1080p",
+  "avatar_id": "<look_id from mcp__HeyGen__list_avatar_looks>",
+  "voice_id": "<voice_id from mcp__HeyGen__list_voices or mcp__HeyGen__clone_voice>",
+  "style_id": "<optional — style_id from mcp__HeyGen__list_video_agent_styles>",
+  "brand_kit_id": "<optional — brand_kit_id from mcp__HeyGen__list_brand_kits>",
+  "output_languages": [],
+
+  "frames": [
+    {
+      "name": "Hook",
+      "frame_type": "hook",
+      "script": "<8–15 words. Pattern interrupt: question, bold claim, or provocative stat.>",
+      "engine": "avatar_v",
+      "motion_prompt": "Lean in slightly, raise one eyebrow, direct eye contact with camera",
+      "background_color": "#0f0f0f",
+      "video_id": null,
+      "video_url": null,
+      "subtitle_url": null,
+      "status": "pending"
+    },
+    {
+      "name": "Problem",
+      "frame_type": "problem",
+      "script": "<20–45 words. Empathetic. 'If you've ever [pain], you know [consequence].'",
+      "engine": "avatar_v",
+      "motion_prompt": "Nod slowly, thoughtful expression, slight pause before speaking",
+      "background_color": "#0f0f0f",
+      "video_id": null,
+      "video_url": null,
+      "subtitle_url": null,
+      "status": "pending"
+    },
+    {
+      "name": "Solution",
+      "frame_type": "solution",
+      "script": "<40–80 words. '[Product] [does X] so you [get Y] without [Z].' Include one differentiator.>",
+      "engine": "avatar_v",
+      "motion_prompt": "Open-palm gesture forward, confident posture, slight smile",
+      "background_color": "#0f0f0f",
+      "video_id": null,
+      "video_url": null,
+      "subtitle_url": null,
+      "status": "pending"
+    },
+    {
+      "name": "CTA",
+      "frame_type": "cta",
+      "script": "<8–15 words. One action only. '[Action] → [specific benefit].'",
+      "engine": "avatar_v",
+      "motion_prompt": "Direct eye contact, single firm nod, slight forward lean at end",
+      "background_color": "#0f0f0f",
+      "video_id": null,
+      "video_url": null,
+      "subtitle_url": null,
+      "status": "pending"
+    }
+  ]
+}
