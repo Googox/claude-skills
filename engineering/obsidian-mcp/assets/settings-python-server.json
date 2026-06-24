@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "obsidian": {
+      "command": "python3",
+      "args": [
+        "/PFAD/ZU/claude-skills/engineering/obsidian-mcp/scripts/mcp_obsidian_fs.py",
+        "--vault",
+        "/PFAD/ZU/DEINEM/VAULT"
+      ],
+      "comment": "Kein npm nötig — nutzt nur Python Standard Library"
+    }
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "obsidian": {
+      "command": "npx",
+      "args": ["-y", "mcp-obsidian"],
+      "env": {
+        "OBSIDIAN_API_KEY": "DEIN_API_SCHLUESSEL_HIER",
+        "OBSIDIAN_HOST": "http://localhost:27123"
+      },
+      "comment": "API-Key findest du in Obsidian → Einstellungen → Local REST API"
+    }
+  }
+}

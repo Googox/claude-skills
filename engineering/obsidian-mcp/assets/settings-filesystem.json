@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "obsidian": {
+      "command": "npx",
+      "args": ["obsidian-mcp", "/PFAD/ZU/DEINEM/VAULT"],
+      "comment": "Ersetze /PFAD/ZU/DEINEM/VAULT mit deinem tatsächlichen Vault-Pfad"
+    }
+  }
+}
