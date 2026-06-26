@@ -1,10 +1,10 @@
 ---
 name: cs-second-brain
-description: Personal AI second brain agent that connects Claude to Obsidian via SAMS MCP — captures, connects, and retrieves your knowledge across notes, projects, and live data
+description: Personal AI second brain agent that connects Claude to Obsidian via MCP — captures, connects, and retrieves knowledge across notes, projects, Google Calendar, and Gmail
 skills: engineering/obsidian-mcp
 domain: knowledge
 model: sonnet
-tools: [Read, Write, Bash, Grep, Glob, mcp__Google_Calendar__list_events, mcp__Google_Calendar__create_event, mcp__Gmail__search_threads, mcp__Gmail__get_thread]
+tools: [Read, Write, Bash, Grep, Glob, mcp__Google_Calendar__list_events, mcp__Google_Calendar__create_event, mcp__Google_Calendar__get_event, mcp__Gmail__search_threads, mcp__Gmail__get_thread, mcp__Gmail__create_draft]
 ---
 
 # Second Brain Agent (cs-second-brain)
@@ -288,6 +288,93 @@ Can you list all files in my Obsidian vault?
 Good morning. Read my CLAUDE.md, check today's calendar,
 and create today's Daily Note with my schedule and top 3 priorities.
 ```
+
+---
+
+### Workflow 7: Google Calendar — Morgenbriefing
+
+**Goal:** Tag mit Kalender-Überblick starten und Daily Note befüllen
+
+**Trigger:** "Good morning", "Guten Morgen", "Starte meinen Tag"
+
+**Steps:**
+1. Claude liest `CLAUDE.md` für aktuellen Kontext
+2. Claude ruft heutige Kalender-Events ab (Google Calendar MCP)
+3. Claude erstellt oder aktualisiert die heutige Daily Note mit:
+   - Heutige Termine (Zeit, Titel, Teilnehmer)
+   - Vorbereitungshinweise für wichtige Meetings
+   - Top 3 Prioritäten basierend auf CLAUDE.md Projekten
+4. Optional: Morgen-Termine für Planung anzeigen
+
+**Beispiel-Prompt:**
+```
+Guten Morgen. Lies mein CLAUDE.md, hole meine heutigen Termine
+und erstelle meine Daily Note für heute mit Zeitplan und Top 3 Prioritäten.
+```
+
+**Erwartetes Ergebnis:** Daily Note mit strukturiertem Tagesplan
+
+---
+
+### Workflow 8: Gmail — E-Mails in Vault verarbeiten
+
+**Goal:** Wichtige E-Mails analysieren und Action Items in Obsidian speichern
+
+**Trigger:** "Check my emails", "E-Mails verarbeiten", "Was habe ich verpasst?"
+
+**Steps:**
+1. Claude durchsucht Gmail nach ungelesenen/wichtigen E-Mails (letzte 24h)
+2. Claude analysiert jede E-Mail:
+   - Ist eine Antwort nötig? Bis wann?
+   - Gibt es Action Items für mich?
+   - Ist das relevant für ein aktives Projekt?
+3. Claude erstellt eine Zusammenfassung in `Notes & Knowledge/Inbox/email-actions-DATUM.md`
+4. Dringende Tasks werden zu `Tasks & Next Actions/` hinzugefügt
+5. Optional: Entwurf für Antworten erstellen
+
+**Beispiel-Prompts:**
+```
+Schau durch meine E-Mails der letzten 24 Stunden.
+Extrahiere alle Action Items und speichere sie in meinem Vault.
+```
+
+```
+Suche in meinen E-Mails nach allem über [Projekt/Person].
+Fasse zusammen was ich tun muss.
+```
+
+**Erwartetes Ergebnis:** `email-actions-2026-06-24.md` mit strukturierten Aufgaben und Links zu relevanten Vault-Notizen
+
+---
+
+### Workflow 9: Knowledge Graph — Vault-Gesundheit analysieren
+
+**Goal:** Vault-Struktur analysieren, Lücken finden und Verbesserungen vorschlagen
+
+**Trigger:** "Analysiere meinen Vault", "Knowledge Graph", "Vault-Gesundheit"
+
+**Steps:**
+1. Claude liest alle Notizen im Vault (Volltext-Scan)
+2. Claude erstellt eine Analyse:
+   - **Verwaiste Notizen** — Notizen ohne eingehende Links
+   - **Tote Links** — `[[Links]]` die auf nicht-existierende Notizen zeigen
+   - **Tag-Lücken** — Notizen ohne Tags
+   - **Veraltete Notizen** — Nicht aktualisiert seit >30 Tagen
+   - **Verbindungsvorschläge** — Notizen die zusammengehören aber nicht verlinkt sind
+3. Claude erstellt einen Report in `Resources & Assets/vault-health-DATUM.md`
+4. Optional: Claude repariert tote Links und fügt fehlende Tags hinzu
+
+**Beispiel-Prompts:**
+```
+Analysiere meinen gesamten Vault. Finde verwaiste Notizen,
+fehlende Links und schlage neue Verbindungen vor.
+```
+
+```
+Welche meiner Notizen hängen zusammen aber sind nicht verlinkt?
+```
+
+**Erwartetes Ergebnis:** Strukturierter Health-Report mit konkreten Verbesserungsvorschlägen und optionaler automatischer Reparatur
 
 ---
 
