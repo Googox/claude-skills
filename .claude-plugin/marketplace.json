@@ -4,14 +4,25 @@
     "name": "Alireza Rezvani",
     "url": "https://alirezarezvani.com"
   },
-  "description": "Production-ready skill packages for Claude AI - 65 expert skills across marketing, engineering, product, C-level advisory, project management, regulatory compliance, business growth, and finance",
+  "description": "Production-ready skill packages for Claude AI - 70 expert skills across marketing, engineering, product, C-level advisory, project management, regulatory compliance, business growth, finance, and Obsidian",
   "homepage": "https://github.com/alirezarezvani/claude-skills",
   "repository": "https://github.com/alirezarezvani/claude-skills",
   "metadata": {
-    "description": "65 production-ready skill packages across 8 domains: marketing, engineering, product, C-level advisory, project management, regulatory compliance, business growth, and finance",
+    "description": "70 production-ready skill packages across 9 domains: marketing, engineering, product, C-level advisory, project management, regulatory compliance, business growth, finance, and Obsidian",
     "version": "1.0.0"
   },
   "plugins": [
+    {
+      "name": "obsidian-skills",
+      "source": "./obsidian",
+      "description": "5 Obsidian skills: Obsidian Flavored Markdown, Bases (.base), JSON Canvas (.canvas), Obsidian CLI, and Defuddle web extraction",
+      "version": "1.0.0",
+      "author": {
+        "name": "Alireza Rezvani"
+      },
+      "keywords": ["obsidian", "markdown", "bases", "json-canvas", "notes", "pkm", "defuddle"],
+      "category": "productivity"
+    },
     {
       "name": "marketing-skills",
       "source": "./marketing-skill",

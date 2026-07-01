@@ -1,0 +1,13 @@
+{
+  "name": "obsidian-skills",
+  "description": "5 Obsidian skills: Obsidian Flavored Markdown, Bases (.base), JSON Canvas (.canvas), Obsidian CLI, and Defuddle web extraction",
+  "version": "1.0.0",
+  "author": {
+    "name": "Alireza Rezvani",
+    "url": "https://alirezarezvani.com"
+  },
+  "homepage": "https://github.com/alirezarezvani/claude-skills/tree/main/obsidian",
+  "repository": "https://github.com/alirezarezvani/claude-skills",
+  "license": "MIT",
+  "skills": "./"
+}

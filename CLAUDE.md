@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This is a **comprehensive skills library** for Claude AI — reusable, production-ready skill packages that bundle domain expertise, best practices, analysis tools, and strategic frameworks. The repository provides modular skills that teams can download and use directly in their workflows.
 
-**Current Scope:** 86 production-ready skills across 9 domains with 5 production agents.
+**Current Scope:** 91 production-ready skills across 10 domains with 5 production agents.
 
 **Key Distinction**: This is NOT a traditional application. It's a library of skill packages meant to be extracted and deployed by users into their own Claude workflows. It supports Claude Code natively, and also integrates with OpenAI Codex and OpenClaw.
 
@@ -26,6 +26,7 @@ This repository uses **modular documentation**. For domain-specific guidance, se
 | **RA/QM Compliance** | [ra-qm-team/CLAUDE.md](ra-qm-team/CLAUDE.md) | 12 | ISO 13485, MDR, FDA compliance workflows |
 | **Business & Growth** | [business-growth/CLAUDE.md](business-growth/CLAUDE.md) | 4 | Customer success, sales engineering, revenue operations |
 | **Finance** | [finance/CLAUDE.md](finance/CLAUDE.md) | 1 | Financial analysis, DCF valuation, budgeting, forecasting |
+| **Obsidian** | [obsidian/CLAUDE.md](obsidian/CLAUDE.md) | 5 | Obsidian Markdown, Bases, JSON Canvas, Obsidian CLI, Defuddle |
 | **Standards Library** | [standards/CLAUDE.md](standards/CLAUDE.md) | 5 docs | Communication, quality, git, security standards |
 | **Templates** | [templates/CLAUDE.md](templates/CLAUDE.md) | — | Agent template system |
 
@@ -48,6 +49,7 @@ claude-skills/
 ├── ra-qm-team/                # 12 RA/QM compliance skills
 ├── business-growth/           # 4 business & growth skills
 ├── finance/                   # 1 finance skill
+├── obsidian/                  # 5 Obsidian skills (vendored from kepano/obsidian-skills)
 ├── standards/                 # 5 standards documents
 ├── templates/                 # agent-template.md for new agent creation
 ├── documentation/             # Implementation plans, sprints, delivery
@@ -95,6 +97,7 @@ Each domain has a `.claude-plugin/plugin.json` manifest enabling Claude Code plu
 | **product-team/** | 8 | product-manager-toolkit, agile-product-owner, product-strategist, competitive-teardown, ux-researcher-designer, ui-design-system, landing-page-generator, saas-scaffolder |
 | **project-management/** | 6 | jira-expert, confluence-expert, scrum-master, senior-pm, atlassian-admin, atlassian-templates |
 | **business-growth/** | 4 | customer-success-manager, sales-engineer, revenue-operations, contract-and-proposal-writer |
+| **obsidian/** | 5 | obsidian-markdown, obsidian-bases, json-canvas, obsidian-cli, defuddle |
 | **c-level-advisor/** | 2 | ceo-advisor, cto-advisor |
 | **finance/** | 1 | financial-analyst |
 
@@ -196,8 +199,8 @@ See [standards/git/git-workflow-standards.md](standards/git/git-workflow-standar
 
 ## Roadmap
 
-**Current state (86 skills, 5 agents):**
-- Engineering (24+21=45), RA/QM (12), Product (8), Marketing (7), PM (6), Business (4), C-Level (2), Finance (1)
+**Current state (91 skills, 5 agents):**
+- Engineering (24+21=45), RA/QM (12), Product (8), Marketing (7), PM (6), Obsidian (5), Business (4), C-Level (2), Finance (1)
 - 5 production agents orchestrating core domains
 
 **Next Priorities:**
@@ -244,7 +247,7 @@ See [standards/git/git-workflow-standards.md](standards/git/git-workflow-standar
 
 ---
 
-**Last Updated:** June 2026
-**Skills:** 86 production-ready across 9 domains
+**Last Updated:** July 2026
+**Skills:** 91 production-ready across 10 domains
 **Agents:** 5 production agents (cs-* prefixed)
 **Active Sprint:** sprint-11-06-2025 (CS- Orchestrator Framework — in progress)
