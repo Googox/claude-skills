@@ -21,6 +21,7 @@ This guide covers the **24 practical engineering tool skills** in the `engineeri
 | api-test-suite-builder | Automated API test generation |
 | changelog-generator | Automated changelog from git history |
 | ci-cd-pipeline-builder | GitHub Actions, GitLab CI pipeline scaffolding |
+| code-review-graph | Dependency graph, blast radius, and reviewer routing for PRs |
 | codebase-onboarding | New developer onboarding documentation |
 | database-designer | Database schema and ER diagram design |
 | database-schema-designer | Advanced schema design with migrations |
