@@ -54,6 +54,12 @@
       "description": "Code review automation for TypeScript, JavaScript, Python, Go, Swift, Kotlin. Analyzes PRs for complexity and risk, checks code quality for SOLID violations and code smells, generates review reports. Use when reviewing pull requests, analyzing code quality, identifying issues, generating review checklists."
     },
     {
+      "name": "code-review-graph",
+      "source": "../../engineering/code-review-graph",
+      "category": "engineering",
+      "description": "Dependency graph, blast radius analysis, and reviewer routing for pull requests. Supports Python, JS/TS, Go. Outputs ASCII, DOT (Graphviz), and JSON."
+    },
+    {
       "name": "email-template-builder",
       "source": "../../engineering-team/email-template-builder",
       "category": "engineering",
