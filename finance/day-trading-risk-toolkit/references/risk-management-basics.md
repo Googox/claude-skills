@@ -84,6 +84,25 @@ Consequences for a EUR 10,000 account:
   tighter spreads but require meaningful intraday margin per contract; a EUR
   10,000 account supports only very small futures positions with proper risk.
 
+**Offshore leverage (200:1, 500:1, 1000:1):** leverage above the ESMA caps is
+only available from brokers outside EU regulation (or by waiving retail
+status as a "professional client"). Three facts matter:
+
+1. **Leverage does not change expectancy.** It changes the maximum position
+   size, not the odds. A losing strategy loses faster; a winning strategy
+   does not win more per unit of risk.
+2. **The protections disappear.** Outside ESMA: usually no negative balance
+   protection (losses beyond the deposit become debt owed to the broker), no
+   EU deposit protection, no BaFin/ESMA recourse. Many high-leverage
+   jurisdictions (SVG, Vanuatu, Seychelles) host brokers with documented
+   withdrawal-refusal and price-manipulation complaints — counterparty risk
+   is real even when the trading is profitable.
+3. **Gaps ignore stops.** A stop-loss fills at the next available price. At
+   500:1 full utilization (EUR 12.5M notional on EUR 25k), a 0.2% adverse
+   move — a routine opening candle — erases the account; a 0.5% news spike
+   on gold creates debt. High leverage turns ordinary volatility into
+   account-terminal events.
+
 ## 5. Realistic Benchmarks
 
 - **Chague & De-Losso (FGV Brazil, 2020):** of ~20,000 futures day traders

@@ -113,6 +113,9 @@ python scripts/position_size_calculator.py --capital 10000 --risk-pct 1 --stop-p
 
 # Gold CFD: 1% risk, USD 5 stop at price 2650
 python scripts/position_size_calculator.py --capital 10000 --risk-pct 1 --stop-points 5 --price 2650 --instrument xauusd-cfd
+
+# Offshore account with 500:1 leverage — shows gap-risk and missing-protection warnings
+python scripts/position_size_calculator.py --capital 25000 --risk-pct 4 --stop-points 40 --price 21500 --instrument nasdaq-cfd --leverage 500
 ```
 
 ### 3. Trading Journal (`scripts/trading_journal.py`)
