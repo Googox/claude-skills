@@ -92,12 +92,12 @@
     {
       "name": "finance-skills",
       "source": "./finance",
-      "description": "1 finance skill: financial analyst with ratio analysis, DCF valuation, budgeting, and forecasting",
-      "version": "1.0.0",
+      "description": "2 finance skills: financial analyst (ratio analysis, DCF valuation, budgeting, forecasting) and day trading risk toolkit (Monte Carlo stress-testing, position sizing, trade journal)",
+      "version": "1.1.0",
       "author": {
         "name": "Alireza Rezvani"
       },
-      "keywords": ["finance", "dcf", "valuation", "budgeting", "forecasting"],
+      "keywords": ["finance", "dcf", "valuation", "budgeting", "forecasting", "trading", "risk-management", "monte-carlo"],
       "category": "finance"
     },
     {

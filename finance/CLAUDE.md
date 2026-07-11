@@ -6,8 +6,9 @@ This guide covers the finance skill and its Python automation tools.
 
 **Available Skills:**
 1. **financial-analyst/** - Financial statement analysis, ratio analysis, DCF valuation, budgeting, forecasting (4 Python tools)
+2. **day-trading-risk-toolkit/** - Risk management for intraday trading: Monte Carlo strategy stress-testing, fixed-fractional position sizing, statistically honest trade journaling (3 Python tools)
 
-**Total Tools:** 4 Python automation tools, 3 knowledge bases, 5 templates
+**Total Tools:** 7 Python automation tools, 4 knowledge bases, 6 templates
 
 ## Python Automation Tools
 
@@ -77,6 +78,52 @@ python financial-analyst/scripts/budget_variance_analyzer.py budget_data.json --
 ```bash
 python financial-analyst/scripts/forecast_builder.py forecast_data.json
 python financial-analyst/scripts/forecast_builder.py forecast_data.json --format json
+```
+
+### 5. Monte Carlo Simulator (`day-trading-risk-toolkit/scripts/monte_carlo_simulator.py`)
+
+**Purpose:** Stress-test a day trading plan by simulating thousands of equity curves
+
+**Features:**
+- Risk of ruin, final-equity percentiles, drawdown distribution
+- Losing-streak probabilities and expectancy (R-multiples)
+- Percent-of-equity or fixed-EUR risk modes, per-trade cost modeling
+- Plain-language interpretation with go/no-go guidance
+
+**Usage:**
+```bash
+python day-trading-risk-toolkit/scripts/monte_carlo_simulator.py --capital 10000 --win-rate 0.65 --rr 1.5 --risk-pct 1
+python day-trading-risk-toolkit/scripts/monte_carlo_simulator.py --capital 10000 --win-rate 0.55 --rr 1.0 --risk-eur 1000 --format json
+```
+
+### 6. Position Size Calculator (`day-trading-risk-toolkit/scripts/position_size_calculator.py`)
+
+**Purpose:** Fixed-fractional position sizing for leveraged intraday instruments
+
+**Features:**
+- Presets for NASDAQ 100 (CFD, MNQ) and Gold (CFD, MGC)
+- Effective leverage, margin, and spread-cost estimation
+- Warnings for oversized risk, ESMA leverage cap violations, margin overload
+
+**Usage:**
+```bash
+python day-trading-risk-toolkit/scripts/position_size_calculator.py --capital 10000 --risk-pct 1 --stop-points 40 --price 21500 --instrument nasdaq-cfd
+```
+
+### 7. Trading Journal (`day-trading-risk-toolkit/scripts/trading_journal.py`)
+
+**Purpose:** CSV trade journal with statistically honest performance metrics
+
+**Features:**
+- Win rate with 95% Wilson confidence interval (exposes small-sample illusions)
+- Expectancy, profit factor, max drawdown, worst loss streak
+- `init` / `add` / `stats` subcommands; CSV portable to Excel/Sheets
+
+**Usage:**
+```bash
+python day-trading-risk-toolkit/scripts/trading_journal.py init
+python day-trading-risk-toolkit/scripts/trading_journal.py add --instrument NAS100 --direction long --entry 21500 --exit 21540 --size 2.5 --pnl 95 --risk 100
+python day-trading-risk-toolkit/scripts/trading_journal.py stats --format json
 ```
 
 ## Quality Standards

@@ -1,7 +1,7 @@
 {
   "name": "finance-skills",
-  "description": "1 production-ready finance skill: financial analyst with ratio analysis, DCF valuation, budget variance, and forecasting",
-  "version": "1.0.0",
+  "description": "2 production-ready finance skills: financial analyst (ratio analysis, DCF valuation, budget variance, forecasting) and day trading risk toolkit (Monte Carlo stress-testing, position sizing, trade journal)",
+  "version": "1.1.0",
   "author": {
     "name": "Alireza Rezvani",
     "url": "https://alirezarezvani.com"
