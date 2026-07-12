@@ -84,7 +84,31 @@ Professional risk standards this toolkit enforces in its warnings:
 
 ## Tools
 
-### 1. Monte Carlo Simulator (`scripts/monte_carlo_simulator.py`)
+### 1. Session Backtester (`scripts/session_backtester.py`)
+
+Takes continuous 1-minute OHLCV history (e.g. exported from Databento as
+front-month continuous futures) and answers two questions for a specific
+intraday window: (a) the opportunity ceiling — how much movement the window
+actually offered, day by day, with perfect foresight; (b) a measured
+backtest of a transparent Opening Range Breakout baseline with realistic
+spread/slippage costs — replacing an assumed win rate with a measured one.
+
+```bash
+python scripts/session_backtester.py --file nq_continuous_1m.parquet \
+  --tz America/New_York --start 09:30 --end 11:00 --point-value 2.0 \
+  --spread-points 2 --slippage-points 1 --stop-points 40 --target-r 1.5
+
+python scripts/session_backtester.py --file gc_continuous_1m.parquet \
+  --tz Europe/Berlin --start 15:30 --end 18:00 --point-value 10.0 \
+  --spread-points 0.3 --slippage-points 0.2 --stop-points 5 --target-r 1.5
+```
+
+Requires `pandas` (only non-stdlib dependency in this toolkit, needed for
+the datetime/timezone handling and grouping efficient columnar data
+requires). Input file must have columns `dt, open, high, low, close,
+volume`; `dt` must be timezone-aware (UTC).
+
+### 2. Monte Carlo Simulator (`scripts/monte_carlo_simulator.py`)
 
 Simulates 10,000 possible equity curves from strategy parameters. Reports
 risk of ruin, final-equity percentiles, drawdown distribution, and
@@ -101,7 +125,7 @@ python scripts/monte_carlo_simulator.py --capital 10000 --win-rate 0.75 --rr 1.0
 python scripts/monte_carlo_simulator.py --capital 10000 --win-rate 0.55 --rr 1.0 --risk-pct 1 --format json
 ```
 
-### 2. Position Size Calculator (`scripts/position_size_calculator.py`)
+### 3. Position Size Calculator (`scripts/position_size_calculator.py`)
 
 Fixed-fractional position sizing with presets for NASDAQ 100 (CFD, MNQ
 future) and Gold (CFD, MGC future). Warns on excessive risk, leverage above
@@ -118,7 +142,7 @@ python scripts/position_size_calculator.py --capital 10000 --risk-pct 1 --stop-p
 python scripts/position_size_calculator.py --capital 25000 --risk-pct 4 --stop-points 40 --price 21500 --instrument nasdaq-cfd --leverage 500
 ```
 
-### 3. Trading Journal (`scripts/trading_journal.py`)
+### 4. Trading Journal (`scripts/trading_journal.py`)
 
 CSV-based journal (portable to Excel/Sheets) computing win rate **with a 95%
 confidence interval**, expectancy, profit factor, max drawdown, and worst

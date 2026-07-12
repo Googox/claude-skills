@@ -6,9 +6,9 @@ This guide covers the finance skill and its Python automation tools.
 
 **Available Skills:**
 1. **financial-analyst/** - Financial statement analysis, ratio analysis, DCF valuation, budgeting, forecasting (4 Python tools)
-2. **day-trading-risk-toolkit/** - Risk management for intraday trading: Monte Carlo strategy stress-testing, fixed-fractional position sizing, statistically honest trade journaling (3 Python tools)
+2. **day-trading-risk-toolkit/** - Risk management for intraday trading: historical session/backtest analysis, Monte Carlo strategy stress-testing, fixed-fractional position sizing, statistically honest trade journaling (4 Python tools)
 
-**Total Tools:** 7 Python automation tools, 4 knowledge bases, 6 templates
+**Total Tools:** 8 Python automation tools, 4 knowledge bases, 6 templates
 
 ## Python Automation Tools
 
