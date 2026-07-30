@@ -1,0 +1,1307 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>FeWo-Potentialrechner Allgäu</title>
+
+<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/prop-types/prop-types.min.js"></script>
+<script src="https://unpkg.com/recharts@2.12.7/umd/Recharts.js"></script>
+<script src="https://unpkg.com/@babel/standalone@7/babel.min.js"></script>
+
+<style>
+  :root {
+    --accent: #1f6f5c;
+    --accent-dark: #14493c;
+    --accent-light: #e6f1ee;
+    --gruen: #2e7d46;
+    --gelb: #c99a1e;
+    --rot: #c0392b;
+    --grau: #9aa0a6;
+    --border: #dfe3e2;
+    --bg: #ffffff;
+    --text: #24292e;
+    --text-muted: #6a7370;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--text);
+    font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+  #root { min-height: 100vh; display: flex; flex-direction: column; }
+  h1, h2, h3, h4 { font-weight: 600; margin: 0 0 .5em; }
+  h1 { font-size: 1.4rem; }
+  h2 { font-size: 1.15rem; }
+  h3 { font-size: 1rem; color: var(--accent-dark); }
+  a { color: var(--accent); }
+  button { font: inherit; cursor: pointer; }
+  .app-header { border-bottom: 1px solid var(--border); padding: 14px 24px; display: flex;
+    align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+  .app-header .brand { display: flex; align-items: baseline; gap: 10px; }
+  .app-header .subtitle { color: var(--text-muted); font-size: .85rem; }
+  .toolbar { display: flex; gap: 8px; flex-wrap: wrap; }
+  .btn { border: 1px solid var(--border); background: #fff; border-radius: 6px; padding: 7px 14px;
+    font-size: .85rem; color: var(--text); transition: background .15s; }
+  .btn:hover { background: #f4f6f5; }
+  .btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .btn.primary:hover { background: var(--accent-dark); }
+  .btn.ghost { border-color: transparent; }
+  .btn:disabled { opacity: .45; cursor: not-allowed; }
+  .btn.small { padding: 4px 9px; font-size: .78rem; }
+  .layout { flex: 1; display: flex; min-height: 0; }
+  .sidebar { width: 220px; border-right: 1px solid var(--border); padding: 16px 10px; flex-shrink: 0; }
+  .sidebar .objekt-tab { display: flex; align-items: center; gap: 8px; padding: 8px 10px; border-radius: 6px;
+    cursor: pointer; font-size: .88rem; margin-bottom: 2px; }
+  .sidebar .objekt-tab:hover { background: #f4f6f5; }
+  .sidebar .objekt-tab.active { background: var(--accent-light); font-weight: 600; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .dot.gruen, .badge.gruen { background: var(--gruen); }
+  .dot.gelb, .badge.gelb { background: var(--gelb); }
+  .dot.rot, .badge.rot { background: var(--rot); }
+  .dot.grau, .badge.grau { background: var(--grau); }
+  .main { flex: 1; padding: 20px 28px; overflow-y: auto; }
+  .progress { display: flex; gap: 6px; margin-bottom: 22px; }
+  .progress .step { flex: 1; text-align: center; padding: 8px 4px; border-radius: 6px; font-size: .8rem;
+    background: #f0f2f1; color: var(--text-muted); border: 1px solid var(--border); }
+  .progress .step.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .progress .step.done { background: var(--accent-light); color: var(--accent-dark); }
+  .progress .step.locked { opacity: .5; cursor: not-allowed; }
+  .progress .step:not(.locked) { cursor: pointer; }
+  .card { border: 1px solid var(--border); border-radius: 8px; padding: 16px 18px; margin-bottom: 16px; background: #fff; }
+  .grid { display: grid; gap: 14px; }
+  .grid.cols-2 { grid-template-columns: 1fr 1fr; }
+  .grid.cols-3 { grid-template-columns: repeat(3, 1fr); }
+  .grid.cols-4 { grid-template-columns: repeat(4, 1fr); }
+  @media (max-width: 900px) { .grid.cols-2, .grid.cols-3, .grid.cols-4 { grid-template-columns: 1fr; } }
+  label.field-label { display: block; font-size: .82rem; font-weight: 600; margin-bottom: 4px; color: var(--text); }
+  .hint { font-size: .76rem; color: var(--text-muted); margin: 2px 0 6px; }
+  .annahme-badge { display: inline-block; font-size: .68rem; background: var(--accent-light); color: var(--accent-dark);
+    border-radius: 4px; padding: 1px 6px; margin-left: 6px; font-weight: 600; letter-spacing: .02em; }
+  input[type="number"], input[type="text"], select {
+    width: 100%; padding: 7px 9px; border: 1px solid var(--border); border-radius: 6px; font-size: .88rem;
+    background: #fff; color: var(--text);
+  }
+  input:disabled, select:disabled { background: #f4f6f5; color: var(--text-muted); }
+  .ampel-group { display: flex; gap: 6px; }
+  .ampel-btn { flex: 1; padding: 8px; border-radius: 6px; border: 2px solid var(--border); background: #fff;
+    font-size: .8rem; font-weight: 600; text-align: center; }
+  .ampel-btn.gruen.sel { background: var(--gruen); border-color: var(--gruen); color: #fff; }
+  .ampel-btn.gelb.sel { background: var(--gelb); border-color: var(--gelb); color: #fff; }
+  .ampel-btn.rot.sel { background: var(--rot); border-color: var(--rot); color: #fff; }
+  .ko-row { display: grid; grid-template-columns: minmax(0,1.5fr) minmax(0,1fr); gap: 16px; align-items: start;
+    padding: 12px 0; border-bottom: 1px solid var(--border); }
+  .ko-row:last-child { border-bottom: none; }
+  .banner { border-radius: 8px; padding: 14px 16px; margin-bottom: 18px; font-size: .9rem; }
+  .banner.rot { background: #fdecea; border: 1px solid var(--rot); color: #7a231a; }
+  .banner.gelb { background: #fdf6e3; border: 1px solid var(--gelb); color: #6b5410; }
+  .banner.gruen { background: #eaf6ed; border: 1px solid var(--gruen); color: #1c4d29; }
+  .radio-opts { display: flex; flex-direction: column; gap: 6px; }
+  .radio-opt { display: flex; align-items: center; gap: 8px; padding: 6px 8px; border: 1px solid var(--border);
+    border-radius: 6px; font-size: .84rem; cursor: pointer; }
+  .radio-opt.sel { border-color: var(--accent); background: var(--accent-light); font-weight: 600; }
+  .kpi-cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 18px; }
+  @media (max-width: 1000px) { .kpi-cards { grid-template-columns: repeat(2, 1fr); } }
+  .kpi { border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; }
+  .kpi .label { font-size: .74rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: .03em; }
+  .kpi .value { font-size: 1.35rem; font-weight: 700; margin-top: 2px; }
+  .ampel-big { display: flex; align-items: center; gap: 16px; padding: 18px; border-radius: 10px; margin-bottom: 18px; }
+  .ampel-circle { width: 56px; height: 56px; border-radius: 50%; flex-shrink: 0; }
+  table { width: 100%; border-collapse: collapse; font-size: .84rem; }
+  table th, table td { text-align: left; padding: 7px 9px; border-bottom: 1px solid var(--border); }
+  table th { color: var(--text-muted); font-weight: 600; font-size: .76rem; text-transform: uppercase;
+    cursor: pointer; user-select: none; }
+  table tbody tr:hover { background: #f8faf9; }
+  .tabs { display: flex; gap: 4px; margin-bottom: 14px; border-bottom: 1px solid var(--border); }
+  .tabs button { padding: 8px 14px; border: none; background: none; font-size: .85rem; color: var(--text-muted);
+    border-bottom: 2px solid transparent; }
+  .tabs button.active { color: var(--accent-dark); border-bottom-color: var(--accent); font-weight: 600; }
+  .footer { border-top: 1px solid var(--border); padding: 12px 24px; font-size: .74rem; color: var(--text-muted); }
+  .slider-row { display: grid; grid-template-columns: 180px 1fr 60px; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .hebel-item { padding: 10px 0; border-bottom: 1px solid var(--border); font-size: .85rem; }
+  .hebel-item:last-child { border-bottom: none; }
+  .hebel-rank { display: inline-flex; width: 20px; height: 20px; border-radius: 50%; background: var(--accent);
+    color: #fff; align-items: center; justify-content: center; font-size: .72rem; font-weight: 700; margin-right: 8px; }
+  .print-sheet { display: none; }
+  .season-bar-fallback { display: flex; align-items: flex-end; gap: 18px; height: 180px; padding: 10px 0; }
+  .season-bar-fallback .bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; }
+  .season-bar-fallback .bar { width: 100%; background: var(--accent); border-radius: 4px 4px 0 0; }
+  .season-bar-fallback .bar-label { font-size: .72rem; margin-top: 6px; color: var(--text-muted); text-align: center; }
+  .empty-state { text-align: center; padding: 60px 20px; color: var(--text-muted); }
+  @media print {
+    .no-print { display: none !important; }
+    .print-sheet { display: block !important; }
+    body { padding: 0; }
+  }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel-app" id="app-source">
+const { useState, useMemo, useCallback } = React;
+const Recharts = window.Recharts || null;
+
+/* ============================================================
+   KONSTANTEN
+   ============================================================ */
+
+const SAISON_KEYS = ['winter', 'sommer', 'fruehjahr', 'herbst'];
+const SAISON_LABELS = { winter: 'Winter-Hauptsaison', sommer: 'Sommer-Hauptsaison', fruehjahr: 'Nebensaison Frühjahr', herbst: 'Nebensaison Herbst' };
+const TAGE_PRO_MONAT = 30.4;
+
+const GROESSE_OPTIONS = [
+  { value: '1-Zi', label: '1-Zimmer', range: '8.000–12.000 €', mid: 10000 },
+  { value: '2-Zi', label: '2-Zimmer', range: '12.000–18.000 €', mid: 15000 },
+  { value: '3-Zi', label: '3-Zimmer', range: '18.000–25.000 €', mid: 21500 },
+];
+
+const AMPEL_OPTIONS = [
+  { value: 'gruen', label: 'Grün' },
+  { value: 'gelb', label: 'Gelb' },
+  { value: 'rot', label: 'Rot' },
+];
+
+const STANDORT_CRITERIA = [
+  { key: 'entfernung', label: 'Entfernung Kempten Zentrum', weight: 10, maxPoints: 10,
+    options: [
+      { value: 'lt2', label: '< 2 km', points: 10 },
+      { value: '2-5', label: '2–5 km', points: 8 },
+      { value: '5-10', label: '5–10 km', points: 5 },
+      { value: 'gt10', label: '> 10 km', points: 2 },
+    ] },
+  { key: 'zugpferde', label: 'Nähe Zugpferde (Oberstdorf, Neuschwanstein/Füssen, Alpsee/Immenstadt, Skigebiete)', weight: 20, maxPoints: 10,
+    options: [
+      { value: 'lt20', label: '< 20 min Fahrzeit', points: 10 },
+      { value: '20-40', label: '20–40 min Fahrzeit', points: 7 },
+      { value: 'gt40', label: '> 40 min Fahrzeit', points: 3 },
+    ] },
+  { key: 'aussicht', label: 'Aussicht/Lagequalität', weight: 10, maxPoints: 10,
+    options: [
+      { value: 'berg', label: 'Bergblick/ruhig', points: 10 },
+      { value: 'neutral', label: 'Neutral', points: 6 },
+      { value: 'strasse', label: 'Hauptstraße/Gewerbe', points: 2 },
+    ] },
+  { key: 'parkplatz', label: 'Parkplatz', weight: 15, maxPoints: 10,
+    options: [
+      { value: 'eigen', label: 'Eigener Stellplatz', points: 10 },
+      { value: 'oeffentlich', label: 'Öffentlich verfügbar', points: 6 },
+      { value: 'problematisch', label: 'Problematisch', points: 2 },
+    ] },
+  { key: 'oepnv', label: 'ÖPNV/Bahnhofsnähe', weight: 5, maxPoints: 8,
+    options: [
+      { value: 'lt1', label: '< 1 km', points: 8 },
+      { value: '1-3', label: '1–3 km', points: 5 },
+      { value: 'gt3', label: '> 3 km', points: 2 },
+    ] },
+  { key: 'nahversorgung', label: 'Nahversorgung fußläufig (Bäcker, Supermarkt, Gastro)', weight: 10, maxPoints: 8,
+    options: [
+      { value: 'ja', label: 'Ja', points: 8 },
+      { value: 'teilweise', label: 'Teilweise', points: 5 },
+      { value: 'nein', label: 'Nein', points: 2 },
+    ] },
+  { key: 'konkurrenz', label: 'Konkurrenzdichte (aktive Inserate im Ort/Ortsteil)', weight: 15, maxPoints: 10,
+    hint: 'Manuell auf Airbnb/Booking zählen – Momentaufnahme, keine automatische Abfrage.',
+    options: [
+      { value: 'lt10', label: '< 10 Inserate', points: 10 },
+      { value: '10-30', label: '10–30 Inserate', points: 6 },
+      { value: 'gt30', label: '> 30 Inserate', points: 3 },
+    ] },
+  { key: 'ganzjahres', label: 'Ganzjahrestauglichkeit (Winter- UND Sommerattraktion erreichbar)', weight: 15, maxPoints: 10,
+    options: [
+      { value: 'beides', label: 'Beides erreichbar', points: 10 },
+      { value: 'eines', label: 'Nur eines erreichbar', points: 6 },
+      { value: 'keines', label: 'Keines', points: 2 },
+    ] },
+];
+
+const STANDORT_SUGGESTIONS = {
+  entfernung: 'Lage weiter vom Zentrum entfernt – auf Alleinstellungsmerkmale (Ruhe, Aussicht, Natur) im Listing setzen.',
+  zugpferde: 'Fahrzeit zu den Zugpferden hoch – Transferangebot, E-Bike-Verleih oder Ausflugstipps als Kompensation anbieten.',
+  aussicht: 'Lagequalität neutral/schwach – durch Ausstattung, Fotografie und Inneneinrichtung kompensieren.',
+  parkplatz: 'Parkplatzsituation verbessern – festen Stellplatz mit dem Eigentümer verhandeln, das hebt den Standort-Score spürbar.',
+  oepnv: 'Geringe Bahnhofsnähe – Shuttle- oder Fahrrad-Hinweis im Listing ergänzen.',
+  nahversorgung: 'Schwache Nahversorgung – Willkommensmappe mit Lieferdienst- und Einkaufstipps ergänzen.',
+  konkurrenz: 'Hohe Konkurrenzdichte – über Ausstattung/Nische differenzieren statt über den Preis zu konkurrieren.',
+  ganzjahres: 'Standort nicht ganzjahrestauglich – Nebensaison-Pricing und -Angebote gezielt aggressiver gestalten.',
+};
+
+/* ============================================================
+   PURE-FUNCTIONS – BERECHNUNGSLOGIK
+   ============================================================ */
+
+function evaluateKO(ko) {
+  const items = [
+    { key: 'untervermietung', label: 'Untervermietungserlaubnis', status: ko.untervermietung },
+    { key: 'baurecht', label: 'Baurecht / Nutzungsänderung', status: ko.baurecht },
+    { key: 'zweckentfremdung', label: 'Zweckentfremdungssatzung',
+      status: ko.zweckentfremdungVorhanden === 'nein' ? 'gruen' : ko.zweckentfremdungGenehmigung },
+  ];
+  if (ko.wegAnwendbar) items.push({ key: 'weg', label: 'WEG-Zustimmung', status: ko.wegStatus });
+  items.push({ key: 'brandschutz', label: 'Brandschutz/Sicherheit', status: ko.brandschutz });
+
+  const hasRot = items.some((i) => i.status === 'rot');
+  const hasGelb = items.some((i) => i.status === 'gelb');
+  const overall = hasRot ? 'rot' : hasGelb ? 'gelb' : 'gruen';
+  const offenePunkte = items.filter((i) => i.status !== 'gruen').map((i) => i.label);
+  const rotPunkte = items.filter((i) => i.status === 'rot').map((i) => i.label);
+  return { items, overall, offenePunkte, rotPunkte };
+}
+
+function computeStandortScore(standort) {
+  let score = 0;
+  let answered = 0;
+  const breakdown = [];
+  for (const crit of STANDORT_CRITERIA) {
+    const opt = crit.options.find((o) => o.value === standort[crit.key]);
+    if (opt) answered += 1;
+    const points = opt ? opt.points : 0;
+    const contrib = (points / crit.maxPoints) * crit.weight;
+    score += contrib;
+    breakdown.push({ key: crit.key, label: crit.label, points, maxPoints: crit.maxPoints, weight: crit.weight, contrib, lostContrib: crit.weight - contrib });
+  }
+  return { score, breakdown, answered, total: STANDORT_CRITERIA.length };
+}
+
+function scenarioMultiplier(type) {
+  if (type === 'konservativ') return { occ: 0.8, adr: 0.95 };
+  if (type === 'optimistisch') return { occ: 1.1, adr: 1.05 };
+  return { occ: 1, adr: 1 };
+}
+
+function computeScenario(objekt, type) {
+  const { occ: occMult, adr: adrMult } = scenarioMultiplier(type);
+  let belegteNaechte = 0;
+  let bruttoumsatz = 0;
+  const totalTage = SAISON_KEYS.reduce((sum, k) => sum + (objekt.saison[k].monate || 0) * TAGE_PRO_MONAT, 0) || 365;
+
+  for (const key of SAISON_KEYS) {
+    const s = objekt.saison[key];
+    const monate = s.monate || 0;
+    let auslastung = ((s.auslastung || 0) / 100) * occMult;
+    if (type === 'optimistisch') auslastung = Math.min(auslastung, 0.95);
+    auslastung = Math.min(Math.max(auslastung, 0), 1);
+    const adr = (s.adr || 0) * adrMult;
+    const naechte = monate * TAGE_PRO_MONAT * auslastung;
+    belegteNaechte += naechte;
+    bruttoumsatz += naechte * adr;
+  }
+
+  const v = objekt.variable;
+  const turnover = v.aufenthaltsdauer > 0 ? belegteNaechte / v.aufenthaltsdauer : 0;
+  const provisionKosten = bruttoumsatz * (v.provision / 100);
+  const reinigungKosten = turnover * v.reinigung;
+  const verbrauchKosten = turnover * v.verbrauch;
+  const kurtaxeKosten = v.kurtaxeDurchgereicht ? 0 : belegteNaechte * v.personenzahl * v.kurtaxeProPersonNacht;
+  const instandhaltungKosten = bruttoumsatz * (v.instandhaltungPct / 100);
+  const pufferKosten = bruttoumsatz * (v.leerstandPct / 100);
+  const variableKosten = provisionKosten + reinigungKosten + verbrauchKosten + kurtaxeKosten + instandhaltungKosten + pufferKosten;
+
+  const f = objekt.fixkosten;
+  const monatsFix = f.kaltmiete + f.nebenkosten + f.strom + f.internet + f.versicherung + f.gema + f.software;
+  const einmalinvest = (objekt.invest.moeblierung || 0) + (objekt.invest.renovierung || 0);
+  const afaJahre = (objekt.invest.afaMonate || 48) / 12;
+  const afaJahr = afaJahre > 0 ? einmalinvest / afaJahre : 0;
+  const fixkostenJahr = monatsFix * 12 + afaJahr;
+
+  const ergebnisVorSteuern = bruttoumsatz - variableKosten - fixkostenJahr;
+
+  const marginalContribution = bruttoumsatz - variableKosten;
+  const avgOccAtS1 = belegteNaechte / totalTage;
+  let breakEvenAuslastung = null;
+  if (marginalContribution > 0) {
+    const sStar = fixkostenJahr / marginalContribution;
+    breakEvenAuslastung = sStar * avgOccAtS1 * 100;
+  }
+
+  const deckungsbeitragMonat = (bruttoumsatz - variableKosten) / 12;
+  const cashflowVorAfaJahr = ergebnisVorSteuern + afaJahr;
+  const cashflowVorAfaMonat = cashflowVorAfaJahr / 12;
+  const paybackMonate = cashflowVorAfaMonat > 0 ? einmalinvest / cashflowVorAfaMonat : null;
+  const umsatzrendite = bruttoumsatz > 0 ? (ergebnisVorSteuern / bruttoumsatz) * 100 : null;
+
+  return {
+    type, belegteNaechte, bruttoumsatz, variableKosten, fixkostenJahr, einmalinvest, afaJahr, monatsFix,
+    ergebnisVorSteuern, ergebnisMonat: ergebnisVorSteuern / 12,
+    breakEvenAuslastung, deckungsbeitragMonat, paybackMonate, umsatzrendite,
+    kosten: { provisionKosten, reinigungKosten, verbrauchKosten, kurtaxeKosten, instandhaltungKosten, pufferKosten },
+  };
+}
+
+function computeSaisonUmsaetze(objekt, type) {
+  const { occ: occMult, adr: adrMult } = scenarioMultiplier(type);
+  return SAISON_KEYS.map((key) => {
+    const s = objekt.saison[key];
+    let auslastung = ((s.auslastung || 0) / 100) * occMult;
+    if (type === 'optimistisch') auslastung = Math.min(auslastung, 0.95);
+    auslastung = Math.min(Math.max(auslastung, 0), 1);
+    const adr = (s.adr || 0) * adrMult;
+    const naechte = (s.monate || 0) * TAGE_PRO_MONAT * auslastung;
+    return { key, saison: SAISON_LABELS[key], umsatz: naechte * adr, naechte };
+  });
+}
+
+function scoreErgebnis(ergebnisMonat) {
+  if (ergebnisMonat > 800) return 40;
+  if (ergebnisMonat >= 400) return 30;
+  if (ergebnisMonat >= 100) return 18;
+  if (ergebnisMonat >= 0) return 8;
+  return 0;
+}
+function scoreBreakEven(be) {
+  if (be === null) return 3;
+  if (be < 40) return 25;
+  if (be <= 50) return 18;
+  if (be <= 60) return 10;
+  return 3;
+}
+function scorePayback(months) {
+  if (months === null) return 2;
+  if (months < 18) return 20;
+  if (months <= 30) return 14;
+  if (months <= 48) return 7;
+  return 2;
+}
+function scoreKonservativ(konservativErgebnisVorSteuern) {
+  return konservativErgebnisVorSteuern > 0 ? 15 : 0;
+}
+function computeObjektScore(realistisch, konservativ) {
+  const ergebnisPts = scoreErgebnis(realistisch.ergebnisMonat);
+  const breakEvenPts = scoreBreakEven(realistisch.breakEvenAuslastung);
+  const paybackPts = scorePayback(realistisch.paybackMonate);
+  const konservativPts = scoreKonservativ(konservativ.ergebnisVorSteuern);
+  return { score: ergebnisPts + breakEvenPts + paybackPts + konservativPts,
+    breakdown: { ergebnisPts, breakEvenPts, paybackPts, konservativPts } };
+}
+
+function computeGesamtscore(standortScore, objektScore) { return 0.4 * standortScore + 0.6 * objektScore; }
+function computeAmpelBand(gesamtscore) { return gesamtscore >= 70 ? 'gruen' : gesamtscore >= 50 ? 'gelb' : 'rot'; }
+function computeGesamtStatus(koOverall, gesamtscore) {
+  if (koOverall === 'rot') return { status: 'nicht_geeignet', band: null };
+  const band = computeAmpelBand(gesamtscore);
+  return { status: koOverall === 'gelb' ? 'vorbehaltlich' : band, band };
+}
+
+function suggestKaltmiete(objekt, realistisch) {
+  const delta = objekt.fixkosten.kaltmiete * 0.1;
+  const testObjekt = { ...objekt, fixkosten: { ...objekt.fixkosten, kaltmiete: objekt.fixkosten.kaltmiete - delta } };
+  const testScenario = computeScenario(testObjekt, 'realistisch');
+  return { delta, testScenario };
+}
+
+function computeHebel(objekt, standortBreakdown, realistisch, konservativ, objektScoreBreakdown) {
+  const items = [];
+  for (const b of standortBreakdown) {
+    if (b.lostContrib > 0.01) {
+      items.push({ source: 'standort', key: b.key, label: b.label, lostGesamt: b.lostContrib * 0.4,
+        suggestion: STANDORT_SUGGESTIONS[b.key] || (b.label + ': Punktverlust reduzieren.') });
+    }
+  }
+  const ergebnisLost = 40 - objektScoreBreakdown.ergebnisPts;
+  const breakEvenLost = 25 - objektScoreBreakdown.breakEvenPts;
+  const paybackLost = 20 - objektScoreBreakdown.paybackPts;
+  const konservativLost = 15 - objektScoreBreakdown.konservativPts;
+
+  if (ergebnisLost > 0 || breakEvenLost > 0) {
+    const { delta, testScenario } = suggestKaltmiete(objekt, realistisch);
+    items.push({ source: 'objekt', key: 'kaltmiete', label: 'Ergebnis / Break-even',
+      lostGesamt: Math.max(ergebnisLost, breakEvenLost) * 0.6,
+      suggestion: 'Kaltmiete um ' + fmtEUR(delta) + ' (10 %) verhandeln senkt Break-even von ' +
+        (realistisch.breakEvenAuslastung == null ? 'n/a' : fmtPct(realistisch.breakEvenAuslastung)) + ' auf ' +
+        (testScenario.breakEvenAuslastung == null ? 'n/a' : fmtPct(testScenario.breakEvenAuslastung)) +
+        ' und hebt das Monatsergebnis auf ' + fmtEUR(testScenario.ergebnisMonat) + '.' });
+  }
+  if (paybackLost > 0) {
+    items.push({ source: 'objekt', key: 'payback', label: 'Payback Möblierung', lostGesamt: paybackLost * 0.6,
+      suggestion: 'Einmalinvest senken (gebrauchte/geleaste Möblierung, Eigenleistung bei der Renovierung) oder mit dem Eigentümer einen Zuschuss zur Einrichtung verhandeln.' });
+  }
+  if (konservativLost > 0) {
+    items.push({ source: 'objekt', key: 'konservativ', label: 'Konservatives Szenario', lostGesamt: konservativLost * 0.6,
+      suggestion: 'Konservatives Szenario ist negativ – Auslastungsrisiko zu hoch. Kaltmiete/ADR nachverhandeln oder Objekt meiden.' });
+  }
+  items.sort((a, b) => b.lostGesamt - a.lostGesamt);
+  return items.slice(0, 3);
+}
+
+/* ============================================================
+   FORMATIERUNG
+   ============================================================ */
+
+function fmtEUR(n) {
+  const v = Number.isFinite(n) ? n : 0;
+  return v.toLocaleString('de-DE', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 });
+}
+function fmtPct(n, d) {
+  if (n == null || !Number.isFinite(n)) return '–';
+  return n.toLocaleString('de-DE', { minimumFractionDigits: d == null ? 1 : d, maximumFractionDigits: d == null ? 1 : d }) + ' %';
+}
+function fmtNum(n, d) {
+  if (n == null || !Number.isFinite(n)) return '–';
+  return n.toLocaleString('de-DE', { minimumFractionDigits: d == null ? 0 : d, maximumFractionDigits: d == null ? 0 : d });
+}
+
+/* Zielkorridor für die Umsatzrendite (Marge): 25–40 % */
+const MARGE_ZIEL_MIN = 25;
+const MARGE_ZIEL_MAX = 40;
+function margeBand(pct) {
+  if (pct == null || !Number.isFinite(pct)) return null;
+  if (pct < MARGE_ZIEL_MIN) return 'niedrig';
+  if (pct <= MARGE_ZIEL_MAX) return 'ziel';
+  return 'hoch';
+}
+function margeColor(pct) {
+  const band = margeBand(pct);
+  if (band === 'ziel') return 'var(--gruen)';
+  if (band === 'niedrig') return 'var(--rot)';
+  if (band === 'hoch') return 'var(--gelb)';
+  return 'inherit';
+}
+function margeLabel(pct) {
+  const band = margeBand(pct);
+  if (band === 'ziel') return 'im Zielkorridor (25–40 %)';
+  if (band === 'niedrig') return 'unter Zielkorridor (25–40 %)';
+  if (band === 'hoch') return 'über Zielkorridor (25–40 %) – Annahmen prüfen';
+  return '';
+}
+
+/* ============================================================
+   DATENMODELL / FACTORY
+   ============================================================ */
+
+function makeId() {
+  return (window.crypto && window.crypto.randomUUID) ? window.crypto.randomUUID() : 'id-' + Math.random().toString(36).slice(2) + Date.now();
+}
+
+function createObjekt(name) {
+  return {
+    id: makeId(),
+    name: name || 'Neues Objekt',
+    adresse: '',
+    groesse: '2-Zi',
+    uiStep: 0,
+    ko: {
+      untervermietung: 'gelb',
+      baurecht: 'gelb',
+      zweckentfremdungVorhanden: 'unklar',
+      zweckentfremdungGenehmigung: 'gelb',
+      wegAnwendbar: false,
+      wegStatus: 'gelb',
+      gewerbeanmeldungBestaetigt: false,
+      brandschutz: 'gelb',
+    },
+    standort: { entfernung: '', zugpferde: '', aussicht: '', parkplatz: '', oepnv: '', nahversorgung: '', konkurrenz: '', ganzjahres: '' },
+    fixkosten: { kaltmiete: 0, nebenkosten: 0, strom: 0, internet: 0, versicherung: 0, gema: 0, software: 0 },
+    invest: { moeblierung: 15000, afaMonate: 48, renovierung: 0, kaution: 0 },
+    saison: {
+      winter: { monate: 3, adr: 0, auslastung: 0 },
+      sommer: { monate: 4, adr: 0, auslastung: 0 },
+      fruehjahr: { monate: 2, adr: 0, auslastung: 0 },
+      herbst: { monate: 3, adr: 0, auslastung: 0 },
+    },
+    variable: { provision: 16, reinigung: 0, aufenthaltsdauer: 3, verbrauch: 0, kurtaxeProPersonNacht: 0, personenzahl: 2, kurtaxeDurchgereicht: true, instandhaltungPct: 3, leerstandPct: 5 },
+    sensitivity: { kaltmiete: 0, adr: 0, auslastung: 0 },
+  };
+}
+
+function setPath(obj, path, value) {
+  if (path.length === 0) return value;
+  const [head, ...rest] = path;
+  const base = (obj && typeof obj === 'object') ? obj[head] : undefined;
+  return { ...obj, [head]: setPath(base ?? {}, rest, value) };
+}
+
+/* Derived analysis for one Objekt (memoized by caller) */
+function analyseObjekt(objekt) {
+  const ko = evaluateKO(objekt.ko);
+  const standort = computeStandortScore(objekt.standort);
+  const konservativ = computeScenario(objekt, 'konservativ');
+  const realistisch = computeScenario(objekt, 'realistisch');
+  const optimistisch = computeScenario(objekt, 'optimistisch');
+  const objektScore = computeObjektScore(realistisch, konservativ);
+  const gesamtscore = computeGesamtscore(standort.score, objektScore.score);
+  const gesamtStatus = computeGesamtStatus(ko.overall, gesamtscore);
+  const monateSum = SAISON_KEYS.reduce((s, k) => s + (objekt.saison[k].monate || 0), 0);
+  const hebel = gesamtStatus.status === 'gelb' || gesamtStatus.status === 'vorbehaltlich'
+    ? computeHebel(objekt, standort.breakdown, realistisch, konservativ, objektScore.breakdown)
+    : [];
+  return { ko, standort, konservativ, realistisch, optimistisch, objektScore, gesamtscore, gesamtStatus, monateSum, hebel };
+}
+
+/* ============================================================
+   KLEINE UI-BAUSTEINE
+   ============================================================ */
+
+function AmpelBadge({ status }) {
+  const map = {
+    gruen: { cls: 'gruen', label: 'Grün' }, gelb: { cls: 'gelb', label: 'Gelb' },
+    rot: { cls: 'rot', label: 'Rot' }, vorbehaltlich: { cls: 'grau', label: 'Vorbehaltlich' },
+    nicht_geeignet: { cls: 'rot', label: 'Nicht geeignet' },
+  };
+  const m = map[status] || { cls: 'grau', label: '–' };
+  return <span className={'badge ' + m.cls} style={{ display: 'inline-block', width: 12, height: 12, borderRadius: '50%', marginRight: 6, verticalAlign: 'middle' }} title={m.label}></span>;
+}
+
+function NumberField({ label, value, onChange, suffix, hint, min, step, disabled, annahme }) {
+  return (
+    <div>
+      <label className="field-label">{label}{annahme && <span className="annahme-badge">Annahme</span>}</label>
+      {hint && <div className="hint">{hint}</div>}
+      <input type="number" value={Number.isFinite(value) ? value : 0} min={min == null ? 0 : min} step={step == null ? 1 : step}
+        disabled={disabled}
+        onChange={(e) => {
+          const v = parseFloat(e.target.value);
+          onChange(Number.isFinite(v) ? v : 0);
+        }} />
+      {suffix && <div className="hint">{suffix}</div>}
+    </div>
+  );
+}
+
+function AmpelPicker({ value, onChange, label, hint }) {
+  return (
+    <div>
+      {label && <label className="field-label">{label}</label>}
+      {hint && <div className="hint">{hint}</div>}
+      <div className="ampel-group">
+        {AMPEL_OPTIONS.map((o) => (
+          <button key={o.value} type="button" className={'ampel-btn ' + o.value + (value === o.value ? ' sel' : '')}
+            onClick={() => onChange(o.value)}>{o.label}</button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function RadioOpts({ options, value, onChange }) {
+  return (
+    <div className="radio-opts">
+      {options.map((o) => (
+        <div key={o.value} className={'radio-opt' + (value === o.value ? ' sel' : '')} onClick={() => onChange(o.value)}>
+          <input type="radio" checked={value === o.value} onChange={() => onChange(o.value)} />
+          <span>{o.label}{Number.isFinite(o.points) && <strong> ({o.points} P)</strong>}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/* ============================================================
+   STUFE 1: K.O.-FILTER
+   ============================================================ */
+
+function StepKO({ objekt, update }) {
+  const ko = objekt.ko;
+  const evald = evaluateKO(ko);
+  return (
+    <div>
+      <h2>Stufe 1 · K.O.-Filter</h2>
+      <p className="hint">Rent-to-Rent scheitert in der Praxis an Recht und Erlaubnis, nicht an der Rendite. Erst wenn alle Kriterien grün sind, wird Stufe 2 vollständig freigegeben.</p>
+
+      {evald.overall === 'rot' && (
+        <div className="banner rot"><strong>NICHT GEEIGNET.</strong> Begründung: {evald.rotPunkte.join(', ')}. Stufe 2 bleibt gesperrt.</div>
+      )}
+      {evald.overall === 'gelb' && (
+        <div className="banner gelb"><strong>VORBEHALTLICH.</strong> Offene Punkte: {evald.offenePunkte.join(', ')}. Stufe 2 ist nutzbar, das Ergebnis wird als vorbehaltlich gekennzeichnet.</div>
+      )}
+      {evald.overall === 'gruen' && (
+        <div className="banner gruen"><strong>Alle K.O.-Kriterien erfüllt.</strong> Stufe 2 ist vollständig freigegeben.</div>
+      )}
+
+      <div className="card">
+        <div className="ko-row">
+          <div><h3>1. Untervermietungserlaubnis</h3><p className="hint">Schriftliche Zustimmung des Eigentümers zur gewerblichen Kurzzeitvermietung liegt vor / ist zugesagt / verneint.</p></div>
+          <AmpelPicker value={ko.untervermietung} onChange={(v) => update(['ko', 'untervermietung'], v)} />
+        </div>
+        <div className="ko-row">
+          <div><h3>2. Baurecht / Nutzungsänderung</h3><p className="hint">Ferienvermietung am Standort baurechtlich zulässig (Gemeinde-Auskunft). In Bayern kommunal unterschiedlich geregelt – pro Gemeinde beim Bauamt anfragen. Keine Automatik-Prüfung, manuelle Bestätigung erforderlich.</p></div>
+          <AmpelPicker value={ko.baurecht} onChange={(v) => update(['ko', 'baurecht'], v)} />
+        </div>
+        <div className="ko-row">
+          <div>
+            <h3>3. Zweckentfremdungssatzung</h3>
+            <p className="hint">Existiert am Standort eine Zweckentfremdungssatzung?</p>
+            <RadioOpts
+              options={[{ value: 'nein', label: 'Nein' }, { value: 'ja', label: 'Ja' }, { value: 'unklar', label: 'Unklar' }]}
+              value={ko.zweckentfremdungVorhanden}
+              onChange={(v) => update(['ko', 'zweckentfremdungVorhanden'], v)} />
+          </div>
+          {ko.zweckentfremdungVorhanden !== 'nein' ? (
+            <AmpelPicker label="Genehmigung möglich?" value={ko.zweckentfremdungGenehmigung} onChange={(v) => update(['ko', 'zweckentfremdungGenehmigung'], v)} />
+          ) : <div className="hint">Keine Satzung vorhanden – unbedenklich (automatisch Grün).</div>}
+        </div>
+        <div className="ko-row">
+          <div>
+            <h3>4. WEG-Zustimmung</h3>
+            <p className="hint">Nur relevant bei Eigentumswohnung in einer Wohnungseigentümergemeinschaft (WEG).</p>
+            <label className="radio-opt" style={{ display: 'inline-flex' }}>
+              <input type="checkbox" checked={ko.wegAnwendbar} onChange={(e) => update(['ko', 'wegAnwendbar'], e.target.checked)} />
+              <span style={{ marginLeft: 6 }}>Objekt ist Eigentumswohnung in einer WEG</span>
+            </label>
+          </div>
+          {ko.wegAnwendbar ? (
+            <AmpelPicker label="Teilungserklärung/Gemeinschaft erlaubt Kurzzeitvermietung" value={ko.wegStatus} onChange={(v) => update(['ko', 'wegStatus'], v)} />
+          ) : <div className="hint">Nicht zutreffend – wird bei der K.O.-Prüfung ignoriert.</div>}
+        </div>
+        <div className="ko-row">
+          <div><h3>5. Gewerbeanmeldung &amp; steuerliche Einordnung</h3><p className="hint">Kein K.O.-Kriterium, nur Pflicht-Reminder – vor Start mit Steuerberater klären.</p></div>
+          <label className="radio-opt" style={{ display: 'inline-flex' }}>
+            <input type="checkbox" checked={ko.gewerbeanmeldungBestaetigt} onChange={(e) => update(['ko', 'gewerbeanmeldungBestaetigt'], e.target.checked)} />
+            <span style={{ marginLeft: 6 }}>Vor Start mit Steuerberater klären – bestätigt</span>
+          </label>
+        </div>
+        <div className="ko-row">
+          <div><h3>6. Brandschutz/Sicherheit</h3><p className="hint">Rauchmelder, zweiter Rettungsweg bei OG-Lagen, ggf. Anforderungen der Gemeinde.</p></div>
+          <AmpelPicker value={ko.brandschutz} onChange={(v) => update(['ko', 'brandschutz'], v)} />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ============================================================
+   STUFE 2A: STANDORTANALYSE
+   ============================================================ */
+
+function StepStandort({ objekt, update }) {
+  const { score, breakdown, answered, total } = computeStandortScore(objekt.standort);
+  return (
+    <div>
+      <h2>Stufe 2a · Standortanalyse <span className="hint" style={{ display: 'inline' }}>(Gewicht 40 % am Gesamtscore)</span></h2>
+      <div className="kpi" style={{ maxWidth: 260, marginBottom: 16 }}>
+        <div className="label">Standortscore</div>
+        <div className="value">{fmtNum(score, 1)} / 100</div>
+        <div className="hint">{answered} von {total} Kriterien ausgewählt</div>
+      </div>
+      <div className="grid cols-2">
+        {STANDORT_CRITERIA.map((crit) => (
+          <div className="card" key={crit.key}>
+            <h3>{crit.label} <span className="hint" style={{ display: 'inline' }}>· Gewicht {crit.weight} %</span></h3>
+            {crit.hint && <div className="hint">{crit.hint}</div>}
+            <RadioOpts options={crit.options} value={objekt.standort[crit.key]} onChange={(v) => update(['standort', crit.key], v)} />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ============================================================
+   STUFE 2B: OBJEKTKALKULATION
+   ============================================================ */
+
+function StepKalkulation({ objekt, update }) {
+  const [tab, setTab] = useState('fix');
+  const monateSum = SAISON_KEYS.reduce((s, k) => s + (objekt.saison[k].monate || 0), 0);
+  const groesse = GROESSE_OPTIONS.find((g) => g.value === objekt.groesse) || GROESSE_OPTIONS[1];
+
+  return (
+    <div>
+      <h2>Stufe 2b · Objektkalkulation <span className="hint" style={{ display: 'inline' }}>(Gewicht 60 % am Gesamtscore)</span></h2>
+      <div className="tabs">
+        <button className={tab === 'fix' ? 'active' : ''} onClick={() => setTab('fix')}>Fixkosten</button>
+        <button className={tab === 'invest' ? 'active' : ''} onClick={() => setTab('invest')}>Einmalinvest</button>
+        <button className={tab === 'saison' ? 'active' : ''} onClick={() => setTab('saison')}>Saison &amp; ADR {monateSum !== 12 && <span style={{ color: 'var(--rot)' }}> ⚠</span>}</button>
+        <button className={tab === 'variable' ? 'active' : ''} onClick={() => setTab('variable')}>Variable Kosten</button>
+      </div>
+
+      {tab === 'fix' && (
+        <div className="card grid cols-3">
+          <NumberField label="Kaltmiete (€/Monat)" value={objekt.fixkosten.kaltmiete} onChange={(v) => update(['fixkosten', 'kaltmiete'], v)} />
+          <NumberField label="Nebenkosten inkl. Heizung (€/Monat)" value={objekt.fixkosten.nebenkosten} onChange={(v) => update(['fixkosten', 'nebenkosten'], v)} />
+          <NumberField label="Strom (€/Monat)" value={objekt.fixkosten.strom} onChange={(v) => update(['fixkosten', 'strom'], v)} />
+          <NumberField label="Internet/TV (€/Monat)" value={objekt.fixkosten.internet} onChange={(v) => update(['fixkosten', 'internet'], v)} />
+          <NumberField label="Versicherung (Inhalt/Haftpflicht, €/Monat)" value={objekt.fixkosten.versicherung} onChange={(v) => update(['fixkosten', 'versicherung'], v)} />
+          <NumberField label="GEMA/Rundfunk (€/Monat)" value={objekt.fixkosten.gema} onChange={(v) => update(['fixkosten', 'gema'], v)} />
+          <NumberField label="Software/Channel-Manager anteilig (€/Monat)" value={objekt.fixkosten.software} onChange={(v) => update(['fixkosten', 'software'], v)} />
+        </div>
+      )}
+
+      {tab === 'invest' && (
+        <div className="card">
+          <div className="grid cols-3" style={{ marginBottom: 14 }}>
+            <div>
+              <label className="field-label">Wohnungsgröße</label>
+              <select value={objekt.groesse} onChange={(e) => update(['groesse'], e.target.value)}>
+                {GROESSE_OPTIONS.map((g) => <option key={g.value} value={g.value}>{g.label}</option>)}
+              </select>
+              <div className="hint">Orientierung Möblierung: {groesse.range} <span className="annahme-badge">Annahme</span></div>
+              <button type="button" className="btn small" style={{ marginTop: 6 }} onClick={() => update(['invest', 'moeblierung'], groesse.mid)}>Vorschlag übernehmen ({fmtEUR(groesse.mid)})</button>
+            </div>
+            <NumberField label="Möblierung &amp; Ausstattung komplett (€)" value={objekt.invest.moeblierung} onChange={(v) => update(['invest', 'moeblierung'], v)} annahme />
+            <div>
+              <label className="field-label">Abschreibungsdauer Möblierung (Monate)</label>
+              <input type="number" min="36" max="60" value={objekt.invest.afaMonate} onChange={(e) => update(['invest', 'afaMonate'], Math.min(60, Math.max(36, parseFloat(e.target.value) || 48)))} />
+              <div className="hint">Default 48, editierbar 36–60</div>
+            </div>
+          </div>
+          <div className="grid cols-3">
+            <NumberField label="Renovierung/Anfangsaufwand (€)" value={objekt.invest.renovierung} onChange={(v) => update(['invest', 'renovierung'], v)} />
+            <NumberField label="Kaution (€)" value={objekt.invest.kaution} onChange={(v) => update(['invest', 'kaution'], v)} hint="Nur Liquiditätsanzeige, fließt nicht in die GuV." />
+          </div>
+        </div>
+      )}
+
+      {tab === 'saison' && (
+        <div>
+          <div className={'hint'} style={{ marginBottom: 10, fontWeight: 600, color: monateSum === 12 ? 'var(--gruen)' : 'var(--rot)' }}>
+            Summe Monate: {fmtNum(monateSum, 1)} / 12 {monateSum === 12 ? '✓' : '– muss genau 12 ergeben'}
+          </div>
+          <div className="grid cols-2">
+            {SAISON_KEYS.map((key) => (
+              <div className="card" key={key}>
+                <h3>{SAISON_LABELS[key]}</h3>
+                <div className="grid cols-3">
+                  <NumberField label="Monate" value={objekt.saison[key].monate} step={0.1} onChange={(v) => update(['saison', key, 'monate'], v)} />
+                  <NumberField label="ADR (€)" value={objekt.saison[key].adr} onChange={(v) => update(['saison', key, 'adr'], v)} />
+                  <NumberField label="Auslastung (%)" value={objekt.saison[key].auslastung} onChange={(v) => update(['saison', key, 'auslastung'], Math.min(100, Math.max(0, v)))} />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {tab === 'variable' && (
+        <div className="card grid cols-3">
+          <div>
+            <label className="field-label">Plattformprovision (%)</label>
+            <input type="number" min="12" max="20" value={objekt.variable.provision} onChange={(e) => update(['variable', 'provision'], Math.min(20, Math.max(12, parseFloat(e.target.value) || 16)))} />
+            <div className="hint">Default 16 % (Mischsatz Airbnb/Booking), editierbar 12–20 %</div>
+          </div>
+          <NumberField label="Reinigungskosten pro Turnover (€)" value={objekt.variable.reinigung} onChange={(v) => update(['variable', 'reinigung'], v)} />
+          <NumberField label="Ø Aufenthaltsdauer (Nächte)" value={objekt.variable.aufenthaltsdauer} min={1} onChange={(v) => update(['variable', 'aufenthaltsdauer'], Math.max(1, v))} />
+          <NumberField label="Verbrauchsmaterial pro Turnover (€)" value={objekt.variable.verbrauch} onChange={(v) => update(['variable', 'verbrauch'], v)} />
+          <NumberField label="Ø Personenzahl" value={objekt.variable.personenzahl} min={1} onChange={(v) => update(['variable', 'personenzahl'], Math.max(1, v))} />
+          <div>
+            <label className="field-label">Kurtaxe pro Person/Nacht (€)</label>
+            <input type="number" disabled={objekt.variable.kurtaxeDurchgereicht} value={objekt.variable.kurtaxeProPersonNacht} onChange={(e) => update(['variable', 'kurtaxeProPersonNacht'], parseFloat(e.target.value) || 0)} />
+            <label className="radio-opt" style={{ display: 'inline-flex', marginTop: 6 }}>
+              <input type="checkbox" checked={objekt.variable.kurtaxeDurchgereicht} onChange={(e) => update(['variable', 'kurtaxeDurchgereicht'], e.target.checked)} />
+              <span style={{ marginLeft: 6 }}>Wird an Gast weiterberechnet (dann 0 in Kalkulation)</span>
+            </label>
+          </div>
+          <div>
+            <label className="field-label">Instandhaltungspauschale (% v. Umsatz)</label>
+            <input type="number" value={objekt.variable.instandhaltungPct} onChange={(e) => update(['variable', 'instandhaltungPct'], parseFloat(e.target.value) || 0)} />
+            <div className="hint">Default 3 %</div>
+          </div>
+          <div>
+            <label className="field-label">Leerstands-/Ausfallpuffer (% v. Umsatz)</label>
+            <input type="number" value={objekt.variable.leerstandPct} onChange={(e) => update(['variable', 'leerstandPct'], parseFloat(e.target.value) || 0)} />
+            <div className="hint">Default 5 %</div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ============================================================
+   SAISON-BALKENDIAGRAMM (Recharts, mit Fallback)
+   ============================================================ */
+
+function SeasonBarChart({ data }) {
+  if (Recharts) {
+    const { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip } = Recharts;
+    return (
+      <div style={{ width: '100%', height: 240 }}>
+        <ResponsiveContainer>
+          <BarChart data={data} margin={{ top: 10, right: 20, left: 0, bottom: 10 }}>
+            <CartesianGrid strokeDasharray="3 3" stroke="#eef1f0" />
+            <XAxis dataKey="saison" tick={{ fontSize: 11 }} interval={0} angle={-10} textAnchor="end" height={50} />
+            <YAxis tick={{ fontSize: 11 }} tickFormatter={(v) => fmtEUR(v)} width={80} />
+            <Tooltip formatter={(v) => fmtEUR(v)} />
+            <Bar dataKey="umsatz" fill="#1f6f5c" radius={[4, 4, 0, 0]} />
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+    );
+  }
+  const max = Math.max(1, ...data.map((d) => d.umsatz));
+  return (
+    <div className="season-bar-fallback">
+      {data.map((d) => (
+        <div className="bar-col" key={d.key}>
+          <div style={{ fontSize: '.72rem' }}>{fmtEUR(d.umsatz)}</div>
+          <div className="bar" style={{ height: (d.umsatz / max) * 140 + 'px' }}></div>
+          <div className="bar-label">{d.saison}</div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/* ============================================================
+   STUFE 3: ERGEBNIS-DASHBOARD
+   ============================================================ */
+
+function ScenarioTable({ konservativ, realistisch, optimistisch }) {
+  const rows = [
+    { label: 'Konservativ', s: konservativ },
+    { label: 'Realistisch', s: realistisch },
+    { label: 'Optimistisch', s: optimistisch },
+  ];
+  return (
+    <div className="card" style={{ overflowX: 'auto' }}>
+      <h3>Szenariorechnung</h3>
+      <p className="hint">Zielkorridor für die Umsatzrendite (Marge): 25–40 %. Grün = im Zielkorridor, Rot = darunter, Gelb = darüber (Annahmen prüfen).</p>
+      <table>
+        <thead>
+          <tr>
+            <th>Szenario</th><th>Belegte Nächte</th><th>Bruttoumsatz</th><th>Variable Kosten</th>
+            <th>Fixkosten/Jahr</th><th>Ergebnis/Jahr</th><th>Ergebnis/Monat</th><th>Break-even</th><th>Payback</th><th>Umsatzrendite</th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((r) => (
+            <tr key={r.label}>
+              <td><strong>{r.label}</strong></td>
+              <td>{fmtNum(r.s.belegteNaechte, 0)}</td>
+              <td>{fmtEUR(r.s.bruttoumsatz)}</td>
+              <td>{fmtEUR(r.s.variableKosten)}</td>
+              <td>{fmtEUR(r.s.fixkostenJahr)}</td>
+              <td style={{ color: r.s.ergebnisVorSteuern >= 0 ? 'var(--gruen)' : 'var(--rot)', fontWeight: 600 }}>{fmtEUR(r.s.ergebnisVorSteuern)}</td>
+              <td style={{ fontWeight: 600 }}>{fmtEUR(r.s.ergebnisMonat)}</td>
+              <td>{r.s.breakEvenAuslastung == null ? 'nicht erreichbar' : fmtPct(r.s.breakEvenAuslastung)}</td>
+              <td>{r.s.paybackMonate == null ? '–' : fmtNum(r.s.paybackMonate, 1) + ' Mon.'}</td>
+              <td style={{ color: margeColor(r.s.umsatzrendite), fontWeight: 600 }} title={margeLabel(r.s.umsatzrendite)}>{fmtPct(r.s.umsatzrendite)}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+function Sensitivity({ objekt }) {
+  const [delta, setDelta] = useState({ kaltmiete: 0, adr: 0, auslastung: 0 });
+  const adjusted = useMemo(() => {
+    const o = JSON.parse(JSON.stringify(objekt));
+    o.fixkosten.kaltmiete = o.fixkosten.kaltmiete * (1 + delta.kaltmiete / 100);
+    for (const k of SAISON_KEYS) {
+      o.saison[k].adr = o.saison[k].adr * (1 + delta.adr / 100);
+      o.saison[k].auslastung = Math.min(100, Math.max(0, o.saison[k].auslastung * (1 + delta.auslastung / 100)));
+    }
+    return computeScenario(o, 'realistisch');
+  }, [objekt, delta]);
+  const base = useMemo(() => computeScenario(objekt, 'realistisch'), [objekt]);
+
+  const sliders = [
+    { key: 'kaltmiete', label: 'Kaltmiete' },
+    { key: 'adr', label: 'ADR' },
+    { key: 'auslastung', label: 'Auslastung' },
+  ];
+
+  return (
+    <div className="card">
+      <h3>Pflicht-Sensitivität · „Was wäre wenn“</h3>
+      <p className="hint">Alexandras Verhandlungswerkzeug gegenüber Eigentümern – live-Auswirkung auf Ergebnis und Break-even.</p>
+      {sliders.map((s) => (
+        <div className="slider-row" key={s.key}>
+          <label className="field-label" style={{ margin: 0 }}>{s.label} {delta[s.key] > 0 ? '+' : ''}{delta[s.key]}%</label>
+          <input type="range" min="-20" max="20" step="1" value={delta[s.key]}
+            onChange={(e) => setDelta((d) => ({ ...d, [s.key]: parseInt(e.target.value, 10) }))} />
+          <button className="btn small" onClick={() => setDelta((d) => ({ ...d, [s.key]: 0 }))}>Reset</button>
+        </div>
+      ))}
+      <div className="grid cols-2" style={{ marginTop: 12 }}>
+        <div className="kpi">
+          <div className="label">Ergebnis/Monat (angepasst)</div>
+          <div className="value" style={{ color: adjusted.ergebnisMonat >= 0 ? 'var(--gruen)' : 'var(--rot)' }}>{fmtEUR(adjusted.ergebnisMonat)}</div>
+          <div className="hint">Basis realistisch: {fmtEUR(base.ergebnisMonat)}</div>
+        </div>
+        <div className="kpi">
+          <div className="label">Break-even (angepasst)</div>
+          <div className="value">{adjusted.breakEvenAuslastung == null ? 'nicht erreichbar' : fmtPct(adjusted.breakEvenAuslastung)}</div>
+          <div className="hint">Basis realistisch: {base.breakEvenAuslastung == null ? 'nicht erreichbar' : fmtPct(base.breakEvenAuslastung)}</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function HebelList({ hebel }) {
+  if (!hebel.length) return null;
+  return (
+    <div className="card">
+      <h3>Größte Stellhebel</h3>
+      {hebel.map((h, i) => (
+        <div className="hebel-item" key={h.key}>
+          <span className="hebel-rank">{i + 1}</span>
+          <strong>{h.label}</strong>
+          <div style={{ marginTop: 4 }}>{h.suggestion}</div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function AmpelStatusLabel(status) {
+  switch (status) {
+    case 'gruen': return { text: 'Anmieten empfohlen – Verhandlung starten', color: 'var(--gruen)', bg: '#eaf6ed' };
+    case 'gelb': return { text: 'Bedingt geeignet – Stellhebel prüfen', color: 'var(--gelb)', bg: '#fdf6e3' };
+    case 'rot': return { text: 'Nicht anmieten', color: 'var(--rot)', bg: '#fdecea' };
+    case 'vorbehaltlich': return { text: 'Vorbehaltlich – offene K.O.-Punkte klären', color: 'var(--grau)', bg: '#f1f2f2' };
+    case 'nicht_geeignet': return { text: 'Nicht geeignet – K.O.-Kriterium verletzt', color: 'var(--rot)', bg: '#fdecea' };
+    default: return { text: '–', color: 'var(--grau)', bg: '#f1f2f2' };
+  }
+}
+
+function StepErgebnis({ objekt, analysis }) {
+  const { ko, standort, konservativ, realistisch, optimistisch, objektScore, gesamtscore, gesamtStatus, monateSum, hebel } = analysis;
+  const seasonData = useMemo(() => computeSaisonUmsaetze(objekt, 'realistisch'), [objekt]);
+  const label = AmpelStatusLabel(gesamtStatus.status);
+  const grayedOut = ko.overall === 'gelb';
+
+  return (
+    <div>
+      <h2>Ergebnis</h2>
+      {ko.overall === 'rot' && (
+        <div className="banner rot"><strong>NICHT GEEIGNET.</strong> Begründung: {ko.rotPunkte.join(', ')}. Es wird kein Score berechnet.</div>
+      )}
+      {ko.overall === 'gelb' && (
+        <div className="banner gelb"><strong>VORBEHALTLICH – offene Punkte:</strong> {ko.offenePunkte.join(', ')}</div>
+      )}
+      {monateSum !== 12 && ko.overall !== 'rot' && (
+        <div className="banner gelb">Achtung: Die Saison-Monate summieren sich auf {fmtNum(monateSum, 1)} statt 12 – die Kalkulation ist noch unvollständig.</div>
+      )}
+
+      {ko.overall !== 'rot' && (
+        <React.Fragment>
+          <div className="ampel-big" style={{ background: label.bg }}>
+            <div className="ampel-circle" style={{ background: grayedOut ? 'var(--grau)' : (gesamtStatus.band === 'gruen' ? 'var(--gruen)' : gesamtStatus.band === 'gelb' ? 'var(--gelb)' : 'var(--rot)') }}></div>
+            <div>
+              <div style={{ fontSize: '1.15rem', fontWeight: 700, color: label.color }}>{label.text}</div>
+              <div className="hint">Gesamtscore: {fmtNum(gesamtscore, 1)} / 100</div>
+            </div>
+          </div>
+
+          <div className="kpi-cards">
+            <div className="kpi"><div className="label">Gesamtscore</div><div className="value">{fmtNum(gesamtscore, 1)}</div></div>
+            <div className="kpi"><div className="label">Standortscore (40 %)</div><div className="value">{fmtNum(standort.score, 1)}</div></div>
+            <div className="kpi"><div className="label">Objektscore (60 %)</div><div className="value">{fmtNum(objektScore.score, 1)}</div></div>
+            <div className="kpi"><div className="label">Ergebnis/Monat (real.)</div><div className="value" style={{ color: realistisch.ergebnisMonat >= 0 ? 'var(--gruen)' : 'var(--rot)' }}>{fmtEUR(realistisch.ergebnisMonat)}</div></div>
+            <div className="kpi"><div className="label">Break-even Auslastung</div><div className="value">{realistisch.breakEvenAuslastung == null ? 'n/a' : fmtPct(realistisch.breakEvenAuslastung)}</div></div>
+            <div className="kpi"><div className="label">Payback Möblierung</div><div className="value">{realistisch.paybackMonate == null ? 'n/a' : fmtNum(realistisch.paybackMonate, 1) + ' Mon.'}</div></div>
+            <div className="kpi"><div className="label">Deckungsbeitrag/Monat</div><div className="value">{fmtEUR(realistisch.deckungsbeitragMonat)}</div></div>
+            <div className="kpi">
+              <div className="label">Umsatzrendite (Marge)</div>
+              <div className="value" style={{ color: margeColor(realistisch.umsatzrendite) }}>{fmtPct(realistisch.umsatzrendite)}</div>
+              <div className="hint">Zielkorridor 25–40 % · {margeLabel(realistisch.umsatzrendite) || 'keine Angabe'}</div>
+            </div>
+          </div>
+
+          <ScenarioTable konservativ={konservativ} realistisch={realistisch} optimistisch={optimistisch} />
+
+          <div className="card">
+            <h3>Saisonumsätze (realistisches Szenario)</h3>
+            <SeasonBarChart data={seasonData} />
+          </div>
+
+          <Sensitivity objekt={objekt} />
+
+          {(gesamtStatus.status === 'gelb' || gesamtStatus.status === 'vorbehaltlich') && <HebelList hebel={hebel} />}
+        </React.Fragment>
+      )}
+    </div>
+  );
+}
+
+/* ============================================================
+   DRUCKANSICHT (Einseiter)
+   ============================================================ */
+
+function PrintSheet({ objekt, analysis }) {
+  const { ko, standort, realistisch, konservativ, objektScore, gesamtscore, gesamtStatus, hebel } = analysis;
+  const label = AmpelStatusLabel(gesamtStatus.status);
+  return (
+    <div className="print-sheet">
+      <h1>FeWo-Potentialrechner Allgäu – {objekt.name}</h1>
+      <p>{objekt.adresse}</p>
+      <h2 style={{ color: label.color }}>{label.text}</h2>
+      <p>Gesamtscore: {fmtNum(gesamtscore, 1)} / 100 · Standort {fmtNum(standort.score, 1)} · Objekt {fmtNum(objektScore.score, 1)}</p>
+      {ko.overall !== 'gruen' && <p><strong>K.O.-Hinweis:</strong> {ko.offenePunkte.join(', ') || '–'}</p>}
+      <table>
+        <tbody>
+          <tr><td>Ergebnis/Monat (realistisch)</td><td>{fmtEUR(realistisch.ergebnisMonat)}</td></tr>
+          <tr><td>Ergebnis/Monat (konservativ)</td><td>{fmtEUR(konservativ.ergebnisMonat)}</td></tr>
+          <tr><td>Break-even-Auslastung</td><td>{realistisch.breakEvenAuslastung == null ? 'n/a' : fmtPct(realistisch.breakEvenAuslastung)}</td></tr>
+          <tr><td>Payback Möblierung</td><td>{realistisch.paybackMonate == null ? 'n/a' : fmtNum(realistisch.paybackMonate, 1) + ' Monate'}</td></tr>
+          <tr><td>Umsatzrendite (Marge, Zielkorridor 25–40 %)</td><td style={{ color: margeColor(realistisch.umsatzrendite) }}>{fmtPct(realistisch.umsatzrendite)}</td></tr>
+        </tbody>
+      </table>
+      {hebel.length > 0 && (
+        <div><h3>Stellhebel</h3><ul>{hebel.map((h) => <li key={h.key}>{h.label}: {h.suggestion}</li>)}</ul></div>
+      )}
+      <p style={{ fontSize: '.75rem', marginTop: 24 }}>Entscheidungshilfe, ersetzt keine steuerliche/rechtliche Beratung. Rechtliche K.O.-Kriterien sind vor Vertragsschluss schriftlich zu bestätigen.</p>
+    </div>
+  );
+}
+
+/* ============================================================
+   OBJEKTVERGLEICH
+   ============================================================ */
+
+function Vergleich({ objekte, onSelect }) {
+  const [sortKey, setSortKey] = useState('gesamtscore');
+  const [sortDir, setSortDir] = useState('desc');
+
+  const rows = objekte.map((o) => {
+    const a = analyseObjekt(o);
+    return {
+      id: o.id, name: o.name, status: a.gesamtStatus.status, gesamtscore: a.gesamtscore,
+      ergebnisKons: a.konservativ.ergebnisMonat, ergebnisReal: a.realistisch.ergebnisMonat,
+      breakEven: a.realistisch.breakEvenAuslastung, payback: a.realistisch.paybackMonate,
+    };
+  });
+
+  const sorted = [...rows].sort((a, b) => {
+    let va = a[sortKey], vb = b[sortKey];
+    if (va == null) va = -Infinity;
+    if (vb == null) vb = -Infinity;
+    if (typeof va === 'string') return sortDir === 'asc' ? va.localeCompare(vb) : vb.localeCompare(va);
+    return sortDir === 'asc' ? va - vb : vb - va;
+  });
+
+  function toggleSort(key) {
+    if (sortKey === key) setSortDir((d) => (d === 'asc' ? 'desc' : 'asc'));
+    else { setSortKey(key); setSortDir('desc'); }
+  }
+
+  const cols = [
+    { key: 'name', label: 'Objekt' }, { key: 'status', label: 'Ampel' }, { key: 'gesamtscore', label: 'Score' },
+    { key: 'ergebnisKons', label: 'Ergebnis/Monat konserv.' }, { key: 'ergebnisReal', label: 'Ergebnis/Monat realist.' },
+    { key: 'breakEven', label: 'Break-even' }, { key: 'payback', label: 'Payback (Mon.)' },
+  ];
+
+  return (
+    <div>
+      <h2>Objektvergleich</h2>
+      {rows.length === 0 ? <div className="empty-state">Noch keine Objekte angelegt.</div> : (
+        <div className="card" style={{ overflowX: 'auto' }}>
+          <table>
+            <thead>
+              <tr>{cols.map((c) => <th key={c.key} onClick={() => toggleSort(c.key)}>{c.label}{sortKey === c.key ? (sortDir === 'asc' ? ' ▲' : ' ▼') : ''}</th>)}</tr>
+            </thead>
+            <tbody>
+              {sorted.map((r) => (
+                <tr key={r.id} onClick={() => onSelect(r.id)} style={{ cursor: 'pointer' }}>
+                  <td><strong>{r.name}</strong></td>
+                  <td><AmpelBadge status={r.status} /> {AmpelStatusLabel(r.status).text}</td>
+                  <td>{fmtNum(r.gesamtscore, 1)}</td>
+                  <td>{fmtEUR(r.ergebnisKons)}</td>
+                  <td>{fmtEUR(r.ergebnisReal)}</td>
+                  <td>{r.breakEven == null ? 'n/a' : fmtPct(r.breakEven)}</td>
+                  <td>{r.payback == null ? '–' : fmtNum(r.payback, 1)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ============================================================
+   WIZARD SHELL
+   ============================================================ */
+
+const STEP_LABELS = ['1 · K.O.-Filter', '2a · Standort', '2b · Kalkulation', '3 · Ergebnis'];
+
+function ProgressBar({ step, setStep, locked }) {
+  return (
+    <div className="progress no-print">
+      {STEP_LABELS.map((label, i) => {
+        const isLocked = locked && i > 0;
+        return (
+          <div key={label} className={'step' + (i === step ? ' active' : i < step ? ' done' : '') + (isLocked ? ' locked' : '')}
+            onClick={() => !isLocked && setStep(i)}>{label}</div>
+        );
+      })}
+    </div>
+  );
+}
+
+function Wizard({ objekt, update, onPrint }) {
+  const step = objekt.uiStep || 0;
+  const setStep = (s) => update(['uiStep'], s);
+  const analysis = useMemo(() => analyseObjekt(objekt), [objekt]);
+  const locked = analysis.ko.overall === 'rot';
+  const monateSum = analysis.monateSum;
+
+  return (
+    <div>
+      <ProgressBar step={step} setStep={setStep} locked={locked} />
+      {step === 0 && <StepKO objekt={objekt} update={update} />}
+      {step === 1 && !locked && <StepStandort objekt={objekt} update={update} />}
+      {step === 2 && !locked && <StepKalkulation objekt={objekt} update={update} />}
+      {step === 3 && !locked && <StepErgebnis objekt={objekt} analysis={analysis} />}
+      {locked && step > 0 && (
+        <div className="banner rot">Stufe 2 ist gesperrt, solange ein K.O.-Kriterium rot ist. Bitte zurück zu Stufe 1.</div>
+      )}
+
+      <div className="no-print" style={{ display: 'flex', justifyContent: 'space-between', marginTop: 20 }}>
+        <button className="btn" disabled={step === 0} onClick={() => setStep(Math.max(0, step - 1))}>← Zurück</button>
+        <div style={{ display: 'flex', gap: 8 }}>
+          {step === 3 && <button className="btn" onClick={onPrint}>Druckansicht</button>}
+          <button className="btn primary" disabled={step === 3 || locked || (step === 2 && monateSum !== 12)}
+            onClick={() => setStep(Math.min(3, step + 1))}>
+            {step === 2 && monateSum !== 12 ? 'Monate müssen 12 ergeben' : 'Weiter →'}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ============================================================
+   APP ROOT
+   ============================================================ */
+
+function App() {
+  const [objekte, setObjekte] = useState(() => [createObjekt('Objekt 1')]);
+  const [activeId, setActiveId] = useState(() => objekte[0] ? objekte[0].id : null);
+  const [view, setView] = useState('wizard');
+  const fileInputRef = React.useRef(null);
+
+  const activeObjekt = objekte.find((o) => o.id === activeId) || null;
+
+  const update = useCallback((path, value) => {
+    setObjekte((prev) => prev.map((o) => (o.id === activeId ? setPath(o, path, value) : o)));
+  }, [activeId]);
+
+  function addObjekt() {
+    const o = createObjekt('Objekt ' + (objekte.length + 1));
+    setObjekte((prev) => [...prev, o]);
+    setActiveId(o.id);
+    setView('wizard');
+  }
+
+  function removeObjekt(id) {
+    setObjekte((prev) => {
+      const next = prev.filter((o) => o.id !== id);
+      if (activeId === id) setActiveId(next[0] ? next[0].id : null);
+      return next;
+    });
+  }
+
+  function exportJSON() {
+    const data = JSON.stringify({ objekte, exportedAt: new Date().toISOString() }, null, 2);
+    const blob = new Blob([data], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'fewo-potentialrechner-' + new Date().toISOString().slice(0, 10) + '.json';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+  function importJSON(e) {
+    const file = e.target.files && e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const parsed = JSON.parse(reader.result);
+        if (!parsed || !Array.isArray(parsed.objekte)) throw new Error('Ungültiges Format');
+        setObjekte(parsed.objekte);
+        setActiveId(parsed.objekte[0] ? parsed.objekte[0].id : null);
+        setView('wizard');
+      } catch (err) {
+        alert('Import fehlgeschlagen: Datei ist kein gültiger FeWo-Potentialrechner-Export.');
+      }
+    };
+    reader.readAsText(file);
+    e.target.value = '';
+  }
+
+  function handlePrint() {
+    window.print();
+  }
+
+  const printAnalysis = activeObjekt ? analyseObjekt(activeObjekt) : null;
+
+  return (
+    <React.Fragment>
+      <header className="app-header no-print">
+        <div className="brand">
+          <h1>FeWo-Potentialrechner Allgäu</h1>
+          <span className="subtitle">Go/No-Go-Bewertung für Rent-to-Rent-Objekte im Raum Kempten</span>
+        </div>
+        <div className="toolbar">
+          <button className="btn" onClick={() => setView('vergleich')}>Objektvergleich</button>
+          <button className="btn" onClick={exportJSON}>JSON exportieren</button>
+          <button className="btn" onClick={() => fileInputRef.current && fileInputRef.current.click()}>JSON importieren</button>
+          <input type="file" accept="application/json" ref={fileInputRef} style={{ display: 'none' }} onChange={importJSON} />
+        </div>
+      </header>
+
+      <div className="layout no-print">
+        <aside className="sidebar no-print">
+          {objekte.map((o) => {
+            const a = analyseObjekt(o);
+            return (
+              <div key={o.id} className={'objekt-tab' + (o.id === activeId && view === 'wizard' ? ' active' : '')}
+                onClick={() => { setActiveId(o.id); setView('wizard'); }}>
+                <span className={'dot ' + (a.gesamtStatus.status === 'nicht_geeignet' ? 'rot' : a.gesamtStatus.status === 'vorbehaltlich' ? 'grau' : a.gesamtStatus.band || 'grau')}></span>
+                <span style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{o.name}</span>
+                <button className="btn ghost small" onClick={(e) => { e.stopPropagation(); removeObjekt(o.id); }} title="Objekt löschen">✕</button>
+              </div>
+            );
+          })}
+          <button className="btn" style={{ width: '100%', marginTop: 10 }} onClick={addObjekt}>+ Neues Objekt</button>
+        </aside>
+
+        <main className="main no-print">
+          {view === 'vergleich' && (
+            <Vergleich objekte={objekte} onSelect={(id) => { setActiveId(id); setView('wizard'); }} />
+          )}
+          {view === 'wizard' && activeObjekt && (
+            <div>
+              <div className="grid cols-2 no-print" style={{ marginBottom: 16 }}>
+                <div>
+                  <label className="field-label">Objektname</label>
+                  <input type="text" value={activeObjekt.name} onChange={(e) => update(['name'], e.target.value)} />
+                </div>
+                <div>
+                  <label className="field-label">Adresse</label>
+                  <input type="text" value={activeObjekt.adresse} onChange={(e) => update(['adresse'], e.target.value)} placeholder="Straße, PLZ Ort" />
+                </div>
+              </div>
+              <Wizard objekt={activeObjekt} update={update} onPrint={handlePrint} />
+            </div>
+          )}
+          {view === 'wizard' && !activeObjekt && (
+            <div className="empty-state">
+              <p>Noch kein Objekt angelegt.</p>
+              <button className="btn primary" onClick={addObjekt}>+ Neues Objekt anlegen</button>
+            </div>
+          )}
+        </main>
+      </div>
+
+      <footer className="footer no-print">
+        Entscheidungshilfe, ersetzt keine steuerliche/rechtliche Beratung. Rechtliche K.O.-Kriterien sind vor Vertragsschluss schriftlich zu bestätigen.
+      </footer>
+
+      {activeObjekt && printAnalysis && <PrintSheet objekt={activeObjekt} analysis={printAnalysis} />}
+    </React.Fragment>
+  );
+}
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(<App />);
+</script>
+<script>
+  (function () {
+    var src = document.getElementById('app-source').textContent;
+    var out = Babel.transform(src, { presets: [['react', { runtime: 'classic' }]], filename: 'app.jsx' });
+    var script = document.createElement('script');
+    script.text = out.code;
+    document.body.appendChild(script);
+  })();
+</script>
+</body>
+</html>
