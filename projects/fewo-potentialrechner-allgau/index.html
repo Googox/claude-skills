@@ -54,6 +54,7 @@
     cursor: pointer; font-size: .88rem; margin-bottom: 2px; }
   .sidebar .objekt-tab:hover { background: #f4f6f5; }
   .sidebar .objekt-tab.active { background: var(--accent-light); font-weight: 600; }
+  .add-objekt-btn { width: 100%; margin-top: 10px; }
   .dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
   .dot.gruen, .badge.gruen { background: var(--gruen); }
   .dot.gelb, .badge.gelb { background: var(--gelb); }
@@ -111,12 +112,14 @@
   table th { color: var(--text-muted); font-weight: 600; font-size: .76rem; text-transform: uppercase;
     cursor: pointer; user-select: none; }
   table tbody tr:hover { background: #f8faf9; }
-  .tabs { display: flex; gap: 4px; margin-bottom: 14px; border-bottom: 1px solid var(--border); }
+  .tabs { display: flex; gap: 4px; margin-bottom: 14px; border-bottom: 1px solid var(--border);
+    overflow-x: auto; -webkit-overflow-scrolling: touch; }
   .tabs button { padding: 8px 14px; border: none; background: none; font-size: .85rem; color: var(--text-muted);
-    border-bottom: 2px solid transparent; }
+    border-bottom: 2px solid transparent; flex-shrink: 0; white-space: nowrap; }
   .tabs button.active { color: var(--accent-dark); border-bottom-color: var(--accent); font-weight: 600; }
   .footer { border-top: 1px solid var(--border); padding: 12px 24px; font-size: .74rem; color: var(--text-muted); }
   .slider-row { display: grid; grid-template-columns: 180px 1fr 60px; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .slider-row input[type="range"] { width: 100%; }
   .hebel-item { padding: 10px 0; border-bottom: 1px solid var(--border); font-size: .85rem; }
   .hebel-item:last-child { border-bottom: none; }
   .hebel-rank { display: inline-flex; width: 20px; height: 20px; border-radius: 50%; background: var(--accent);
@@ -127,6 +130,26 @@
   .season-bar-fallback .bar { width: 100%; background: var(--accent); border-radius: 4px 4px 0 0; }
   .season-bar-fallback .bar-label { font-size: .72rem; margin-top: 6px; color: var(--text-muted); text-align: center; }
   .empty-state { text-align: center; padding: 60px 20px; color: var(--text-muted); }
+  @media (max-width: 720px) {
+    .app-header { padding: 10px 14px; gap: 10px; }
+    .app-header h1 { font-size: 1.05rem; }
+    .app-header .subtitle { display: none; }
+    .toolbar .btn { padding: 6px 10px; font-size: .8rem; }
+    .layout { flex-direction: column; }
+    .sidebar { width: 100%; flex-direction: row; align-items: center; overflow-x: auto;
+      border-right: none; border-bottom: 1px solid var(--border); padding: 8px 10px;
+      -webkit-overflow-scrolling: touch; }
+    .sidebar .objekt-tab { flex-shrink: 0; width: 150px; margin-bottom: 0; }
+    .add-objekt-btn { width: auto; flex-shrink: 0; margin-top: 0; white-space: nowrap; }
+    .main { padding: 14px 16px; }
+    .ko-row { grid-template-columns: 1fr; gap: 10px; }
+    .slider-row { grid-template-columns: 1fr; gap: 4px; }
+    .progress { flex-wrap: wrap; }
+    .progress .step { flex: 1 1 calc(50% - 6px); }
+    .kpi-cards { grid-template-columns: repeat(2, 1fr); }
+    .ampel-big { flex-wrap: wrap; }
+    input[type="number"], input[type="text"], select { font-size: 16px; }
+  }
   @media print {
     .no-print { display: none !important; }
     .print-sheet { display: block !important; }
@@ -1309,7 +1332,7 @@ function App() {
               </div>
             );
           })}
-          <button className="btn" style={{ width: '100%', marginTop: 10 }} onClick={addObjekt}>+ Neues Objekt</button>
+          <button className="btn add-objekt-btn" onClick={addObjekt}>+ Neues Objekt</button>
         </aside>
 
         <main className="main no-print">
