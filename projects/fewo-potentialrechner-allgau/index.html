@@ -225,6 +225,37 @@ const STANDORT_SUGGESTIONS = {
   ganzjahres: 'Standort nicht ganzjahrestauglich – Nebensaison-Pricing und -Angebote gezielt aggressiver gestalten.',
 };
 
+const GLOSSAR = [
+  { begriff: 'ADR', erklaerung: 'Average Daily Rate – durchschnittlicher Übernachtungspreis pro Nacht in einer Saison.' },
+  { begriff: 'AfA', erklaerung: 'Absetzung für Abnutzung – die Abschreibung der Einmalinvestition (Möblierung, Renovierung) über die Nutzungsdauer.' },
+  { begriff: 'Ampel', erklaerung: 'Die farbige Gesamtbewertung eines Objekts: Grün (empfohlen), Gelb (bedingt geeignet), Rot (nicht anmieten).' },
+  { begriff: 'Break-even-Auslastung', erklaerung: 'Die durchschnittliche Jahresauslastung, ab der die Einnahmen genau die Kosten decken (Ergebnis vor Steuern = 0 €), bei sonst gleichbleibendem Preis-Mix.' },
+  { begriff: 'Channel-Manager', erklaerung: 'Software, die Verfügbarkeiten und Preise zentral über mehrere Buchungsplattformen (Airbnb, Booking, etc.) synchronisiert.' },
+  { begriff: 'Deckungsbeitrag', erklaerung: 'Bruttoumsatz abzüglich variabler Kosten – der Betrag, der zur Deckung der Fixkosten und als Gewinn übrig bleibt.' },
+  { begriff: 'Einmalinvest', erklaerung: 'Einmalige Investitionskosten zu Beginn (Möblierung & Ausstattung, Renovierung/Anfangsaufwand).' },
+  { begriff: 'Fixkosten', erklaerung: 'Monatlich gleichbleibende Kosten, unabhängig davon, ob und wie oft die Wohnung vermietet ist (Miete, Nebenkosten, Strom, Internet, Versicherung, GEMA, Software).' },
+  { begriff: 'GEMA/Rundfunk', erklaerung: 'Pflichtabgabe für die öffentliche bzw. gewerbliche Nutzung von Rundfunk/Musik in der Ferienwohnung.' },
+  { begriff: 'Gesamtscore', erklaerung: 'Die gewichtete Summe aus Standortscore (40 %) und Objektscore (60 %), Basis für die Ampel.' },
+  { begriff: 'Instandhaltungspauschale', erklaerung: 'Kalkulatorische Rücklage für laufende Reparaturen und Verschleiß, als Prozentsatz vom Umsatz.' },
+  { begriff: 'K.O.-Kriterium', erklaerung: 'Ausschlusskriterium in Stufe 1. Ein rotes K.O.-Kriterium verhindert die Anmietung unabhängig vom späteren Score.' },
+  { begriff: 'Konkurrenzdichte', erklaerung: 'Anzahl vergleichbarer aktiver Ferienwohnungs-Inserate (Airbnb/Booking) im selben Ort bzw. Ortsteil – manuell gezählte Momentaufnahme.' },
+  { begriff: 'Kurtaxe', erklaerung: 'Kommunale Tourismusabgabe pro Person und Übernachtung; wird oft direkt an den Gast weiterberechnet.' },
+  { begriff: 'Leerstands-/Ausfallpuffer', erklaerung: 'Kalkulatorischer Sicherheitsabschlag vom Umsatz für unvorhergesehene Leerstände oder Stornos.' },
+  { begriff: 'Objektscore', erklaerung: 'Punktebewertung (0–100) der wirtschaftlichen Kennzahlen eines Objekts: Ergebnis/Monat, Break-even, Payback, konservatives Szenario.' },
+  { begriff: 'Payback (Amortisation)', erklaerung: 'Anzahl Monate, bis sich die Einmalinvestition aus dem laufenden Cashflow (vor Abschreibung) zurückgezahlt hat.' },
+  { begriff: 'Plattformprovision', erklaerung: 'Vermittlungsgebühr der Buchungsplattform (Airbnb, Booking) in Prozent vom Umsatz.' },
+  { begriff: 'Rent-to-Rent', erklaerung: 'Geschäftsmodell, bei dem eine Wohnung regulär angemietet und anschließend gewerblich als Ferienwohnung weitervermietet wird.' },
+  { begriff: 'Standortscore', erklaerung: 'Punktebewertung (0–100) der Lagequalität anhand von acht gewichteten Kriterien (Entfernung, Zugpferde, Aussicht, Parkplatz, ÖPNV, Nahversorgung, Konkurrenz, Ganzjahrestauglichkeit).' },
+  { begriff: 'Stellhebel', erklaerung: 'Die automatisch ermittelten drei größten Score-Verluste bei „Gelb"-Ergebnissen, inklusive konkretem Verhandlungs- oder Verbesserungsvorschlag.' },
+  { begriff: 'Szenariorechnung', erklaerung: 'Parallele Berechnung mit drei Annahme-Varianten: Konservativ (niedrigere Auslastung/ADR), Realistisch (Eingabewerte), Optimistisch (höhere Auslastung/ADR).' },
+  { begriff: 'Turnover', erklaerung: 'Ein Vermietungszyklus zwischen zwei Gästen: Auszug, Reinigung, neuer Check-in. Bestimmt die Häufigkeit von Reinigungs- und Verbrauchskosten.' },
+  { begriff: 'Umsatzrendite (Marge)', erklaerung: 'Ergebnis vor Steuern im Verhältnis zum Bruttoumsatz, in Prozent. Zielkorridor in dieser App: 25–40 %.' },
+  { begriff: 'Variable Kosten', erklaerung: 'Kosten, die mit der Auslastung schwanken: Provision, Reinigung, Verbrauchsmaterial, Kurtaxe, Instandhaltung, Puffer.' },
+  { begriff: 'Vorbehaltlich', erklaerung: 'Kennzeichnung des Ergebnisses, wenn mindestens ein K.O.-Kriterium noch gelb (ungeklärt) ist – die Zahlen gelten nur unter diesem Vorbehalt.' },
+  { begriff: 'WEG', erklaerung: 'Wohnungseigentümergemeinschaft – die Gemeinschaft der Eigentümer einer Eigentumswohnanlage, deren Teilungserklärung Kurzzeitvermietung regeln oder einschränken kann.' },
+  { begriff: 'Zweckentfremdung(ssatzung)', erklaerung: 'Kommunale Satzung, die die Nutzung von Wohnraum zu anderen Zwecken (z. B. Ferienvermietung) beschränkt oder genehmigungspflichtig macht.' },
+];
+
 /* ============================================================
    PURE-FUNCTIONS – BERECHNUNGSLOGIK
    ============================================================ */
@@ -547,6 +578,7 @@ function NumberField({ label, value, onChange, suffix, hint, min, step, disabled
       {hint && <div className="hint">{hint}</div>}
       <input type="number" value={Number.isFinite(value) ? value : 0} min={min == null ? 0 : min} step={step == null ? 1 : step}
         disabled={disabled}
+        onFocus={(e) => e.target.select()}
         onChange={(e) => {
           const v = parseFloat(e.target.value);
           onChange(Number.isFinite(v) ? v : 0);
@@ -729,7 +761,7 @@ function StepKalkulation({ objekt, update }) {
             <NumberField label="Möblierung &amp; Ausstattung komplett (€)" value={objekt.invest.moeblierung} onChange={(v) => update(['invest', 'moeblierung'], v)} annahme />
             <div>
               <label className="field-label">Abschreibungsdauer Möblierung (Monate)</label>
-              <input type="number" min="36" max="60" value={objekt.invest.afaMonate} onChange={(e) => update(['invest', 'afaMonate'], Math.min(60, Math.max(36, parseFloat(e.target.value) || 48)))} />
+              <input type="number" min="36" max="60" value={objekt.invest.afaMonate} onFocus={(e) => e.target.select()} onChange={(e) => update(['invest', 'afaMonate'], Math.min(60, Math.max(36, parseFloat(e.target.value) || 48)))} />
               <div className="hint">Default 48, editierbar 36–60</div>
             </div>
           </div>
@@ -764,7 +796,7 @@ function StepKalkulation({ objekt, update }) {
         <div className="card grid cols-3">
           <div>
             <label className="field-label">Plattformprovision (%)</label>
-            <input type="number" min="12" max="20" value={objekt.variable.provision} onChange={(e) => update(['variable', 'provision'], Math.min(20, Math.max(12, parseFloat(e.target.value) || 16)))} />
+            <input type="number" min="12" max="20" value={objekt.variable.provision} onFocus={(e) => e.target.select()} onChange={(e) => update(['variable', 'provision'], Math.min(20, Math.max(12, parseFloat(e.target.value) || 16)))} />
             <div className="hint">Default 16 % (Mischsatz Airbnb/Booking), editierbar 12–20 %</div>
           </div>
           <NumberField label="Reinigungskosten pro Turnover (€)" value={objekt.variable.reinigung} onChange={(v) => update(['variable', 'reinigung'], v)} />
@@ -773,7 +805,7 @@ function StepKalkulation({ objekt, update }) {
           <NumberField label="Ø Personenzahl" value={objekt.variable.personenzahl} min={1} onChange={(v) => update(['variable', 'personenzahl'], Math.max(1, v))} />
           <div>
             <label className="field-label">Kurtaxe pro Person/Nacht (€)</label>
-            <input type="number" disabled={objekt.variable.kurtaxeDurchgereicht} value={objekt.variable.kurtaxeProPersonNacht} onChange={(e) => update(['variable', 'kurtaxeProPersonNacht'], parseFloat(e.target.value) || 0)} />
+            <input type="number" disabled={objekt.variable.kurtaxeDurchgereicht} value={objekt.variable.kurtaxeProPersonNacht} onFocus={(e) => e.target.select()} onChange={(e) => update(['variable', 'kurtaxeProPersonNacht'], parseFloat(e.target.value) || 0)} />
             <label className="radio-opt" style={{ display: 'inline-flex', marginTop: 6 }}>
               <input type="checkbox" checked={objekt.variable.kurtaxeDurchgereicht} onChange={(e) => update(['variable', 'kurtaxeDurchgereicht'], e.target.checked)} />
               <span style={{ marginLeft: 6 }}>Wird an Gast weiterberechnet (dann 0 in Kalkulation)</span>
@@ -781,12 +813,12 @@ function StepKalkulation({ objekt, update }) {
           </div>
           <div>
             <label className="field-label">Instandhaltungspauschale (% v. Umsatz)</label>
-            <input type="number" value={objekt.variable.instandhaltungPct} onChange={(e) => update(['variable', 'instandhaltungPct'], parseFloat(e.target.value) || 0)} />
+            <input type="number" value={objekt.variable.instandhaltungPct} onFocus={(e) => e.target.select()} onChange={(e) => update(['variable', 'instandhaltungPct'], parseFloat(e.target.value) || 0)} />
             <div className="hint">Default 3 %</div>
           </div>
           <div>
             <label className="field-label">Leerstands-/Ausfallpuffer (% v. Umsatz)</label>
-            <input type="number" value={objekt.variable.leerstandPct} onChange={(e) => update(['variable', 'leerstandPct'], parseFloat(e.target.value) || 0)} />
+            <input type="number" value={objekt.variable.leerstandPct} onFocus={(e) => e.target.select()} onChange={(e) => update(['variable', 'leerstandPct'], parseFloat(e.target.value) || 0)} />
             <div className="hint">Default 5 %</div>
           </div>
         </div>
@@ -1103,6 +1135,31 @@ function Vergleich({ objekte, onSelect }) {
 }
 
 /* ============================================================
+   GLOSSAR
+   ============================================================ */
+
+function Glossar() {
+  return (
+    <div>
+      <h2>Glossar · Fachwörter &amp; Abkürzungen</h2>
+      <p className="hint">Alphabetische Übersicht aller in der App verwendeten Fachbegriffe und Abkürzungen.</p>
+      <div className="card">
+        <table>
+          <tbody>
+            {GLOSSAR.map((g) => (
+              <tr key={g.begriff}>
+                <td style={{ width: '22%', verticalAlign: 'top' }}><strong>{g.begriff}</strong></td>
+                <td>{g.erklaerung}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+/* ============================================================
    WIZARD SHELL
    ============================================================ */
 
@@ -1232,6 +1289,7 @@ function App() {
         </div>
         <div className="toolbar">
           <button className="btn" onClick={() => setView('vergleich')}>Objektvergleich</button>
+          <button className="btn" onClick={() => setView('glossar')}>Glossar</button>
           <button className="btn" onClick={exportJSON}>JSON exportieren</button>
           <button className="btn" onClick={() => fileInputRef.current && fileInputRef.current.click()}>JSON importieren</button>
           <input type="file" accept="application/json" ref={fileInputRef} style={{ display: 'none' }} onChange={importJSON} />
@@ -1258,6 +1316,7 @@ function App() {
           {view === 'vergleich' && (
             <Vergleich objekte={objekte} onSelect={(id) => { setActiveId(id); setView('wizard'); }} />
           )}
+          {view === 'glossar' && <Glossar />}
           {view === 'wizard' && activeObjekt && (
             <div>
               <div className="grid cols-2 no-print" style={{ marginBottom: 16 }}>
