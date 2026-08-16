@@ -18,8 +18,8 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      pull-requests: read
-      issues: read
+      pull-requests: write  # Needed to post review/fallback/bypass comments via gh pr comment / github-script
+      issues: write         # createComment() targets the issues API even for PR comments
       id-token: write  # Required by Claude Code action for OIDC authentication
 
     steps:
@@ -89,6 +89,7 @@ jobs:
         continue-on-error: true
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
           prompt: |
             REPO: ${{ github.repository }}
             PR NUMBER: ${{ github.event.pull_request.number }}
