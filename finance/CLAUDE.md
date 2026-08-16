@@ -1,13 +1,14 @@
 # Finance Skills - Claude Code Guidance
 
-This guide covers the finance skill and its Python automation tools.
+This guide covers the finance skills and their Python automation tools.
 
 ## Finance Skills Overview
 
 **Available Skills:**
 1. **financial-analyst/** - Financial statement analysis, ratio analysis, DCF valuation, budgeting, forecasting (4 Python tools)
+2. **steuerrechner-selbststaendigkeit/** - German tax calculator for self-employed sole traders (EÜR): USt, GewSt (configurable Hebesatz), ESt, Soli, KiSt incl. §35 EStG credit, plus monthly Qonto reserve transfers (1 Python tool, German-language docs)
 
-**Total Tools:** 4 Python automation tools, 3 knowledge bases, 5 templates
+**Total Tools:** 5 Python automation tools, 6 knowledge bases, 7 templates
 
 ## Python Automation Tools
 
@@ -79,6 +80,25 @@ python financial-analyst/scripts/forecast_builder.py forecast_data.json
 python financial-analyst/scripts/forecast_builder.py forecast_data.json --format json
 ```
 
+### 5. Steuerrechner Selbstständigkeit (`steuerrechner-selbststaendigkeit/scripts/steuerrechner.py`)
+
+**Purpose:** Project all German business taxes from monthly revenue/expenses and derive monthly reserve transfers for a Qonto sub-account structure
+
+**Features:**
+- Umsatzsteuer (19 %, Vorsteuer estimate or exact, Kleinunternehmer option)
+- Gewerbesteuer (24,500 € allowance, 3.5 % Messzahl, configurable Hebesatz — default 320 % / Wiggensbach)
+- Einkommensteuer §32a EStG (2025 exact, 2026 parameters), Vorsorge deduction
+- §35 EStG Gewerbesteuer credit, Solidaritätszuschlag (Freigrenze + Milderungszone), Kirchensteuer
+- Scenario table across revenue levels, JSON profile with CLI overrides
+- German number formatting, text and JSON output
+
+**Usage:**
+```bash
+python3 steuerrechner-selbststaendigkeit/scripts/steuerrechner.py --umsatz 12500 --ausgaben 2800 --kv-monat 850
+python3 steuerrechner-selbststaendigkeit/scripts/steuerrechner.py --tabelle 6000:16000:2000 --kostenquote 0.25
+python3 steuerrechner-selbststaendigkeit/scripts/steuerrechner.py --umsatz 12500 --ausgaben 2800 --format json
+```
+
 ## Quality Standards
 
 **All finance Python tools must:**
@@ -97,6 +117,6 @@ python financial-analyst/scripts/forecast_builder.py forecast_data.json --format
 
 ---
 
-**Last Updated:** February 2026
-**Skills Deployed:** 1/1 finance skills production-ready
-**Total Tools:** 4 Python automation tools
+**Last Updated:** August 2026
+**Skills Deployed:** 2/2 finance skills production-ready
+**Total Tools:** 5 Python automation tools
