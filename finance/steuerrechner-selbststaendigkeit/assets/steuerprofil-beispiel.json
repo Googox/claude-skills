@@ -1,0 +1,18 @@
+{
+  "_kommentar": "Persönliches Steuerprofil — kopieren nach steuerprofil.json und anpassen. CLI-Argumente übersteuern diese Werte. Beträge sind Monatswerte in EUR (netto).",
+  "jahr": 2026,
+  "hebesatz": 320,
+  "kirche": false,
+  "kirchensteuer_satz": null,
+  "kv_monat": 850,
+  "sonstige_vorsorge": 0,
+  "kleinunternehmer": false,
+  "ausgaben": 2800,
+  "_hinweise": {
+    "hebesatz": "320 = Gewerbesteuer-Hebesatz Wiggensbach (Lkr. Oberallgäu)",
+    "kirche": "true setzen bei Kirchenmitgliedschaft (Bayern: 8 %)",
+    "kv_monat": "Kranken- + Pflegeversicherung pro Monat (voll abziehbare Basisabsicherung)",
+    "sonstige_vorsorge": "Rürup/Basisrente, freiwillige Rentenversicherung pro Monat",
+    "ausgaben": "typische Netto-Betriebsausgaben pro Monat als Default; im Monatslauf mit den echten Zahlen übersteuern"
+  }
+}
