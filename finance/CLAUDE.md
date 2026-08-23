@@ -7,8 +7,16 @@ This guide covers the finance skills and their Python automation tools.
 **Available Skills:**
 1. **financial-analyst/** - Financial statement analysis, ratio analysis, DCF valuation, budgeting, forecasting (4 Python tools)
 2. **steuerrechner-selbststaendigkeit/** - German tax calculator for self-employed sole traders (EÜR): USt, GewSt (configurable Hebesatz), ESt, Soli, KiSt incl. §35 EStG credit, plus monthly Qonto reserve transfers (1 Python tool, German-language docs)
+3. **brutto-netto-selbststaendige/** - German gross-to-net calculator for the self-employed: all direct taxes plus all mandatory social contributions (health, long-term care, pension) and the voluntary unemployment insurance under §28a SGB III incl. ALG I estimate (1 Python tool, German-language docs)
 
-**Total Tools:** 5 Python automation tools, 6 knowledge bases, 7 templates
+**Total Tools:** 6 Python automation tools, 9 knowledge bases, 9 templates
+
+**Skill boundary:** `steuerrechner-selbststaendigkeit` answers "what do I owe the
+tax office, and how much do I move to each reserve account each month?".
+`brutto-netto-selbststaendige` answers "of the revenue I invoice, how much
+actually ends up mine?" — it adds the social-contribution side and the §10 EStG
+interaction between contributions and taxable income. Both are self-contained;
+neither imports from the other.
 
 ## Python Automation Tools
 
@@ -99,6 +107,31 @@ python3 steuerrechner-selbststaendigkeit/scripts/steuerrechner.py --tabelle 6000
 python3 steuerrechner-selbststaendigkeit/scripts/steuerrechner.py --umsatz 12500 --ausgaben 2800 --format json
 ```
 
+### 6. Brutto-Netto-Rechner Selbstständige (`brutto-netto-selbststaendige/scripts/brutto_netto.py`)
+
+**Purpose:** Full revenue-to-take-home calculation for German sole traders — every direct tax plus every mandatory social contribution, including the voluntary unemployment insurance
+
+**Features:**
+- Direct taxes: ESt (§32a, 2025/2026 exact), Soli (Freigrenze + Milderungszone), KiSt, GewSt with §35 EStG credit; `--freiberuflich` disables GewSt
+- Health/long-term care: GKV freiwillig (14.6 %/14.0 % + Zusatzbeitrag, Mindest-/Höchstbemessung) or PKV with a fixed premium; PV rate driven by number of children
+- Pension: Regelbeitrag, halber Regelbeitrag (founders), einkommensgerecht, freiwillig, Versorgungswerk, Rürup
+- Unemployment: §28a SGB III contribution (2.6 % of Bezugsgröße), founder discount, plus an ALG I estimate via fiktive Bemessung (§152 SGB III, 4 Qualifikationsgruppen)
+- §10 EStG interaction modelled: 4 % Krankengeld reduction, Günstigerprüfung for sonstige Vorsorgeaufwendungen, Altersvorsorge-Höchstbetrag
+- Marginal-burden figure (what you keep from the next 1,000 € of profit), scenario table, JSON profile with CLI overrides
+
+**Usage:**
+```bash
+python3 brutto-netto-selbststaendige/scripts/brutto_netto.py --umsatz 12500 --ausgaben 2800 --rv ruerup --rv-betrag 500 --alv
+python3 brutto-netto-selbststaendige/scripts/brutto_netto.py --umsatz 9000 --freiberuflich --rv regelbeitrag
+python3 brutto-netto-selbststaendige/scripts/brutto_netto.py --tabelle 6000:16000:2000 --kostenquote 0.25
+python3 brutto-netto-selbststaendige/scripts/brutto_netto.py --umsatz 12500 --ausgaben 2800 --format json
+```
+
+**Maintenance:** All statutory values live in the `RECHENGROESSEN` dict at the top
+of the script, keyed by year (2025 and 2026 present). Add a new year there at the
+turn of the year; `references/rechengroessen-2026.md` lists every value with its
+source and the order in which the official figures are published.
+
 ## Quality Standards
 
 **All finance Python tools must:**
@@ -118,5 +151,5 @@ python3 steuerrechner-selbststaendigkeit/scripts/steuerrechner.py --umsatz 12500
 ---
 
 **Last Updated:** August 2026
-**Skills Deployed:** 2/2 finance skills production-ready
-**Total Tools:** 5 Python automation tools
+**Skills Deployed:** 3/3 finance skills production-ready
+**Total Tools:** 6 Python automation tools

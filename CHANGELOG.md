@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased] - 2026-02-16
 
 ### Added
+- **brutto-netto-selbststaendige** (finance) — German gross-to-net calculator for the self-employed. Takes revenue and expenses and returns what actually stays yours: all direct taxes (ESt, Soli, KiSt, GewSt with §35 EStG credit), all mandatory social contributions (health, long-term care, pension, with the correct floors and ceilings), and the voluntary unemployment insurance under §28a SGB III including an ALG I estimate. Models the §10 EStG interaction between contributions and taxable income, and reports the marginal burden on the next 1,000 € of profit. Statutory values for 2025 and 2026, German-language docs
 - **incident-commander** (POWERFUL tier) — Incident response playbook with severity classifier, timeline reconstructor, and PIR generator
 - **tech-debt-tracker** (POWERFUL tier) — Codebase debt scanner with AST parsing, debt prioritizer, and trend dashboard
 - **api-design-reviewer** (POWERFUL tier) — REST API linter, breaking change detector, and API design scorecard

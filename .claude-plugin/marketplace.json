@@ -92,12 +92,12 @@
     {
       "name": "finance-skills",
       "source": "./finance",
-      "description": "1 finance skill: financial analyst with ratio analysis, DCF valuation, budgeting, and forecasting",
-      "version": "1.0.0",
+      "description": "3 finance skills: financial analyst (ratio analysis, DCF valuation, budgeting, forecasting), German self-employment tax calculator, and German gross-to-net calculator for the self-employed (all direct taxes, mandatory social contributions, voluntary unemployment insurance)",
+      "version": "1.1.0",
       "author": {
         "name": "Alireza Rezvani"
       },
-      "keywords": ["finance", "dcf", "valuation", "budgeting", "forecasting"],
+      "keywords": ["finance", "dcf", "valuation", "budgeting", "forecasting", "steuern", "brutto-netto", "selbststaendigkeit", "sozialversicherung"],
       "category": "finance"
     },
     {

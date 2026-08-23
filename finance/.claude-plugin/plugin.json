@@ -1,7 +1,7 @@
 {
   "name": "finance-skills",
-  "description": "2 production-ready finance skills: financial analyst (ratio analysis, DCF valuation, budget variance, forecasting) and German self-employment tax calculator (USt, GewSt, ESt, Soli, KiSt with Qonto reserve planning)",
-  "version": "1.0.0",
+  "description": "3 production-ready finance skills: financial analyst (ratio analysis, DCF valuation, budget variance, forecasting), German self-employment tax calculator (USt, GewSt, ESt, Soli, KiSt with Qonto reserve planning), and German gross-to-net calculator for the self-employed (all direct taxes, mandatory social contributions, voluntary unemployment insurance with ALG I estimate)",
+  "version": "1.1.0",
   "author": {
     "name": "Alireza Rezvani",
     "url": "https://alirezarezvani.com"
