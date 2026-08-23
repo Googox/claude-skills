@@ -1,0 +1,35 @@
+{
+  "_hinweis": "Persoenliches Profil fuer brutto_netto.py. Kopieren, anpassen, mit --profil uebergeben. Explizite CLI-Argumente uebersteuern diese Werte.",
+
+  "jahr": 2026,
+
+  "_betrieb": "Gewerblich (Personalberatung, Unternehmensberatung, Vertrieb) oder freiberuflich (Katalogberuf § 18 EStG).",
+  "freiberuflich": false,
+  "hebesatz": 320.0,
+  "ausgaben": 2800.0,
+  "kleinunternehmer": false,
+
+  "_steuern": "Kirchensteuer 8 % in Bayern und Baden-Wuerttemberg, sonst 9 %.",
+  "kirche": false,
+
+  "_krankenversicherung": "gesetzlich = GKV freiwillig, privat = fester Beitrag ueber pkv_monat. Zusatzbeitrag als Dezimalzahl der eigenen Kasse eintragen.",
+  "kv": "gesetzlich",
+  "zusatzbeitrag": 0.029,
+  "ohne_krankengeld": false,
+  "pkv_monat": 0.0,
+  "pkv_basis_anteil": 0.8,
+  "kinder": 0,
+
+  "_altersvorsorge": "keine | regelbeitrag | halber-regelbeitrag | einkommensgerecht | freiwillig | versorgungswerk | ruerup",
+  "rv": "ruerup",
+  "rv_betrag": 500.0,
+
+  "_arbeitslosenversicherung": "Freiwillige Weiterversicherung § 28a SGB III. alv_gruender = halber Beitrag im Gruendungsjahr und im Folgejahr.",
+  "alv": true,
+  "alv_gruender": false,
+  "qualifikationsgruppe": 1,
+  "alg_mit_kind": false,
+
+  "_weitere_vorsorge": "Berufsunfaehigkeit, Unfall, private Haftpflicht pro Monat. Betriebliche Versicherungen gehoeren stattdessen in die Betriebsausgaben.",
+  "weitere_vorsorge": 0.0
+}
