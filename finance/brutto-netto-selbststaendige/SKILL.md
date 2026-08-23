@@ -201,6 +201,12 @@ Von 1.000 EUR Mehrgewinn bleiben: 580,00 EUR (42,0 % Abgaben)
   den Jahreswechsel
 
 **assets/**
+- [rechner.html](assets/rechner.html) — interaktive Fassung des Rechners für den
+  Browser: Schieberegler für Umsatz und Ausgaben, sofortige Neuberechnung,
+  Belastungskurve über die Umsatzstufen. Eine Datei, keine Installation, keine
+  Serververbindung; der Rechenkern ist identisch mit `scripts/brutto_netto.py`
+  und gegen dessen Ausgabe abgeglichen. Eingaben bleiben lokal im Browser
+  gespeichert.
 - [profil-beispiel.json](assets/profil-beispiel.json) — Profilvorlage
 - [monats-checkliste.md](assets/monats-checkliste.md) — abhakbare
   Monatsroutine

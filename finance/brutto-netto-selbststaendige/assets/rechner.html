@@ -1,0 +1,1018 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!--
+  Brutto-Netto-Rechner Selbststaendigkeit — eigenstaendige Fassung.
+  Im Browser oeffnen, keine Installation, keine Serververbindung noetig
+  (ohne Internet laedt nur die Schrift nicht, die Rechnung laeuft lokal).
+  Rechenkern identisch mit scripts/brutto_netto.py.
+  Planungswerkzeug, keine Steuer- oder Rechtsberatung.
+-->
+<style>*,*::before,*::after{box-sizing:border-box}html,body{margin:0;padding:0}</style>
+</head>
+<body>
+<title>Was vom Umsatz bleibt</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+
+<style>
+:root {
+  --bg: #EDF0F3;
+  --surface: #FFFFFF;
+  --surface-2: #F5F8FA;
+  --surface-3: #E7ECF1;
+  --border: #D5DDE5;
+  --border-strong: #B9C5D0;
+  --ink: #131A22;
+  --ink-2: #46525F;
+  --ink-3: #6F7D8A;
+  --accent: #0F6B72;
+  --accent-soft: #DCEEEF;
+  --cat-steuern: #A8452B;
+  --cat-sozial: #3A5A9B;
+  --cat-netto: #2E8B57;
+  --shadow: 0 1px 2px rgba(19,26,34,.06), 0 8px 24px -12px rgba(19,26,34,.18);
+  --radius: 10px;
+}
+:root:not([data-theme="light"]) {
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0E1319;
+    --surface: #161D25;
+    --surface-2: #1C242E;
+    --surface-3: #232D38;
+    --border: #2A3540;
+    --border-strong: #3A4854;
+    --ink: #E8EEF4;
+    --ink-2: #A9B7C3;
+    --ink-3: #7C8B99;
+    --accent: #45B7BF;
+    --accent-soft: #12333A;
+    --cat-steuern: #CE6B49;
+    --cat-sozial: #6B8FE8;
+    --cat-netto: #2FA870;
+    --shadow: 0 1px 2px rgba(0,0,0,.5), 0 10px 28px -14px rgba(0,0,0,.7);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0E1319;
+  --surface: #161D25;
+  --surface-2: #1C242E;
+  --surface-3: #232D38;
+  --border: #2A3540;
+  --border-strong: #3A4854;
+  --ink: #E8EEF4;
+  --ink-2: #A9B7C3;
+  --ink-3: #7C8B99;
+  --accent: #45B7BF;
+  --accent-soft: #12333A;
+  --cat-steuern: #CE6B49;
+  --cat-sozial: #6B8FE8;
+  --cat-netto: #2FA870;
+  --shadow: 0 1px 2px rgba(0,0,0,.5), 0 10px 28px -14px rgba(0,0,0,.7);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: "IBM Plex Sans", ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif;
+  font-size: 15px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+.wrap { max-width: 1240px; margin: 0 auto; padding: 28px 20px 72px; }
+
+/* ---------- header ---------- */
+.masthead {
+  display: flex; flex-wrap: wrap; align-items: flex-end; gap: 16px 28px;
+  padding-bottom: 20px; margin-bottom: 24px;
+  border-bottom: 2px solid var(--border-strong);
+}
+.masthead h1 {
+  font-family: "IBM Plex Sans Condensed", "IBM Plex Sans", sans-serif;
+  font-weight: 700; font-size: clamp(30px, 5vw, 46px); line-height: 1.02;
+  letter-spacing: -.015em; margin: 0; text-wrap: balance; flex: 1 1 320px;
+}
+.masthead p { margin: 0; color: var(--ink-2); max-width: 46ch; font-size: 14.5px; }
+.stamp {
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 11px; letter-spacing: .1em; text-transform: uppercase;
+  border: 1px solid var(--border-strong); border-radius: 999px;
+  padding: 5px 12px; color: var(--ink-2); white-space: nowrap;
+}
+
+/* ---------- layout ---------- */
+.grid { display: grid; grid-template-columns: 370px minmax(0, 1fr); gap: 24px; align-items: start; }
+@media (max-width: 980px) { .grid { grid-template-columns: 1fr; } .panel--controls { order: 2; } .results { order: 1; } }
+
+.panel {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); box-shadow: var(--shadow);
+}
+.panel--controls { padding: 4px 20px 20px; position: sticky; top: 16px; max-height: calc(100vh - 32px); overflow-y: auto; }
+@media (max-width: 980px) { .panel--controls { position: static; max-height: none; } }
+
+.results { display: flex; flex-direction: column; gap: 20px; min-width: 0; }
+
+/* ---------- form ---------- */
+fieldset { border: 0; padding: 0; margin: 22px 0 0; }
+legend, .grouplabel {
+  font-family: "IBM Plex Sans Condensed", sans-serif;
+  font-size: 11.5px; font-weight: 700; letter-spacing: .13em; text-transform: uppercase;
+  color: var(--ink-3); padding: 0; margin-bottom: 12px; width: 100%;
+  border-bottom: 1px solid var(--border); padding-bottom: 7px;
+}
+.field { margin-bottom: 16px; }
+.field > label, .field .lbl {
+  display: flex; justify-content: space-between; align-items: baseline; gap: 10px;
+  font-size: 13.5px; color: var(--ink-2); margin-bottom: 6px;
+}
+.field .val {
+  font-family: "IBM Plex Mono", monospace; font-variant-numeric: tabular-nums;
+  font-size: 14px; font-weight: 500; color: var(--ink);
+}
+input[type="range"] {
+  -webkit-appearance: none; appearance: none; width: 100%; height: 22px;
+  background: transparent; margin: 0; cursor: pointer;
+}
+input[type="range"]::-webkit-slider-runnable-track {
+  height: 4px; border-radius: 2px; background: var(--surface-3);
+}
+input[type="range"]::-moz-range-track { height: 4px; border-radius: 2px; background: var(--surface-3); }
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none; width: 17px; height: 17px; border-radius: 50%;
+  background: var(--accent); border: 2px solid var(--surface); margin-top: -6.5px;
+  box-shadow: 0 0 0 1px var(--accent);
+}
+input[type="range"]::-moz-range-thumb {
+  width: 17px; height: 17px; border-radius: 50%; background: var(--accent);
+  border: 2px solid var(--surface); box-shadow: 0 0 0 1px var(--accent);
+}
+input[type="number"], select {
+  width: 100%; padding: 8px 10px; font-family: "IBM Plex Mono", monospace;
+  font-size: 14px; font-variant-numeric: tabular-nums;
+  background: var(--surface-2); color: var(--ink);
+  border: 1px solid var(--border); border-radius: 7px;
+}
+select { font-family: "IBM Plex Sans", sans-serif; }
+.seg { display: flex; background: var(--surface-2); border: 1px solid var(--border); border-radius: 8px; padding: 3px; gap: 3px; }
+.seg button {
+  flex: 1; padding: 7px 6px; font: inherit; font-size: 13px; cursor: pointer;
+  background: transparent; color: var(--ink-2); border: 0; border-radius: 6px;
+  transition: background .12s ease, color .12s ease;
+}
+.seg button[aria-pressed="true"] { background: var(--surface); color: var(--ink); font-weight: 600; box-shadow: var(--shadow); }
+.check { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 11px; font-size: 13.5px; color: var(--ink-2); cursor: pointer; }
+.check input { margin: 3px 0 0; accent-color: var(--accent); width: 15px; height: 15px; flex: none; }
+.check b { color: var(--ink); font-weight: 500; }
+.hint { font-size: 12px; color: var(--ink-3); margin: -6px 0 14px; line-height: 1.45; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+
+/* ---------- hero ---------- */
+.hero { padding: 22px 24px 24px; }
+.hero .eyebrow {
+  font-family: "IBM Plex Sans Condensed", sans-serif; font-size: 11.5px; font-weight: 700;
+  letter-spacing: .14em; text-transform: uppercase; color: var(--ink-3);
+}
+.hero .big {
+  font-family: "IBM Plex Mono", monospace; font-variant-numeric: tabular-nums;
+  font-size: clamp(40px, 8vw, 64px); font-weight: 600; line-height: 1.02;
+  letter-spacing: -.03em; margin: 4px 0 2px; color: var(--cat-netto);
+}
+.hero .sub { font-size: 14px; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+.hero .sub b { font-family: "IBM Plex Mono", monospace; font-weight: 500; color: var(--ink); }
+.warn {
+  margin: 12px 0 0; padding: 10px 13px; border-radius: 8px;
+  border: 1px solid var(--cat-steuern); background: var(--surface-2);
+  font-size: 13.5px; color: var(--ink-2); max-width: 62ch;
+}
+
+.bar { display: flex; width: 100%; height: 46px; margin: 20px 0 10px; gap: 2px; }
+.bar > div {
+  display: flex; align-items: center; justify-content: center; min-width: 2px;
+  font-family: "IBM Plex Mono", monospace; font-size: 12px; font-weight: 500;
+  color: #fff; overflow: hidden; white-space: nowrap;
+  transition: flex-grow .3s cubic-bezier(.4,0,.2,1);
+}
+.bar > div:first-child { border-radius: 5px 0 0 5px; }
+.bar > div:last-child { border-radius: 0 5px 5px 0; }
+.seg-sozial { background: var(--cat-sozial); }
+.seg-steuern { background: var(--cat-steuern); }
+.seg-netto { background: var(--cat-netto); }
+
+.legend { display: flex; flex-wrap: wrap; gap: 8px 20px; font-size: 13px; color: var(--ink-2); }
+.legend span { display: inline-flex; align-items: center; gap: 7px; }
+.dot { width: 10px; height: 10px; border-radius: 3px; flex: none; }
+
+.chips { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
+.chip {
+  border: 1px solid var(--border); background: var(--surface-2);
+  border-radius: 8px; padding: 9px 13px; flex: 1 1 165px;
+}
+.chip .k { font-size: 11.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); font-family: "IBM Plex Sans Condensed", sans-serif; font-weight: 600; }
+.chip .v { font-family: "IBM Plex Mono", monospace; font-variant-numeric: tabular-nums; font-size: 19px; font-weight: 500; margin-top: 2px; }
+
+/* ---------- cards ---------- */
+.card { padding: 20px 24px 24px; }
+.card > h2 {
+  font-family: "IBM Plex Sans Condensed", sans-serif; font-size: 15px; font-weight: 700;
+  letter-spacing: .1em; text-transform: uppercase; margin: 0 0 4px; color: var(--ink);
+}
+.card > .note { margin: 0 0 16px; font-size: 13px; color: var(--ink-3); max-width: 62ch; }
+
+.tablewrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th, td { padding: 8px 10px; text-align: right; white-space: nowrap; }
+th:first-child, td:first-child { text-align: left; white-space: normal; }
+thead th {
+  font-family: "IBM Plex Sans Condensed", sans-serif; font-size: 11.5px; font-weight: 700;
+  letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3);
+  border-bottom: 1px solid var(--border-strong); padding-bottom: 7px;
+}
+tbody td { border-bottom: 1px solid var(--border); font-variant-numeric: tabular-nums; font-family: "IBM Plex Mono", monospace; }
+tbody td:first-child { font-family: "IBM Plex Sans", sans-serif; color: var(--ink-2); }
+tr.head td { font-weight: 600; color: var(--ink) !important; background: var(--surface-2); }
+tr.sum td { font-weight: 600; border-top: 1px solid var(--border-strong); border-bottom: 0; background: var(--surface-2); }
+tr.total td { font-weight: 600; font-size: 16px; border-top: 2px solid var(--border-strong); border-bottom: 0; }
+tr.total td:first-child { color: var(--ink) !important; }
+td.indent:first-child { padding-left: 26px; }
+td .dot { display: inline-block; margin-right: 8px; vertical-align: baseline; }
+.muted td { color: var(--ink-3) !important; }
+
+/* ---------- chart ---------- */
+.chartbox { position: relative; margin-top: 4px; }
+svg.chart { display: block; width: 100%; height: auto; overflow: visible; }
+.tip {
+  position: absolute; pointer-events: none; opacity: 0; transform: translate(-50%, -120%);
+  background: var(--ink); color: var(--bg); padding: 7px 10px; border-radius: 6px;
+  font-family: "IBM Plex Mono", monospace; font-size: 12px; line-height: 1.45;
+  white-space: nowrap; transition: opacity .12s ease; z-index: 5;
+}
+details { margin-top: 14px; }
+summary { cursor: pointer; font-size: 13px; color: var(--accent); font-weight: 500; }
+summary::marker { color: var(--ink-3); }
+
+/* ---------- alv ---------- */
+.split { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 14px; margin-bottom: 16px; }
+.stat { border-left: 3px solid var(--accent); padding: 2px 0 2px 13px; }
+.stat .k { font-size: 11.5px; letter-spacing: .07em; text-transform: uppercase; color: var(--ink-3); font-family: "IBM Plex Sans Condensed", sans-serif; font-weight: 600; }
+.stat .v { font-family: "IBM Plex Mono", monospace; font-variant-numeric: tabular-nums; font-size: 22px; font-weight: 500; }
+.stat .s { font-size: 12.5px; color: var(--ink-3); }
+.callout {
+  background: var(--accent-soft); border-radius: 8px; padding: 13px 16px;
+  font-size: 13.5px; color: var(--ink-2); border: 1px solid var(--border);
+}
+.callout b { color: var(--ink); }
+
+.disabled-card { opacity: .5; }
+
+/* ---------- footer ---------- */
+footer { margin-top: 28px; padding-top: 20px; border-top: 1px solid var(--border); font-size: 12.5px; color: var(--ink-3); }
+footer p { max-width: 78ch; }
+footer b { color: var(--ink-2); font-weight: 600; }
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation: none !important; }
+}
+</style>
+
+<div class="wrap">
+
+  <header class="masthead">
+    <h1>Was vom Umsatz bleibt</h1>
+    <p>Vom Honorar bis zum verfügbaren Netto: alle direkten Steuern, alle
+       Pflichtbeiträge zur Sozialversicherung und die freiwillige
+       Arbeitslosenversicherung — für Einzelunternehmer mit EÜR.</p>
+    <span class="stamp" id="yearStamp">Rechenjahr 2026</span>
+  </header>
+
+  <div class="grid">
+
+    <!-- ============ CONTROLS ============ -->
+    <form class="panel panel--controls" id="form" autocomplete="off">
+
+      <fieldset>
+        <legend>Betrieb</legend>
+
+        <div class="field">
+          <div class="lbl"><label for="umsatz">Umsatz netto je Monat</label><span class="val" id="umsatzVal"></span></div>
+          <input type="range" id="umsatz" min="0" max="30000" step="250" value="12500">
+        </div>
+
+        <div class="field">
+          <div class="lbl"><label for="ausgaben">Betriebsausgaben je Monat</label><span class="val" id="ausgabenVal"></span></div>
+          <input type="range" id="ausgaben" min="0" max="15000" step="100" value="2800">
+        </div>
+
+        <div class="field">
+          <div class="lbl"><span>Einkunftsart</span></div>
+          <div class="seg" role="group" aria-label="Einkunftsart">
+            <button type="button" data-set="gewerblich" data-value="1" aria-pressed="true">Gewerblich</button>
+            <button type="button" data-set="gewerblich" data-value="0" aria-pressed="false">Freiberuflich</button>
+          </div>
+          <p class="hint">Personal-, Unternehmens- und IT-Beratung sind in der Regel
+             gewerbliche Einkünfte nach § 15 EStG, Katalogberufe nach § 18 EStG nicht.</p>
+        </div>
+
+        <div class="field" id="hebesatzField">
+          <div class="lbl"><label for="hebesatz">Gewerbesteuer-Hebesatz</label><span class="val" id="hebesatzVal"></span></div>
+          <input type="range" id="hebesatz" min="200" max="600" step="5" value="320">
+        </div>
+
+        <label class="check"><input type="checkbox" id="kirche"><span><b>Kirchensteuerpflichtig</b> — 8 % in Bayern und Baden-Württemberg</span></label>
+        <label class="check"><input type="checkbox" id="klein"><span><b>Kleinunternehmer</b> nach § 19 UStG</span></label>
+      </fieldset>
+
+      <fieldset>
+        <legend>Kranken- und Pflegeversicherung</legend>
+
+        <div class="field">
+          <div class="seg" role="group" aria-label="Krankenversicherung">
+            <button type="button" data-set="kv" data-value="gkv" aria-pressed="true">Gesetzlich</button>
+            <button type="button" data-set="kv" data-value="pkv" aria-pressed="false">Privat</button>
+          </div>
+        </div>
+
+        <div id="gkvFields">
+          <div class="field">
+            <div class="lbl"><label for="zusatz">Zusatzbeitrag deiner Kasse</label><span class="val" id="zusatzVal"></span></div>
+            <input type="range" id="zusatz" min="0" max="4.5" step="0.05" value="2.9">
+          </div>
+          <label class="check"><input type="checkbox" id="ohneKg"><span><b>Ohne Krankengeld</b> — ermäßigter Satz 14,0 % statt 14,6 %</span></label>
+        </div>
+
+        <div id="pkvFields" hidden>
+          <div class="field">
+            <div class="lbl"><label for="pkv">PKV-Beitrag je Monat</label><span class="val" id="pkvVal"></span></div>
+            <input type="range" id="pkv" min="200" max="1600" step="10" value="780">
+          </div>
+          <p class="hint">Inklusive privater Pflegepflichtversicherung. Steuerlich zählt
+             nur der Basisanteil, hier mit 80 % angesetzt.</p>
+        </div>
+
+        <div class="field">
+          <label for="kinder">Kinder unter 25</label>
+          <select id="kinder">
+            <option value="0">keine — Beitragssatz Pflege 4,2 %</option>
+            <option value="1">1 Kind — 3,6 %</option>
+            <option value="2">2 Kinder — 3,35 %</option>
+            <option value="3">3 Kinder — 3,10 %</option>
+            <option value="4">4 Kinder — 2,85 %</option>
+            <option value="5">5 und mehr — 2,60 %</option>
+          </select>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Altersvorsorge</legend>
+        <div class="field">
+          <label for="rv">Form der Altersvorsorge</label>
+          <select id="rv">
+            <option value="keine">keine Beiträge</option>
+            <option value="ruerup" selected>Rürup / Basisrente</option>
+            <option value="freiwillig">freiwillige Beiträge gesetzliche RV</option>
+            <option value="versorgungswerk">Versorgungswerk</option>
+            <option value="regelbeitrag">Pflichtversichert — Regelbeitrag</option>
+            <option value="halber-regelbeitrag">Pflichtversichert — halber Regelbeitrag (Gründer)</option>
+            <option value="einkommensgerecht">Pflichtversichert — einkommensgerecht</option>
+          </select>
+        </div>
+        <div class="field" id="rvBetragField">
+          <div class="lbl"><label for="rvBetrag">Beitrag je Monat</label><span class="val" id="rvBetragVal"></span></div>
+          <input type="range" id="rvBetrag" min="0" max="2500" step="25" value="500">
+        </div>
+        <p class="hint" id="rvHint"></p>
+      </fieldset>
+
+      <fieldset>
+        <legend>Arbeitslosenversicherung</legend>
+        <label class="check"><input type="checkbox" id="alv" checked><span><b>Freiwillige Weiterversicherung</b> nach § 28a SGB III</span></label>
+        <div id="alvFields">
+          <label class="check"><input type="checkbox" id="alvGruender"><span>Gründerermäßigung — halber Beitrag im Gründungsjahr und im Folgejahr</span></label>
+          <div class="field">
+            <label for="quali">Qualifikationsgruppe für die ALG-I-Bemessung</label>
+            <select id="quali">
+              <option value="1" selected>1 — Hochschul- oder Fachhochschulabschluss</option>
+              <option value="2">2 — Meister, Techniker, Fachschule</option>
+              <option value="3">3 — abgeschlossene Berufsausbildung</option>
+              <option value="4">4 — ohne Berufsausbildung</option>
+            </select>
+          </div>
+          <label class="check"><input type="checkbox" id="algKind"><span>Kind im Sinne des § 32 EStG — Leistungssatz 67 % statt 60 %</span></label>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Weiteres</legend>
+        <div class="field">
+          <div class="lbl"><label for="weitere">Weitere Vorsorge je Monat</label><span class="val" id="weitereVal"></span></div>
+          <input type="range" id="weitere" min="0" max="800" step="10" value="0">
+        </div>
+        <p class="hint">Berufsunfähigkeit, Unfall, private Haftpflicht. Betriebliche
+           Versicherungen gehören stattdessen in die Betriebsausgaben.</p>
+        <div class="field">
+          <label for="jahr">Rechenjahr</label>
+          <select id="jahr">
+            <option value="2026" selected>2026</option>
+            <option value="2025">2025</option>
+          </select>
+        </div>
+      </fieldset>
+    </form>
+
+    <!-- ============ RESULTS ============ -->
+    <div class="results">
+
+      <section class="panel hero" aria-labelledby="heroLabel">
+        <div class="eyebrow" id="heroLabel">Das bleibt dir je Monat</div>
+        <div class="big" id="nettoMonat">—</div>
+        <div class="sub">im Jahr <b id="nettoJahr">—</b> · Gewinn vor Abgaben <b id="gewinnJahr">—</b></div>
+        <p class="warn" id="warn" hidden>Die Pflichtbeiträge übersteigen den Gewinn — bei
+          diesem Umsatz legst du drauf. Kranken- und Pflegeversicherung haben eine
+          Mindestbemessungsgrundlage, der Rentenregelbeitrag ist gewinnunabhängig.</p>
+
+        <div class="bar" id="bar" role="img" aria-label="Aufteilung des Gewinns">
+          <div class="seg-sozial" id="barSozial" style="flex-grow:1"></div>
+          <div class="seg-steuern" id="barSteuern" style="flex-grow:1"></div>
+          <div class="seg-netto" id="barNetto" style="flex-grow:1"></div>
+        </div>
+        <div class="legend">
+          <span><i class="dot" style="background:var(--cat-sozial)"></i>Sozialabgaben <b id="lgSozial"></b></span>
+          <span><i class="dot" style="background:var(--cat-steuern)"></i>Steuern <b id="lgSteuern"></b></span>
+          <span><i class="dot" style="background:var(--cat-netto)"></i>Netto <b id="lgNetto"></b></span>
+        </div>
+
+        <div class="chips">
+          <div class="chip"><div class="k">Abgabenquote</div><div class="v" id="chipQuote">—</div></div>
+          <div class="chip"><div class="k">Vom nächsten 1.000 €</div><div class="v" id="chipGrenz">—</div></div>
+          <div class="chip"><div class="k">Netto je € Umsatz</div><div class="v" id="chipUmsatz">—</div></div>
+        </div>
+      </section>
+
+      <section class="panel card">
+        <h2>Vom Umsatz zum Netto</h2>
+        <p class="note">Alle Beträge netto ohne Umsatzsteuer. Die Umsatzsteuer ist ein
+           Durchlaufposten und steht deshalb außerhalb dieser Rechnung.</p>
+        <div class="tablewrap">
+          <table>
+            <thead>
+              <tr><th scope="col">Position</th><th scope="col">je Monat</th><th scope="col">je Jahr</th></tr>
+            </thead>
+            <tbody id="ledger"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="panel card">
+        <h2>Umsatzsteuer</h2>
+        <p class="note">Gehört nie dir. Sie mindert das Netto nicht, muss aber jederzeit
+           verfügbar sein — sie ist der häufigste Grund für Liquiditätslücken.</p>
+        <div class="tablewrap">
+          <table><tbody id="ustTable"></tbody></table>
+        </div>
+      </section>
+
+      <section class="panel card">
+        <h2>Belastungskurve</h2>
+        <p class="note">Abgabenquote auf den Gewinn über die Umsatzstufen, bei
+           gleichbleibender Kostenquote. Der Knick liegt dort, wo der Gewinn die
+           Beitragsbemessungsgrenze der Krankenkasse überschreitet — ab da wächst nur
+           noch die Steuer, nicht mehr der Kassenbeitrag.</p>
+        <div class="chartbox">
+          <svg class="chart" id="curve" viewBox="0 0 720 300" role="img" aria-labelledby="curveTitle"></svg>
+          <div class="tip" id="tip"></div>
+        </div>
+        <p id="curveTitle" class="sr" style="position:absolute;left:-9999px">Abgabenquote in Prozent über dem Monatsumsatz</p>
+        <details>
+          <summary>Werte als Tabelle anzeigen</summary>
+          <div class="tablewrap">
+            <table>
+              <thead><tr><th scope="col">Umsatz je Monat</th><th scope="col">Abgabenquote</th><th scope="col">Netto je Monat</th></tr></thead>
+              <tbody id="curveTable"></tbody>
+            </table>
+          </div>
+        </details>
+      </section>
+
+      <section class="panel card" id="alvCard">
+        <h2>Arbeitslosenversicherung</h2>
+        <p class="note">Der Beitrag hängt nicht am Gewinn, sondern pauschal an der
+           Bezugsgröße — und das Arbeitslosengeld hängt nicht am Beitrag, sondern an
+           der Qualifikationsgruppe. Deshalb ist die Versicherung für Gutverdiener
+           rechnerisch am günstigsten.</p>
+        <div class="split" id="alvStats"></div>
+        <div class="callout" id="alvNote"></div>
+      </section>
+
+      <section class="panel card">
+        <h2>Monatliche Rücklage</h2>
+        <p class="note">Daueraufträge auf getrennte Unterkonten. Getrennte Töpfe, weil
+           die Empfänger und die Fälligkeiten verschieden sind.</p>
+        <div class="tablewrap">
+          <table><tbody id="ruecklage"></tbody></table>
+        </div>
+      </section>
+
+      <footer>
+        <p><b>Planungswerkzeug, keine Steuer- oder Rechtsberatung.</b> Gerechnet wird für
+        einen Einzelunternehmer mit Grundtarif, ohne Zusammenveranlagung, ohne weitere
+        Einkunftsarten und ohne Hinzurechnungen oder Kürzungen bei der Gewerbesteuer.
+        Die Kirchensteuer wird nicht als Sonderausgabe gegengerechnet, das Ergebnis ist
+        insoweit konservativ. Die ALG-I-Höhe ist eine Schätzung; verbindlich ist allein
+        die Auskunft der Agentur für Arbeit.</p>
+        <p>Rechengrößen 2026 nach der Sozialversicherungsrechengrößen-Verordnung 2026,
+        Tarifeckwerte nach dem Steuerfortentwicklungsgesetz. Bezugsgröße 3.955 €,
+        Beitragsbemessungsgrenze Kranken- und Pflegeversicherung 5.812,50 €,
+        Grundfreibetrag 12.348 €, Soli-Freigrenze 20.350 €.</p>
+      </footer>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  /* ================= Rechengrößen ================= */
+  const R = {
+    2025: {
+      bezug: 3745, bbgKV: 5512.50, bbgRV: 8050,
+      minKV: 1248.33, minRV: 556,
+      kvVoll: .146, kvErm: .140, zusatzStd: 2.5,
+      pvBasis: .036, pvKinderlos: .006, pvAbschlag: .0025,
+      rvSatz: .186, alvSatz: .026,
+      avHoechst: 29344, sonstHoechst: 2800,
+      tarif: [12096, 17443, 68480, 277825], soli: 19950
+    },
+    2026: {
+      bezug: 3955, bbgKV: 5812.50, bbgRV: 8450,
+      minKV: 1318.33, minRV: 603,
+      kvVoll: .146, kvErm: .140, zusatzStd: 2.9,
+      pvBasis: .036, pvKinderlos: .006, pvAbschlag: .0025,
+      rvSatz: .186, alvSatz: .026,
+      avHoechst: 30826, sonstHoechst: 2800,
+      tarif: [12348, 17799, 69878, 277825], soli: 20350
+    }
+  };
+  const SOLI_SATZ = .055, SOLI_MILD = .119;
+  const GEWST_FB = 24500, GEWST_MZ = .035, GEWST_ANR = 4.0;
+  const UST = .19, SA_PAUSCH = 36, KG_KUERZUNG = .04;
+  const AN_PAUSCH = 1230, SV_PAUSCH = .20;
+  const QUALI = { 1: 300, 2: 360, 3: 450, 4: 600 };
+
+  /* ================= Steuerfunktionen ================= */
+  function est(zve, jahr) {
+    const [e0, e1, e2, e3] = R[jahr].tarif;
+    const x = Math.floor(Math.max(0, zve));
+    if (x <= e0) return 0;
+    let tax;
+    if (x <= e1) {
+      const y = (x - e0) / 10000, yEnd = (e1 - e0) / 10000;
+      tax = (997 / (2 * yEnd) * y + 1400) * y;
+    } else if (x <= e2) {
+      const z = (x - e1) / 10000, zEnd = (e2 - e1) / 10000;
+      const c1 = 1898.5 * ((e1 - e0) / 10000);
+      tax = (1803 / (2 * zEnd) * z + 2397) * z + c1;
+    } else {
+      const zEnd = (e2 - e1) / 10000;
+      const c1 = 1898.5 * ((e1 - e0) / 10000);
+      const taxE2 = (1803 / (2 * zEnd) * zEnd + 2397) * zEnd + c1;
+      const d42 = .42 * e2 - taxE2;
+      if (x <= e3) tax = .42 * x - d42;
+      else {
+        const taxE3 = .42 * e3 - d42;
+        tax = .45 * x - (.45 * e3 - taxE3);
+      }
+    }
+    return Math.floor(tax);
+  }
+  function gewSt(gewinn, hebesatz) {
+    const ertrag = Math.floor(Math.max(0, gewinn) / 100) * 100;
+    const mess = Math.max(0, ertrag - GEWST_FB) * GEWST_MZ;
+    return { steuer: mess * hebesatz / 100, mess: mess };
+  }
+  function soli(e, jahr) {
+    const fg = R[jahr].soli;
+    return e <= fg ? 0 : Math.min(SOLI_SATZ * e, SOLI_MILD * (e - fg));
+  }
+  function pvSatz(jahr, kinder) {
+    const w = R[jahr];
+    if (kinder <= 0) return w.pvBasis + w.pvKinderlos;
+    return w.pvBasis - Math.min(Math.max(kinder - 1, 0), 4) * w.pvAbschlag;
+  }
+
+  /* ================= Gesamtrechnung ================= */
+  function rechne(i, mitGrenz) {
+    const w = R[i.jahr];
+    const umsatz = i.umsatz * 12, ausgaben = i.ausgaben * 12;
+    const gewinn = umsatz - ausgaben;
+
+    // Umsatzsteuer
+    let ust = 0, vorsteuer = 0, zahllast = 0;
+    if (!i.klein) {
+      ust = umsatz * UST; vorsteuer = ausgaben * UST; zahllast = ust - vorsteuer;
+    }
+
+    // Kranken- und Pflegeversicherung
+    let kvJahr, pvJahr, basisAbzug, kvBasis = null, kvSatzGes = null, pvS = null;
+    if (i.kv === "pkv") {
+      kvJahr = i.pkv * 12; pvJahr = 0; basisAbzug = kvJahr * .80;
+    } else {
+      kvSatzGes = (i.ohneKg ? w.kvErm : w.kvVoll) + i.zusatz / 100;
+      pvS = pvSatz(i.jahr, i.kinder);
+      kvBasis = Math.min(Math.max(gewinn / 12, w.minKV), w.bbgKV);
+      kvJahr = kvBasis * 12 * kvSatzGes;
+      pvJahr = kvBasis * 12 * pvS;
+      basisAbzug = kvJahr * (1 - (i.ohneKg ? 0 : KG_KUERZUNG)) + pvJahr;
+    }
+
+    // Altersvorsorge
+    const regel = w.bezug * w.rvSatz;
+    let rvMonat = 0;
+    if (i.rv === "regelbeitrag") rvMonat = regel;
+    else if (i.rv === "halber-regelbeitrag") rvMonat = regel / 2;
+    else if (i.rv === "einkommensgerecht")
+      rvMonat = Math.min(Math.max(gewinn / 12, w.minRV), w.bbgRV) * w.rvSatz;
+    else if (i.rv === "freiwillig")
+      rvMonat = i.rvBetrag > 0 ? Math.min(Math.max(i.rvBetrag, w.minRV * w.rvSatz), w.bbgRV * w.rvSatz) : 0;
+    else if (i.rv === "versorgungswerk" || i.rv === "ruerup") rvMonat = i.rvBetrag;
+    const rvJahr = rvMonat * 12;
+
+    // Arbeitslosenversicherung
+    const cent = v => Math.round(v * 100) / 100;
+    const alvVoll = cent(w.bezug * w.alvSatz);
+    const alvMonat = i.alv ? cent(i.alvGruender ? alvVoll / 2 : alvVoll) : 0;
+    const alvJahr = alvMonat * 12;
+
+    const weitereJahr = i.weitere * 12;
+    const sozial = kvJahr + pvJahr + rvJahr + alvJahr;
+
+    // Vorsorgeaufwendungen § 10 EStG
+    const alterAbz = Math.min(rvJahr, w.avHoechst);
+    const sonstGez = alvJahr + weitereJahr;
+    const sonstAbz = Math.max(basisAbzug, Math.min(w.sonstHoechst, basisAbzug + sonstGez));
+    const sonstWirksam = Math.max(0, sonstAbz - basisAbzug);
+    const vorsorgeAbzug = alterAbz + sonstAbz;
+
+    // Gewerbesteuer
+    const g = i.gewerblich ? gewSt(gewinn, i.hebesatz) : { steuer: 0, mess: 0 };
+
+    // Einkommensteuer
+    const zve = Math.max(0, gewinn - vorsorgeAbzug - SA_PAUSCH);
+    const estTarif = est(zve, i.jahr);
+    const anrechnung = Math.min(GEWST_ANR * g.mess, g.steuer, estTarif);
+    const estFest = estTarif - anrechnung;
+    const soliBetrag = soli(estFest, i.jahr);
+    const kist = estFest * (i.kirche ? .08 : 0);
+
+    const steuern = g.steuer + estFest + soliBetrag + kist;
+    const netto = gewinn - steuern - sozial;
+
+    let grenz = null;
+    if (mitGrenz) {
+      const plus = rechne(Object.assign({}, i, { umsatz: i.umsatz + 1000 / 12 }), false);
+      grenz = { netto: plus.netto - netto, anteil: (plus.netto - netto) / 1000 };
+    }
+
+    return {
+      gewinn, umsatz, ausgaben, ust, vorsteuer, zahllast,
+      kvJahr, pvJahr, kvBasis, kvSatzGes, pvS, rvJahr, rvMonat, alvJahr, alvMonat,
+      alvVoll, weitereJahr, sozial, basisAbzug, alterAbz, sonstWirksam, sonstGez,
+      vorsorgeAbzug, gewSt: g.steuer, anrechnung, zve, estTarif, estFest,
+      soli: soliBetrag, kist, steuern, netto, grenz
+    };
+  }
+
+  /* ================= ALG I ================= */
+  function algSchaetzung(i) {
+    const w = R[i.jahr];
+    const tag = (w.bezug * 12) / QUALI[i.quali];
+    const jahrEntgelt = tag * 365;
+    const rvAnteil = Math.min(jahrEntgelt, w.bbgRV * 12) * (w.rvSatz / 2);
+    const kvPvBasis = Math.min(jahrEntgelt, w.bbgKV * 12);
+    const kvAnteil = kvPvBasis * ((w.kvErm + w.zusatzStd / 100) / 2);
+    const pvAnteil = kvPvBasis * (w.pvBasis / 2);
+    const zve = Math.max(0, jahrEntgelt - AN_PAUSCH - SA_PAUSCH - rvAnteil - kvAnteil - pvAnteil);
+    const ls = est(zve, i.jahr);
+    const steuerTag = (ls + soli(ls, i.jahr) + ls * (i.kirche ? .08 : 0)) / 365;
+    const leistungsentgelt = Math.max(0, tag * (1 - SV_PAUSCH) - steuerTag);
+    const satz = i.algKind ? .67 : .60;
+    return { tag, monatBrutto: tag * 30, algMonat: leistungsentgelt * satz * 30, satz };
+  }
+
+  /* ================= Formatierung ================= */
+  const fmtEur = new Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR", maximumFractionDigits: 0 });
+  const fmtEur2 = new Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR", minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const fmtPct = new Intl.NumberFormat("de-DE", { style: "percent", minimumFractionDigits: 1, maximumFractionDigits: 1 });
+  const eur = v => fmtEur.format(v);
+  const eur2 = v => fmtEur2.format(v);
+  const pct = v => fmtPct.format(v);
+  const $ = id => document.getElementById(id);
+
+  /* ================= State ================= */
+  const KEY = "was-vom-umsatz-bleibt/v1";
+  const state = {
+    umsatz: 12500, ausgaben: 2800, jahr: 2026, gewerblich: 1, hebesatz: 320,
+    kirche: false, klein: false, kv: "gkv", zusatz: 2.9, ohneKg: false, pkv: 780,
+    kinder: 0, rv: "ruerup", rvBetrag: 500, alv: true, alvGruender: false,
+    quali: 1, algKind: false, weitere: 0
+  };
+  try {
+    const saved = JSON.parse(localStorage.getItem(KEY) || "null");
+    if (saved && typeof saved === "object") Object.assign(state, saved);
+  } catch (e) { /* Speicher nicht verfügbar — Standardwerte bleiben */ }
+
+  function save() {
+    try { localStorage.setItem(KEY, JSON.stringify(state)); }
+    catch (e) { /* Speichern nicht möglich, Rechnung läuft trotzdem */ }
+  }
+
+  /* ================= Controls verdrahten ================= */
+  const ranges = {
+    umsatz: v => eur(v), ausgaben: v => eur(v),
+    hebesatz: v => v + " %", zusatz: v => v.toFixed(2).replace(".", ",") + " %",
+    pkv: v => eur(v), rvBetrag: v => eur(v), weitere: v => eur(v)
+  };
+  Object.keys(ranges).forEach(id => {
+    const el = $(id);
+    el.value = state[id];
+    el.addEventListener("input", () => { state[id] = parseFloat(el.value); render(); });
+  });
+  ["kirche", "klein", "ohneKg", "alv", "alvGruender", "algKind"].forEach(id => {
+    const el = $(id);
+    el.checked = !!state[id];
+    el.addEventListener("change", () => { state[id] = el.checked; render(); });
+  });
+  ["kinder", "rv", "quali", "jahr"].forEach(id => {
+    const el = $(id);
+    el.value = state[id];
+    el.addEventListener("change", () => {
+      state[id] = (id === "rv") ? el.value : parseInt(el.value, 10);
+      if (id === "jahr" && state.zusatz === undefined) state.zusatz = R[state.jahr].zusatzStd;
+      render();
+    });
+  });
+  document.querySelectorAll(".seg button").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const key = btn.dataset.set;
+      const raw = btn.dataset.value;
+      state[key] = (key === "gewerblich") ? parseInt(raw, 10) : raw;
+      render();
+    });
+  });
+
+  function syncControls() {
+    document.querySelectorAll(".seg button").forEach(b => {
+      b.setAttribute("aria-pressed", String(state[b.dataset.set]) === b.dataset.value);
+    });
+    $("gkvFields").hidden = state.kv !== "gkv";
+    $("pkvFields").hidden = state.kv !== "pkv";
+    $("hebesatzField").style.display = state.gewerblich ? "" : "none";
+    const braucht = ["ruerup", "freiwillig", "versorgungswerk"].includes(state.rv);
+    $("rvBetragField").style.display = braucht ? "" : "none";
+    $("alvFields").style.display = state.alv ? "" : "none";
+    $("alvCard").classList.toggle("disabled-card", !state.alv);
+    Object.keys(ranges).forEach(id => { $(id).value = state[id]; $(id + "Val").textContent = ranges[id](state[id]); });
+    ["kinder", "rv", "quali", "jahr"].forEach(id => { $(id).value = state[id]; });
+    ["kirche", "klein", "ohneKg", "alv", "alvGruender", "algKind"].forEach(id => { $(id).checked = !!state[id]; });
+    $("yearStamp").textContent = "Rechenjahr " + state.jahr;
+
+    const w = R[state.jahr];
+    const hints = {
+      keine: "Ohne gesetzliche Pflicht ist Altersvorsorge freiwillig — prüfe § 2 SGB VI, er greift auch bei nur einem Auftraggeber.",
+      ruerup: "Voll abziehbar bis " + eur(w.avHoechst) + " im Jahr. Der größte legale Steuerhebel für Selbstständige.",
+      freiwillig: "Zwischen " + eur2(w.minRV * w.rvSatz) + " und " + eur2(w.bbgRV * w.rvSatz) + " je Monat frei wählbar.",
+      versorgungswerk: "Pflicht für Kammerberufe. Beiträge sind voll abziehbar bis " + eur(w.avHoechst) + ".",
+      regelbeitrag: "Regelbeitrag " + eur2(w.bezug * w.rvSatz) + " je Monat — unabhängig vom Gewinn.",
+      "halber-regelbeitrag": "Halber Regelbeitrag " + eur2(w.bezug * w.rvSatz / 2) + " je Monat, in den ersten drei Kalenderjahren.",
+      einkommensgerecht: "18,6 % des Gewinns, mindestens " + eur2(w.minRV * w.rvSatz) + ", höchstens " + eur2(w.bbgRV * w.rvSatz) + "."
+    };
+    $("rvHint").textContent = hints[state.rv] || "";
+  }
+
+  /* ================= Ledger ================= */
+  function zeile(label, monat, jahr, cls, dotColor) {
+    const dot = dotColor ? '<i class="dot" style="background:' + dotColor + '"></i>' : "";
+    return '<tr class="' + (cls || "") + '"><td' + (cls === "indent" ? ' class="indent"' : "") + '>' +
+      dot + label + "</td><td>" + (monat === null ? "" : eur2(monat)) + "</td><td>" +
+      (jahr === null ? "" : eur2(jahr)) + "</td></tr>";
+  }
+
+  function renderLedger(r) {
+    const rows = [];
+    rows.push(zeile("Umsatz netto", r.umsatz / 12, r.umsatz, "head"));
+    rows.push(zeile("Betriebsausgaben", -r.ausgaben / 12, -r.ausgaben, "indent"));
+    rows.push(zeile("Gewinn nach EÜR", r.gewinn / 12, r.gewinn, "sum"));
+
+    rows.push(zeile("Sozialabgaben", null, null, "head"));
+    if (state.kv === "gkv") {
+      rows.push(zeile("Krankenversicherung · " + pct(r.kvSatzGes) + " auf " + eur2(r.kvBasis), -r.kvJahr / 12, -r.kvJahr, "indent"));
+      rows.push(zeile("Pflegeversicherung · " + pct(r.pvS), -r.pvJahr / 12, -r.pvJahr, "indent"));
+    } else {
+      rows.push(zeile("Private Kranken- und Pflegeversicherung", -r.kvJahr / 12, -r.kvJahr, "indent"));
+    }
+    if (r.rvJahr > 0) rows.push(zeile("Altersvorsorge · " + $("rv").selectedOptions[0].textContent, -r.rvJahr / 12, -r.rvJahr, "indent"));
+    if (r.alvJahr > 0) rows.push(zeile("Arbeitslosenversicherung", -r.alvJahr / 12, -r.alvJahr, "indent"));
+    if (r.weitereJahr > 0) rows.push(zeile("Weitere Vorsorge", -r.weitereJahr / 12, -r.weitereJahr, "indent"));
+    rows.push(zeile("Summe Sozialabgaben", -r.sozial / 12, -r.sozial, "sum"));
+
+    rows.push(zeile("Direkte Steuern", null, null, "head"));
+    if (state.gewerblich) {
+      rows.push(zeile("Gewerbesteuer · Hebesatz " + state.hebesatz + " %", -r.gewSt / 12, -r.gewSt, "indent"));
+      rows.push(zeile("davon nach § 35 EStG auf die ESt angerechnet", r.anrechnung / 12, r.anrechnung, "indent muted"));
+    }
+    rows.push(zeile("Einkommensteuer auf " + eur(r.zve) + " zu versteuerndes Einkommen", -r.estFest / 12, -r.estFest, "indent"));
+    if (r.soli > 0) rows.push(zeile("Solidaritätszuschlag", -r.soli / 12, -r.soli, "indent"));
+    else rows.push(zeile("Solidaritätszuschlag · unter der Freigrenze", 0, 0, "indent muted"));
+    if (r.kist > 0) rows.push(zeile("Kirchensteuer · 8 %", -r.kist / 12, -r.kist, "indent"));
+    rows.push(zeile("Summe Steuern", -r.steuern / 12, -r.steuern, "sum"));
+
+    rows.push(zeile("<b>Das bleibt dir</b>", r.netto / 12, r.netto, "total"));
+    $("ledger").innerHTML = rows.join("");
+
+    const u = [];
+    if (state.klein) {
+      u.push(zeile("Kleinunternehmer nach § 19 UStG — keine Umsatzsteuer", null, null, "head"));
+    } else {
+      u.push(zeile("Umsatzsteuer 19 % auf den Umsatz", r.ust / 12, r.ust, ""));
+      u.push(zeile("Vorsteuer aus Betriebsausgaben", -r.vorsteuer / 12, -r.vorsteuer, ""));
+      u.push(zeile("<b>Zahllast an das Finanzamt</b>", r.zahllast / 12, r.zahllast, "sum"));
+    }
+    $("ustTable").innerHTML = u.join("");
+
+    const rl = [];
+    if (!state.klein) rl.push(zeile('<i class="dot" style="background:var(--ink-3)"></i>Unterkonto Umsatzsteuer', Math.max(0, r.zahllast) / 12, Math.max(0, r.zahllast), ""));
+    if (state.gewerblich && r.gewSt > 0) rl.push(zeile('<i class="dot" style="background:var(--cat-steuern)"></i>Unterkonto Gewerbesteuer', r.gewSt / 12, r.gewSt, ""));
+    rl.push(zeile('<i class="dot" style="background:var(--cat-steuern)"></i>Unterkonto ESt, Soli und Kirchensteuer', (r.estFest + r.soli + r.kist) / 12, r.estFest + r.soli + r.kist, ""));
+    rl.push(zeile('<i class="dot" style="background:var(--cat-sozial)"></i>Sozialversicherung — meist direkt abgebucht', r.sozial / 12, r.sozial, ""));
+    const summe = Math.max(0, r.zahllast) + r.steuern + r.sozial;
+    rl.push(zeile("<b>Summe je Monat</b>", summe / 12, summe, "sum"));
+    $("ruecklage").innerHTML = rl.join("");
+  }
+
+  /* ================= ALV-Karte ================= */
+  function renderAlv(r) {
+    if (!state.alv) {
+      $("alvStats").innerHTML = '<div class="stat"><div class="k">Nicht abgeschlossen</div>' +
+        '<div class="v">' + eur2(r.alvVoll) + '</div><div class="s">würde sie je Monat kosten</div></div>';
+      $("alvNote").innerHTML = "<b>Die Frist ist der Knackpunkt:</b> Der Antrag muss binnen " +
+        "drei Monaten nach Aufnahme der selbstständigen Tätigkeit gestellt werden, und es " +
+        "müssen in den 30 Monaten davor mindestens zwölf Monate Versicherungspflicht oder " +
+        "Leistungsbezug liegen. Danach ist der Zugang endgültig verschlossen.";
+      return;
+    }
+    const a = algSchaetzung(state);
+    const breakEvenTage = a.algMonat > 0 ? (r.alvJahr / a.algMonat) * 30 : 0;
+    $("alvStats").innerHTML =
+      '<div class="stat"><div class="k">Beitrag je Monat</div><div class="v">' + eur2(r.alvMonat) +
+        '</div><div class="s">' + (state.alvGruender ? "halber Beitrag, Gründerermäßigung" : "2,6 % der Bezugsgröße") + '</div></div>' +
+      '<div class="stat"><div class="k">Geschätztes ALG I</div><div class="v">' + eur(a.algMonat) +
+        '</div><div class="s">je Monat, Leistungssatz ' + pct(a.satz) + '</div></div>' +
+      '<div class="stat"><div class="k">Break-even</div><div class="v">' + Math.round(breakEvenTage) +
+        ' Tage</div><div class="s">Leistungsbezug je Beitragsjahr</div></div>';
+    $("alvNote").innerHTML = "Bemessen wird nicht dein Gewinn, sondern fiktiv " +
+      eur(a.monatBrutto) + " brutto im Monat nach § 152 SGB III. <b>Der Anspruch entsteht " +
+      "nur, wenn du die Selbstständigkeit vollständig aufgibst</b> — nicht, wenn sie " +
+      "schlecht läuft. Steuerlich wirkt der Beitrag nicht: Der Höchstbetrag für sonstige " +
+      "Vorsorgeaufwendungen ist durch Kranken- und Pflegeversicherung längst ausgeschöpft.";
+  }
+
+  /* ================= Belastungskurve ================= */
+  const CW = 720, CH = 300, M = { t: 16, r: 16, b: 50, l: 46 };
+  let curvePts = [];
+
+  function renderCurve(r) {
+    const quote = state.umsatz > 0 ? state.ausgaben / state.umsatz : 0;
+    const min = 1000, max = 25000, n = 49;
+    const pts = [];
+    for (let k = 0; k < n; k++) {
+      const u = min + (max - min) * k / (n - 1);
+      const res = rechne(Object.assign({}, state, { umsatz: u, ausgaben: u * quote }), false);
+      pts.push({ u: u, q: res.gewinn > 0 ? (res.steuern + res.sozial) / res.gewinn : 0, netto: res.netto / 12 });
+    }
+    curvePts = pts;
+
+    const peak = Math.max.apply(null, pts.map(p => p.q));
+    const yMax = Math.min(1.2, Math.max(.6, Math.ceil(peak * 10) / 10));
+    const x = u => M.l + (u - min) / (max - min) * (CW - M.l - M.r);
+    const y = q => M.t + (1 - Math.min(q, yMax) / yMax) * (CH - M.t - M.b);
+
+    let g = "";
+    for (let t = 0; t <= yMax + .001; t += .2) {
+      const yy = y(t);
+      g += '<line x1="' + M.l + '" y1="' + yy + '" x2="' + (CW - M.r) + '" y2="' + yy +
+           '" stroke="var(--border)" stroke-width="1"/>' +
+           '<text x="' + (M.l - 8) + '" y="' + (yy + 4) + '" text-anchor="end" font-size="11" ' +
+           'font-family="IBM Plex Mono, monospace" fill="var(--ink-3)">' + Math.round(t * 100) + '%</text>';
+    }
+    [5000, 10000, 15000, 20000, 25000].forEach(u => {
+      g += '<text x="' + x(u) + '" y="' + (CH - 28) + '" text-anchor="middle" font-size="11" ' +
+           'font-family="IBM Plex Mono, monospace" fill="var(--ink-3)">' + (u / 1000) + '.000 €</text>';
+    });
+
+    const d = pts.map((p, k) => (k ? "L" : "M") + x(p.u).toFixed(1) + " " + y(p.q).toFixed(1)).join(" ");
+    g += '<path d="' + d + '" fill="none" stroke="var(--cat-sozial)" stroke-width="2" ' +
+         'stroke-linejoin="round" stroke-linecap="round"/>';
+
+    const cur = state.umsatz > 0 ? r : null;
+    if (cur && state.umsatz >= min && state.umsatz <= max) {
+      const q = cur.gewinn > 0 ? (cur.steuern + cur.sozial) / cur.gewinn : 0;
+      const px = x(state.umsatz);
+      const py = Math.max(M.t, Math.min(y(q), CH - M.b));
+      const labelY = py < M.t + 26 ? py + 22 : py - 12;
+      g += '<line x1="' + px + '" y1="' + M.t + '" x2="' + px + '" y2="' + (CH - M.b) +
+           '" stroke="var(--accent)" stroke-width="1" stroke-dasharray="3 3"/>' +
+           '<circle cx="' + px + '" cy="' + py + '" r="6" fill="var(--cat-sozial)" ' +
+           'stroke="var(--surface)" stroke-width="2"/>' +
+           '<text x="' + (px + (px > CW * .7 ? -12 : 12)) + '" y="' + labelY +
+           '" text-anchor="' + (px > CW * .7 ? "end" : "start") + '" font-size="12.5" font-weight="600" ' +
+           'font-family="IBM Plex Mono, monospace" fill="var(--ink)">' + pct(q) +
+           (q > yMax ? " (über der Skala)" : "") + '</text>';
+    }
+    g += '<line x1="' + M.l + '" y1="' + (CH - M.b) + '" x2="' + (CW - M.r) + '" y2="' + (CH - M.b) +
+         '" stroke="var(--border-strong)" stroke-width="1"/>';
+    g += '<text x="' + ((M.l + CW - M.r) / 2) + '" y="' + (CH - 6) + '" text-anchor="middle" font-size="11" ' +
+         'letter-spacing="1" font-family="IBM Plex Sans Condensed, sans-serif" fill="var(--ink-3)">' +
+         'UMSATZ JE MONAT</text>';
+    $("curve").innerHTML = g;
+
+    $("curveTable").innerHTML = pts.filter((p, k) => k % 6 === 0)
+      .map(p => "<tr><td>" + eur(p.u) + "</td><td>" + pct(p.q) + "</td><td>" + eur(p.netto) + "</td></tr>")
+      .join("");
+  }
+
+  const chartEl = $("curve"), tipEl = $("tip");
+  function onMove(ev) {
+    if (!curvePts.length) return;
+    const box = chartEl.getBoundingClientRect();
+    const cx = ev.clientX !== undefined ? ev.clientX : (ev.touches && ev.touches[0].clientX);
+    if (cx === undefined) return;
+    const rel = (cx - box.left) / box.width * CW;
+    const min = 1000, max = 25000;
+    const u = min + (rel - M.l) / (CW - M.l - M.r) * (max - min);
+    let best = curvePts[0];
+    curvePts.forEach(p => { if (Math.abs(p.u - u) < Math.abs(best.u - u)) best = p; });
+    tipEl.innerHTML = eur(best.u) + " Umsatz<br>" + pct(best.q) + " Abgaben<br>" + eur(best.netto) + " netto";
+    tipEl.style.left = ((M.l + (best.u - min) / (max - min) * (CW - M.l - M.r)) / CW * box.width) + "px";
+    tipEl.style.top = (box.height * .45) + "px";
+    tipEl.style.opacity = "1";
+  }
+  chartEl.addEventListener("mousemove", onMove);
+  chartEl.addEventListener("touchmove", onMove, { passive: true });
+  chartEl.addEventListener("mouseleave", () => { tipEl.style.opacity = "0"; });
+  chartEl.addEventListener("touchend", () => { tipEl.style.opacity = "0"; });
+
+  /* ================= Render ================= */
+  function render() {
+    syncControls();
+    const r = rechne(state, true);
+
+    const defizit = r.netto < 0;
+    $("nettoMonat").textContent = eur(r.netto / 12);
+    $("nettoMonat").style.color = defizit ? "var(--cat-steuern)" : "var(--cat-netto)";
+    $("nettoJahr").textContent = eur(r.netto);
+    $("gewinnJahr").textContent = eur(r.gewinn);
+    $("warn").hidden = !defizit;
+
+    const base = Math.max(r.gewinn, 1);
+    const parts = [
+      ["barSozial", "lgSozial", r.sozial],
+      ["barSteuern", "lgSteuern", r.steuern],
+      ["barNetto", "lgNetto", Math.max(0, r.netto)]
+    ];
+    parts.forEach(([barId, lgId, v], k) => {
+      const share = Math.max(0, v) / base;
+      const el = $(barId);
+      el.style.flexGrow = String(Math.max(share, .001));
+      el.textContent = share > .11 ? pct(share) : "";
+      // Der Balken zeigt kein negatives Netto, die Legende nennt den echten Wert.
+      $(lgId).textContent = eur((k === 2 ? r.netto : v) / 12) + "/M";
+    });
+
+    $("chipQuote").textContent = r.gewinn > 0 ? pct((r.steuern + r.sozial) / r.gewinn) : "—";
+    $("chipGrenz").textContent = r.grenz ? eur(r.grenz.netto) : "—";
+    $("chipUmsatz").textContent = r.umsatz > 0 ? pct(r.netto / r.umsatz) : "—";
+
+    renderLedger(r);
+    renderAlv(r);
+    renderCurve(r);
+    save();
+  }
+
+  render();
+})();
+</script>
+
+</body>
+</html>
