@@ -1,0 +1,179 @@
+datum;km_stand_start;km_stand_ende;kategorie;ziel;zweck;geschaeftspartner
+2026-01-05;41230;41270;dienstreise;Kempten, Rathausplatz 1;Beratungstermin vor Ort;Rieger & Partner GmbH
+2026-01-08;41270;41325;privat;;;
+2026-01-09;41325;41353;privat;;;
+2026-01-10;41353;41493;privat;;;
+2026-01-14;41493;41583;dienstreise;Memmingen, Bahnhofstr. 5;Vertragsverhandlung;Allgaeu Technik GmbH
+2026-01-15;41583;41595;privat;;;
+2026-01-17;41595;41915;privat;;;
+2026-01-20;41915;42125;dienstreise;Augsburg, Maximilianstr. 8;Projekt-Workshop;Nordlicht KG
+2026-01-23;42125;42171;privat;;;
+2026-01-24;42171;42189;privat;;;
+2026-01-25;42189;42399;privat;;;
+2026-01-26;42399;42444;dienstreise;Kempten, Industriestr. 22;Jour fixe Projektsteuerung;Sued Handels GmbH
+2026-01-29;42444;42519;privat;;;
+2026-01-31;42519;42552;privat;;;
+2026-02-04;42552;42812;dienstreise;Muenchen, Leopoldstr. 12;Mandantengespraech;Beispiel GmbH
+2026-02-05;42812;43292;privat;;;
+2026-02-06;43292;43316;privat;;;
+2026-02-08;43316;43378;privat;;;
+2026-02-09;43378;43438;dienstreise;Sonthofen, Alpenstr. 3;Vor-Ort-Analyse;Bergwerk Systems e.K.
+2026-02-12;43438;43533;privat;;;
+2026-02-14;43533;43588;privat;;;
+2026-02-15;43588;43616;privat;;;
+2026-02-16;43616;43806;dienstreise;Ulm, Neue Str. 44;Angebotspraesentation;Muster AG
+2026-02-19;43806;43946;privat;;;
+2026-02-22;43946;43958;privat;;;
+2026-02-23;43958;44198;dienstreise;Friedrichshafen, Messegelaende;Fachmesse, Neukundenkontakte;diverse Aussteller
+2026-02-26;44198;44518;privat;;;
+2026-03-01;44518;44564;privat;;;
+2026-03-03;44564;44604;dienstreise;Kempten, Rathausplatz 1;Beratungstermin vor Ort;Rieger & Partner GmbH
+2026-03-05;44604;44622;privat;;;
+2026-03-07;44622;44832;privat;;;
+2026-03-08;44832;44907;privat;;;
+2026-03-11;44907;44997;dienstreise;Memmingen, Bahnhofstr. 5;Vertragsverhandlung;Allgaeu Technik GmbH
+2026-03-12;44997;45030;privat;;;
+2026-03-13;45030;45510;privat;;;
+2026-03-18;45510;45720;dienstreise;Augsburg, Maximilianstr. 8;Projekt-Workshop;Nordlicht KG
+2026-03-19;45720;45744;privat;;;
+2026-03-20;45744;45806;privat;;;
+2026-03-24;45806;45851;dienstreise;Kempten, Industriestr. 22;Jour fixe Projektsteuerung;Sued Handels GmbH
+2026-03-28;45851;45946;privat;;;
+2026-03-29;45946;46001;privat;;;
+2026-04-01;46001;46261;dienstreise;Muenchen, Leopoldstr. 12;Mandantengespraech;Beispiel GmbH
+2026-04-03;46261;46289;privat;;;
+2026-04-04;46289;46429;privat;;;
+2026-04-05;46429;46441;privat;;;
+2026-04-06;46441;46501;dienstreise;Sonthofen, Alpenstr. 3;Vor-Ort-Analyse;Bergwerk Systems e.K.
+2026-04-10;46501;46821;privat;;;
+2026-04-11;46821;46867;privat;;;
+2026-04-12;46867;46885;privat;;;
+2026-04-15;46885;47075;dienstreise;Ulm, Neue Str. 44;Angebotspraesentation;Muster AG
+2026-04-16;47075;47285;privat;;;
+2026-04-17;47285;47360;privat;;;
+2026-04-19;47360;47393;privat;;;
+2026-04-22;47393;47633;dienstreise;Friedrichshafen, Messegelaende;Fachmesse, Neukundenkontakte;diverse Aussteller
+2026-04-24;47633;48113;privat;;;
+2026-04-26;48113;48137;privat;;;
+2026-04-29;48137;48177;dienstreise;Kempten, Rathausplatz 1;Beratungstermin vor Ort;Rieger & Partner GmbH
+2026-04-30;48177;48239;privat;;;
+2026-05-03;48239;48334;privat;;;
+2026-05-05;48334;48424;dienstreise;Memmingen, Bahnhofstr. 5;Vertragsverhandlung;Allgaeu Technik GmbH
+2026-05-09;48424;48479;privat;;;
+2026-05-10;48479;48507;privat;;;
+2026-05-11;48507;48717;dienstreise;Augsburg, Maximilianstr. 8;Projekt-Workshop;Nordlicht KG
+2026-05-15;48717;48857;privat;;;
+2026-05-16;48857;48869;privat;;;
+2026-05-19;48869;48914;dienstreise;Kempten, Industriestr. 22;Jour fixe Projektsteuerung;Sued Handels GmbH
+2026-05-21;48914;49234;privat;;;
+2026-05-23;49234;49280;privat;;;
+2026-05-27;49280;49540;dienstreise;Muenchen, Leopoldstr. 12;Mandantengespraech;Beispiel GmbH
+2026-05-28;49540;49558;privat;;;
+2026-05-29;49558;49768;privat;;;
+2026-05-31;49768;49843;privat;;;
+2026-06-03;49843;49903;dienstreise;Sonthofen, Alpenstr. 3;Vor-Ort-Analyse;Bergwerk Systems e.K.
+2026-06-05;49903;49936;privat;;;
+2026-06-06;49936;50416;privat;;;
+2026-06-07;50416;50440;privat;;;
+2026-06-08;50440;50630;dienstreise;Ulm, Neue Str. 44;Angebotspraesentation;Muster AG
+2026-06-11;50630;50692;privat;;;
+2026-06-14;50692;50787;privat;;;
+2026-06-17;50787;51027;dienstreise;Friedrichshafen, Messegelaende;Fachmesse, Neukundenkontakte;diverse Aussteller
+2026-06-19;51027;51082;privat;;;
+2026-06-21;51082;51110;privat;;;
+2026-06-24;51110;51150;dienstreise;Kempten, Rathausplatz 1;Beratungstermin vor Ort;Rieger & Partner GmbH
+2026-06-25;51150;51290;privat;;;
+2026-06-27;51290;51302;privat;;;
+2026-06-30;51302;51392;dienstreise;Memmingen, Bahnhofstr. 5;Vertragsverhandlung;Allgaeu Technik GmbH
+2026-07-04;51392;51712;privat;;;
+2026-07-05;51712;51758;privat;;;
+2026-07-07;51758;51968;dienstreise;Augsburg, Maximilianstr. 8;Projekt-Workshop;Nordlicht KG
+2026-07-09;51968;51986;privat;;;
+2026-07-11;51986;52196;privat;;;
+2026-07-12;52196;52271;privat;;;
+2026-07-14;52271;52316;dienstreise;Kempten, Industriestr. 22;Jour fixe Projektsteuerung;Sued Handels GmbH
+2026-07-16;52316;52349;privat;;;
+2026-07-18;52349;52829;privat;;;
+2026-07-19;52829;52853;privat;;;
+2026-07-20;52853;53113;dienstreise;Muenchen, Leopoldstr. 12;Mandantengespraech;Beispiel GmbH
+2026-07-24;53113;53175;privat;;;
+2026-07-25;53175;53270;privat;;;
+2026-07-26;53270;53325;privat;;;
+2026-07-28;53325;53385;dienstreise;Sonthofen, Alpenstr. 3;Vor-Ort-Analyse;Bergwerk Systems e.K.
+2026-07-30;53385;53413;privat;;;
+2026-08-01;53413;53553;privat;;;
+2026-08-05;53553;53743;dienstreise;Ulm, Neue Str. 44;Angebotspraesentation;Muster AG
+2026-08-07;53743;53755;privat;;;
+2026-08-08;53755;54075;privat;;;
+2026-08-09;54075;54121;privat;;;
+2026-08-11;54121;54361;dienstreise;Friedrichshafen, Messegelaende;Fachmesse, Neukundenkontakte;diverse Aussteller
+2026-08-13;54361;54379;privat;;;
+2026-08-16;54379;54589;privat;;;
+2026-08-17;54589;54629;dienstreise;Kempten, Rathausplatz 1;Beratungstermin vor Ort;Rieger & Partner GmbH
+2026-08-20;54629;54704;privat;;;
+2026-08-21;54704;54737;privat;;;
+2026-08-22;54737;55217;privat;;;
+2026-08-25;55217;55307;dienstreise;Memmingen, Bahnhofstr. 5;Vertragsverhandlung;Allgaeu Technik GmbH
+2026-08-29;55307;55331;privat;;;
+2026-08-30;55331;55393;privat;;;
+2026-09-01;55393;55603;dienstreise;Augsburg, Maximilianstr. 8;Projekt-Workshop;Nordlicht KG
+2026-09-03;55603;55698;privat;;;
+2026-09-06;55698;55753;privat;;;
+2026-09-08;55753;55798;dienstreise;Kempten, Industriestr. 22;Jour fixe Projektsteuerung;Sued Handels GmbH
+2026-09-10;55798;55826;privat;;;
+2026-09-13;55826;55966;privat;;;
+2026-09-14;55966;56226;dienstreise;Muenchen, Leopoldstr. 12;Mandantengespraech;Beispiel GmbH
+2026-09-18;56226;56238;privat;;;
+2026-09-20;56238;56558;privat;;;
+2026-09-23;56558;56618;dienstreise;Sonthofen, Alpenstr. 3;Vor-Ort-Analyse;Bergwerk Systems e.K.
+2026-09-25;56618;56664;privat;;;
+2026-09-26;56664;56682;privat;;;
+2026-09-28;56682;56872;dienstreise;Ulm, Neue Str. 44;Angebotspraesentation;Muster AG
+2026-10-01;56872;57082;privat;;;
+2026-10-04;57082;57157;privat;;;
+2026-10-05;57157;57397;dienstreise;Friedrichshafen, Messegelaende;Fachmesse, Neukundenkontakte;diverse Aussteller
+2026-10-08;57397;57430;privat;;;
+2026-10-09;57430;57910;privat;;;
+2026-10-11;57910;57934;privat;;;
+2026-10-14;57934;57974;dienstreise;Kempten, Rathausplatz 1;Beratungstermin vor Ort;Rieger & Partner GmbH
+2026-10-15;57974;58036;privat;;;
+2026-10-16;58036;58131;privat;;;
+2026-10-17;58131;58186;privat;;;
+2026-10-20;58186;58276;dienstreise;Memmingen, Bahnhofstr. 5;Vertragsverhandlung;Allgaeu Technik GmbH
+2026-10-22;58276;58304;privat;;;
+2026-10-23;58304;58444;privat;;;
+2026-10-27;58444;58654;dienstreise;Augsburg, Maximilianstr. 8;Projekt-Workshop;Nordlicht KG
+2026-10-29;58654;58666;privat;;;
+2026-10-31;58666;58986;privat;;;
+2026-11-01;58986;59032;privat;;;
+2026-11-03;59032;59077;dienstreise;Kempten, Industriestr. 22;Jour fixe Projektsteuerung;Sued Handels GmbH
+2026-11-05;59077;59095;privat;;;
+2026-11-06;59095;59305;privat;;;
+2026-11-08;59305;59380;privat;;;
+2026-11-11;59380;59640;dienstreise;Muenchen, Leopoldstr. 12;Mandantengespraech;Beispiel GmbH
+2026-11-12;59640;59673;privat;;;
+2026-11-13;59673;60153;privat;;;
+2026-11-15;60153;60177;privat;;;
+2026-11-16;60177;60237;dienstreise;Sonthofen, Alpenstr. 3;Vor-Ort-Analyse;Bergwerk Systems e.K.
+2026-11-19;60237;60299;privat;;;
+2026-11-20;60299;60394;privat;;;
+2026-11-21;60394;60449;privat;;;
+2026-11-24;60449;60639;dienstreise;Ulm, Neue Str. 44;Angebotspraesentation;Muster AG
+2026-11-28;60639;60667;privat;;;
+2026-11-29;60667;60807;privat;;;
+2026-11-30;60807;61047;dienstreise;Friedrichshafen, Messegelaende;Fachmesse, Neukundenkontakte;diverse Aussteller
+2026-12-03;61047;61059;privat;;;
+2026-12-04;61059;61379;privat;;;
+2026-12-05;61379;61425;privat;;;
+2026-12-07;61425;61465;dienstreise;Kempten, Rathausplatz 1;Beratungstermin vor Ort;Rieger & Partner GmbH
+2026-12-10;61465;61483;privat;;;
+2026-12-11;61483;61693;privat;;;
+2026-12-16;61693;61783;dienstreise;Memmingen, Bahnhofstr. 5;Vertragsverhandlung;Allgaeu Technik GmbH
+2026-12-17;61783;61858;privat;;;
+2026-12-18;61858;61891;privat;;;
+2026-12-19;61891;62371;privat;;;
+2026-12-22;62371;62581;dienstreise;Augsburg, Maximilianstr. 8;Projekt-Workshop;Nordlicht KG
+2026-12-24;62581;62605;privat;;;
+2026-12-26;62605;62667;privat;;;
+2026-12-27;62667;62762;privat;;;
+2026-12-28;62762;62807;dienstreise;Kempten, Industriestr. 22;Jour fixe Projektsteuerung;Sued Handels GmbH

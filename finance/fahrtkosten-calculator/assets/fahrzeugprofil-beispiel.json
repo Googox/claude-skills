@@ -1,0 +1,52 @@
+{
+  "_hinweis": "Alle Kostenangaben als BRUTTO-Jahreswerte (inkl. USt), sofern keine umsatzsteuerliche Zuordnung erfolgt ist. Siehe references/umsatzsteuer-leasing.md.",
+  "unternehmen": {
+    "name": "Mustermann Consulting",
+    "inhaber": "Max Mustermann",
+    "steuernummer": "123/456/78901"
+  },
+  "fahrzeug": {
+    "bezeichnung": "BMW 320d Touring",
+    "kennzeichen": "OA-MM 123",
+    "antrieb": "diesel",
+    "halter": "privat (Leasingnehmer als Privatperson)"
+  },
+  "leasing": {
+    "monatsrate": 549.0,
+    "sonderzahlung": 5000.0,
+    "laufzeit_monate": 36,
+    "vertragsbeginn": "2026-01-01",
+    "inklusiv_km_pa": 15000,
+    "mehrkilometer_cent": 12.0
+  },
+  "fixkosten_pa": {
+    "versicherung": 780.0,
+    "kfz_steuer": 190.0,
+    "stellplatz_garage": 0.0,
+    "schutzbrief_gap": 96.0,
+    "hauptuntersuchung": 0.0,
+    "sonstige_fixkosten": 0.0
+  },
+  "variable_kosten_pa": {
+    "kraftstoff_strom": 2400.0,
+    "wartung_inspektion": 480.0,
+    "reifen": 300.0,
+    "reparaturen": 0.0,
+    "pflege_waesche": 120.0,
+    "sonstige_variable": 0.0
+  },
+  "fahrleistung": {
+    "km_stand_jahresbeginn": 41230,
+    "km_stand_jahresende": 62807
+  },
+  "steuer": {
+    "jahr": 2026,
+    "pauschale_dienstreise_eur_km": 0.3,
+    "entfernungspauschale_bis20_eur_km": 0.38,
+    "entfernungspauschale_ab21_eur_km": 0.38,
+    "betriebsstaette": {
+      "tage": 0,
+      "entfernung_km_einfach": 0
+    }
+  }
+}
