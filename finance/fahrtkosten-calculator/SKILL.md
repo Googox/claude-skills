@@ -156,6 +156,19 @@ vollen Kilometersatz anzusetzen. Der Rechner trennt das automatisch.
 | Stärke | schnelles Durchspielen von Szenarien, Schwellen auf einen Blick | echtes Fahrtenbuch, Lückenprüfung, Monatsabrechnung, JSON-Export |
 | Gedacht für | „Was passiert, wenn ich 3.000 km mehr dienstlich fahre?" | die tatsächliche Jahresabrechnung mit Belegen |
 
+Für alles, was unterschrieben oder verschickt wird, gibt es zusätzlich das
+**Word-Formular** `assets/Eigenbeleg-Fahrzeugkosten.docx`:
+
+| Seite | Inhalt |
+|---|---|
+| 1 | Eigenbeleg mit Kopfdaten, Rechenblöcken A bis D, Rechtsgrundlage, Buchungssatz, Anlagen-Checkliste, Unterschriftszeile |
+| 2 | Kostenaufstellung als Anlage — alle Kostenpositionen einzeln, mit Spalte für die Belegnummer |
+| 3 | Fahrtenbuch-Erfassungsbogen im Querformat, 22 Zeilen (A4 quer) |
+
+Ausfüllbar von Hand nach dem Ausdrucken oder direkt in Word, dann als PDF an
+den Steuerberater. Die Rechenwege stehen als Hinweis neben jedem Feld, damit die
+Zahlen auch ohne den Rechner nachvollziehbar bleiben.
+
 Beide rechnen identisch — dieselben Formeln, dieselben Sätze. Die Oberfläche
 speichert Eingaben nur im eigenen Browser, es wird nichts übertragen.
 
@@ -230,10 +243,12 @@ python3 ../steuerrechner-selbststaendigkeit/scripts/steuerrechner.py \
 | Datei | Zweck |
 |---|---|
 | `scripts/km_kostenrechner.py` | Rechner, Fahrtenbuch-Prüfung, Eigenbeleg-Generator |
+| `scripts/build_word_formular.js` | Erzeugt das Word-Formular neu (`node scripts/build_word_formular.js`, benötigt `npm install docx`) |
 | `assets/kilometersatz-rechner.html` | Interaktive Oberfläche — lokal im Browser öffnen, rechnet live, speichert Eingaben im Browser |
 | `assets/fahrzeugprofil-beispiel.json` | Vorlage für die Kostenerfassung |
 | `assets/fahrtenbuch-vorlage.csv` | Fahrtenbuch-Struktur mit Beispieljahr |
-| `assets/eigenbeleg-vorlage.md` | Eigenbeleg zum Ausfüllen von Hand |
+| `assets/Eigenbeleg-Fahrzeugkosten.docx` | **Word-Formular** — drei Seiten zum Ausfüllen von Hand oder am Rechner, per Mail versendbar |
+| `assets/eigenbeleg-vorlage.md` | Eigenbeleg als Markdown-Fassung |
 | `assets/jahresabrechnung-checkliste.md` | Belegpaket für den Steuerberater |
 | `references/rechtsgrundlagen.md` | Nutzungseinlage, Wahlrechte, Rechtsprechung |
 | `references/gesamtkosten-katalog.md` | Was in den km-Satz gehört — und was nicht |
