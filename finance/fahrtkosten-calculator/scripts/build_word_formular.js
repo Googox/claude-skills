@@ -50,6 +50,9 @@ const FELD = (name, o = {}) => new TextRun({
   text: "@@T|" + name + "@@", font: FONT,
   size: o.size || 20, bold: !!o.bold, color: o.color || INK
 });
+const FELDU = (name, o = {}) => new TextRun({
+  text: "@@U|" + name + "@@", font: FONT, size: o.size || 20, color: o.color || INK
+});
 const BOX = (name) => new TextRun({ text: "@@C|" + name + "@@", font: FONT, size: 20 });
 
 const feldAbsatz = (name, o = {}) => new Paragraph({
@@ -118,21 +121,29 @@ const rechenZeile = (label, formel, wL, wF, wB, o = {}) => new TableRow({
 });
 
 // Leere Erfassungszeile fuer Tabellen mit Rahmen
-const leerZeile = (widths, hoehe = 120, namen = []) => new TableRow({
+const VLINE = { style: BorderStyle.SINGLE, size: 2, color: SOFT };
+
+const leerZeile = (widths, hoehe = 120, namen = [], vlines = false) => new TableRow({
   children: widths.map((w, i) => cell(feldAbsatz(namen[i], { after: 0, size: 18 }), {
     width: w,
-    borders: { top: NONE, left: NONE, right: NONE, bottom: { style: BorderStyle.SINGLE, size: 4, color: SOFT } },
+    borders: {
+      top: NONE, left: NONE,
+      right: vlines && i < widths.length - 1 ? VLINE : NONE,
+      bottom: { style: BorderStyle.SINGLE, size: 4, color: SOFT }
+    },
     mt: hoehe / 2, mb: hoehe / 2
   }))
 });
 
-const kopfZeile = (labels, widths, alignRight = []) => new TableRow({
+const kopfZeile = (labels, widths, alignRight = [], vlines = false) => new TableRow({
   tableHeader: true,
   children: labels.map((l, i) => cell(
     p(l, { size: 15, bold: true, color: INK3, caps: true, spacing: 16, after: 0,
            align: alignRight.includes(i) ? AlignmentType.RIGHT : undefined }),
     { width: widths[i], shade: SHADE,
-      borders: { ...noBorders, bottom: { style: BorderStyle.SINGLE, size: 6, color: LINE } },
+      borders: { top: NONE, left: NONE,
+                 right: vlines && i < labels.length - 1 ? VLINE : NONE,
+                 bottom: { style: BorderStyle.SINGLE, size: 6, color: LINE } },
       mt: 90, mb: 90 }
   ))
 });
@@ -175,9 +186,9 @@ const seite1 = [
   ], [W_L, W_F]),
 
   h2("A · Gesamtkosten und Fahrleistung"),
-  hint("Beträge aus der Kostenaufstellung auf Seite 2 übernehmen. Die Leasingsonderzahlung geht nur anteilig ein, verteilt über die Vertragslaufzeit."),
+  hint("Beträge aus der beiliegenden Kostenaufstellung übernehmen. Die Leasingsonderzahlung geht nur anteilig ein, verteilt über die Vertragslaufzeit."),
   table([
-    rechenZeile("Fahrzeug-Gesamtkosten des Jahres", "Summe Seite 2", 4400, 2900, 2338, { name: "aKosten" }),
+    rechenZeile("Fahrzeug-Gesamtkosten des Jahres", "Summe der Anlage Kostenaufstellung", 4400, 2900, 2338, { name: "aKosten" }),
     rechenZeile("Kilometerstand am 31. Dezember", "", 4400, 2900, 2338, { name: "aKmEnde" }),
     rechenZeile("Kilometerstand am 1. Januar", "abziehen", 4400, 2900, 2338, { name: "aKmStart" }),
     rechenZeile("Gesamtfahrleistung des Jahres", "Differenz der Kilometerstände", 4400, 2900, 2338, { bold: true, name: "aGesamtKm" })
@@ -192,13 +203,18 @@ const seite1 = [
   new Paragraph({
     children: [
       t("Angewandte Methode:    ", { size: 20 }),
-      BOX("mIndiv"), t("  individueller Satz        ", { size: 20 }),
-      BOX("mPausch"), t("  Pauschale 0,30 EUR", { size: 20 }),
-      t("          ", { size: 20 }),
-      BOX("mVorl"), t("  vorläufiger Satz    ", { size: 18, color: INK2 }),
-      BOX("mEndg"), t("  endgültiger Satz", { size: 18, color: INK2 })
+      BOX("mIndiv"), t("  individueller Satz          ", { size: 20 }),
+      BOX("mPausch"), t("  Pauschale 0,30 EUR", { size: 20 })
     ],
-    spacing: { before: 120, after: 80 }
+    spacing: { before: 120, after: 60 }
+  }),
+  new Paragraph({
+    children: [
+      t("Stand des Satzes:        ", { size: 20 }),
+      BOX("mVorl"), t("  vorläufig, Korrektur zum Jahresende          ", { size: 20 }),
+      BOX("mEndg"), t("  endgültig", { size: 20 })
+    ],
+    spacing: { after: 80 }
   }),
 
   h2("C · Betrieblich gefahrene Kilometer"),
@@ -218,7 +234,7 @@ const seite1 = [
   new Paragraph({
     children: [
       t("Betrieblicher Nutzungsanteil: ", { size: 17, color: INK2 }),
-      FELD("dAnteil", { size: 17 }),
+      FELDU("dAnteil", { size: 17 }),
       t(" Prozent.  Über 50 Prozent gilt dieses Modell nicht mehr — dann greift der volle Kostenabzug mit Versteuerung der Privatnutzung. Vor der Abrechnung mit dem Steuerberater klären.", { size: 17, color: INK2 })
     ],
     spacing: { after: 100, line: 240 }
@@ -242,7 +258,7 @@ const seite1 = [
 
   h2("Anlagen"),
   new Paragraph({ children: [BOX("anl1"), t("   Fahrtenbuch des Abrechnungszeitraums", { size: 19 })], spacing: { after: 70 } }),
-  new Paragraph({ children: [BOX("anl2"), t("   Kostenaufstellung mit Einzelbelegen (Seite 2)", { size: 19 })], spacing: { after: 70 } }),
+  new Paragraph({ children: [BOX("anl2"), t("   Kostenaufstellung mit Einzelbelegen", { size: 19 })], spacing: { after: 70 } }),
   new Paragraph({ children: [BOX("anl3"), t("   Kilometerstandsnachweis Jahresanfang und Jahresende", { size: 19 })], spacing: { after: 70 } }),
   new Paragraph({ children: [BOX("anl4"), t("   Leasingvertrag mit Sonderzahlung und Laufzeit", { size: 19 })], spacing: { after: 260 } }),
 
@@ -273,8 +289,8 @@ const kostenZeile = (pos, note, name) => {
     cell(note
       ? [p(pos, { size: 19, after: 10 }), new Paragraph({ children: [t(note, { size: 15, color: INK3 })], spacing: { after: 10 } })]
       : p(pos, { size: 19, after: 30 }),
-      { width: KW[0], borders: { ...noBorders, bottom: { style: BorderStyle.SINGLE, size: 4, color: SOFT } }, mt: 80, mb: 80 }),
-    cell(feldAbsatz(name + "B", { after: 30, align: AlignmentType.RIGHT }), { width: KW[1], borders: { ...noBorders, bottom: { style: BorderStyle.SINGLE, size: 4, color: SOFT } }, mt: 80, mb: 80 }),
+      { width: KW[0], borders: { top: NONE, left: NONE, right: VLINE, bottom: { style: BorderStyle.SINGLE, size: 4, color: SOFT } }, mt: 80, mb: 80 }),
+    cell(feldAbsatz(name + "B", { after: 30, align: AlignmentType.RIGHT }), { width: KW[1], borders: { top: NONE, left: NONE, right: VLINE, bottom: { style: BorderStyle.SINGLE, size: 4, color: SOFT } }, mt: 80, mb: 80 }),
     cell(feldAbsatz(name + "N", { after: 30, size: 18 }), { width: KW[2], borders: { ...noBorders, bottom: { style: BorderStyle.SINGLE, size: 4, color: SOFT } }, mt: 80, mb: 80 })
   ]
   });
@@ -283,7 +299,7 @@ const kostenZeile = (pos, note, name) => {
 const seite2 = [
   h1("Kostenaufstellung"),
   new Paragraph({
-    children: [t("Anlage zum Eigenbeleg · Kalenderjahr ", { size: 20, color: INK2 }), FELD("kJahr", { size: 20, color: INK2 })],
+    children: [t("Anlage zum Eigenbeleg · Kalenderjahr ", { size: 20, color: INK2 }), FELDU("kJahr", { size: 20, color: INK2 })],
     spacing: { after: 140 },
     border: { bottom: { style: BorderStyle.SINGLE, size: 6, color: INK } }
   }),
@@ -291,7 +307,7 @@ const seite2 = [
   hint("Alle Beträge des Kalenderjahres, einheitlich brutto oder einheitlich netto. Jede Zeile braucht einen Beleg dahinter. Parkgebühren, Maut und Fährkosten gehören nicht hierher — sie sind Reisenebenkosten und zusätzlich in voller Höhe abziehbar."),
 
   table([
-    kopfZeile(["Position", "Betrag EUR", "Belege / Bemerkung"], KW, [1]),
+    kopfZeile(["Position", "Betrag EUR", "Belege / Bemerkung"], KW, [1], true),
     kostenZeile("Leasingraten", "Anzahl der Raten im Jahr × Monatsrate", "kLeas"),
     kostenZeile("Leasingsonderzahlung, Jahresanteil", "Sonderzahlung ÷ Laufzeit in Monaten × Monate im Jahr", "kSond"),
     kostenZeile("Kfz-Versicherung", "Haftpflicht und Kasko", "kVers"),
@@ -308,7 +324,7 @@ const seite2 = [
     kostenZeile("Sonstiges", "kSonst"),
     new TableRow({ children: [
       cell(p("Gesamtkosten des Jahres", { size: 20, bold: true, after: 30 }),
-        { width: KW[0], borders: { ...noBorders, top: { style: BorderStyle.SINGLE, size: 8, color: INK } }, mt: 110, mb: 60 }),
+        { width: KW[0], borders: { top: { style: BorderStyle.SINGLE, size: 8, color: INK }, left: NONE, right: VLINE, bottom: NONE }, mt: 110, mb: 60 }),
       cell(feldAbsatz("kSumme", { after: 30, bold: true, align: AlignmentType.RIGHT }),
         { width: KW[1], borders: { top: { style: BorderStyle.SINGLE, size: 8, color: INK }, left: NONE, right: NONE, bottom: { style: BorderStyle.SINGLE, size: 6, color: INK } }, mt: 110, mb: 60 }),
       cell(p("", { after: 30 }),
@@ -334,42 +350,38 @@ const seite2 = [
 // ===========================================================
 // SEITE 3 — FAHRTENBUCH (quer)
 // ===========================================================
-const FW = [1300, 1200, 1200, 900, 1600, 3400, 2870, 2100];
+const FW = [1250, 1150, 1150, 850, 1400, 3200, 2870, 2700];
 
 const seite3 = [
   h1("Fahrtenbuch"),
   new Paragraph({
     children: [
-      t("Erfassungsbogen · Monat ", { size: 20, color: INK2 }), FELD("fbMonat", { size: 20, color: INK2 }),
-      t("  Jahr ", { size: 20, color: INK2 }), FELD("fbJahr", { size: 20, color: INK2 }),
-      t("  ·  Kennzeichen ", { size: 20, color: INK2 }), FELD("fbKennz", { size: 20, color: INK2 })
+      t("Erfassungsbogen · Monat ", { size: 20, color: INK2 }), FELDU("fbMonat", { size: 20, color: INK2 }),
+      t("  Jahr ", { size: 20, color: INK2 }), FELDU("fbJahr", { size: 20, color: INK2 }),
+      t("  ·  Kennzeichen ", { size: 20, color: INK2 }), FELDU("fbKennz", { size: 20, color: INK2 })
     ],
     spacing: { after: 140 },
     border: { bottom: { style: BorderStyle.SINGLE, size: 6, color: INK } }
   }),
   spacer(140),
   new Paragraph({
-    children: [t("Zeitnah führen, am besten direkt nach der Fahrt. Der Endstand einer Fahrt ist der Startstand der nächsten — jede Lücke ist eine nicht erfasste Fahrt und macht den Einzelnachweis angreifbar. Privatfahrten brauchen nur die Kilometerangabe, müssen aber erfasst sein, sonst fehlt die Gesamtfahrleistung. Kategorie eintragen: D für Dienstreise, B für Betriebsstätte, P für privat.", { size: 17, color: INK2 })],
+    children: [t("Zeitnah führen, am besten direkt nach der Fahrt. Der Endstand einer Fahrt ist der Startstand der nächsten — jede Lücke ist eine nicht erfasste Fahrt und macht den Einzelnachweis angreifbar. Privatfahrten brauchen nur die Kilometerangabe, müssen aber erfasst sein, sonst fehlt die Gesamtfahrleistung. Kategorie eintragen: D für Dienstreise, B für Betriebsstätte, P für privat. Bei Dienstreisen sind Reiseziel mit Adresse, Reisezweck und aufgesuchter Geschäftspartner Pflicht — fehlt eine Angabe, kippt die Fahrt in die Privatnutzung. Bei Umwegen den Grund vermerken.", { size: 17, color: INK2 })],
+    spacing: { after: 150, line: 250 }
+  }),
+  new Paragraph({
+    children: [t("Dieser Bogen ist ein Erfassungshilfsmittel. Als steuerlich anerkanntes Fahrtenbuch gilt nur eine geschlossene, nachträglich nicht änderbare Form — gebundenes Papierbuch oder ein elektronisches Fahrtenbuch mit revisionssicherem Protokoll. Eine Tabellenkalkulation wird nicht anerkannt.", { size: 17, color: INK2 })],
     spacing: { after: 200, line: 250 }
   }),
 
   table([
-    kopfZeile(["Datum", "km Start", "km Ende", "km", "Kategorie", "Reiseziel mit Adresse", "Reisezweck", "Geschäftspartner"], FW, [1, 2, 3]),
-    ...Array.from({ length: 22 }, (_, i) => {
+    kopfZeile(["Datum", "km Start", "km Ende", "km", "Kategorie", "Reiseziel mit Adresse", "Reisezweck", "Partner"], FW, [1, 2, 3], true),
+    ...Array.from({ length: 12 }, (_, i) => {
       const n = String(i + 1).padStart(2, "0");
-      return leerZeile(FW, 190, ["d", "s", "e", "k", "c", "z", "w", "p"].map(sp => "fb" + n + sp));
+      return leerZeile(FW, 200, ["d", "s", "e", "k", "c", "z", "w", "p"].map(sp => "fb" + n + sp), true);
     })
   ], FW),
 
-  spacer(200),
-  new Paragraph({
-    children: [t("Pflichtangaben bei Dienstreisen: Datum, Kilometerstände, Reiseziel mit Adresse, Reisezweck und aufgesuchter Geschäftspartner. Fehlt eine davon, kippt die Fahrt in die Privatnutzung. Bei Umwegen den Grund vermerken.", { size: 17, color: INK2 })],
-    spacing: { after: 80, line: 250 }
-  }),
-  new Paragraph({
-    children: [t("Dieser Bogen ist ein Erfassungshilfsmittel. Als steuerlich anerkanntes Fahrtenbuch gilt nur eine geschlossene, nachträglich nicht änderbare Form — gebundenes Papierbuch oder ein elektronisches Fahrtenbuch mit revisionssicherem Protokoll. Eine Tabellenkalkulation wird nicht anerkannt.", { size: 17, color: INK2 })],
-    spacing: { after: 80, line: 250 }
-  })
+  spacer(120)
 ];
 
 // ===========================================================

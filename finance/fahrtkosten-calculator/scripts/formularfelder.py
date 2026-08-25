@@ -3,7 +3,8 @@
 formularfelder.py — wandelt die Platzhalter aus build_word_formular.js in echte
 Word-Formularfelder um und aktiviert den Formularschutz.
 
-  @@T|name@@  ->  FORMTEXT      (Texteingabefeld)
+  @@T|name@@  ->  FORMTEXT      (Texteingabefeld in einer Tabellenzelle)
+  @@U|name@@  ->  FORMTEXT      (Inline-Feld im Fliesstext, unterstrichen)
   @@C|name@@  ->  FORMCHECKBOX  (anklickbares Kontrollkaestchen)
 
 Zusaetzlich wird word/settings.xml mit
@@ -18,7 +19,7 @@ import shutil
 import sys
 import zipfile
 
-MARKER = re.compile(r'@@([TC])\|([A-Za-z0-9]+)@@')
+MARKER = re.compile(r'@@([TCU])\|([A-Za-z0-9]+)@@')
 
 SETTINGS = (
     '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n'
@@ -39,13 +40,25 @@ def ffdata(name, inhalt):
             f'<w:calcOnExit w:val="0"/>{inhalt}</w:ffData>')
 
 
-def formtext(name, rpr):
+def mit_unterstrich(rpr):
+    """Haengt <w:u> an die Zeichenformatierung an. Schema-Reihenfolge: u kommt
+    nach sz/szCs, also ans Ende von rPr."""
+    if not rpr:
+        return '<w:rPr><w:u w:val="single"/></w:rPr>'
+    return rpr.replace('</w:rPr>', '<w:u w:val="single"/></w:rPr>')
+
+
+def formtext(name, rpr, unterstrichen=False):
+    # Das Ergebnisfeld traegt den Unterstrich, damit ein Inline-Feld im
+    # Fliesstext als Ausfuellstelle sichtbar ist.
+    rpr_anzeige = mit_unterstrich(rpr) if unterstrichen else rpr
+    platzhalter = ' ' * (16 if unterstrichen else 5)
     return (
         f'<w:r>{rpr}<w:fldChar w:fldCharType="begin">'
         f'{ffdata(name, "<w:textInput/>")}</w:fldChar></w:r>'
         f'<w:r>{rpr}<w:instrText xml:space="preserve"> FORMTEXT </w:instrText></w:r>'
         f'<w:r>{rpr}<w:fldChar w:fldCharType="separate"/></w:r>'
-        f'<w:r>{rpr}<w:t xml:space="preserve">     </w:t></w:r>'
+        f'<w:r>{rpr_anzeige}<w:t xml:space="preserve">{platzhalter}</w:t></w:r>'
         f'<w:r>{rpr}<w:fldChar w:fldCharType="end"/></w:r>'
     )
 
@@ -62,7 +75,7 @@ def formcheckbox(name, rpr):
 
 def ersetze_marker(xml):
     """Ersetzt jeden Marker samt umschliessendem <w:r> durch das Feld-XML."""
-    anzahl = {"T": 0, "C": 0}
+    anzahl = {"T": 0, "U": 0, "C": 0}
     namen = []
     while True:
         m = MARKER.search(xml)
@@ -80,7 +93,10 @@ def ersetze_marker(xml):
         rpr_m = re.search(r'<w:rPr>.*?</w:rPr>', original, re.S)
         rpr = rpr_m.group(0) if rpr_m else ''
 
-        feld = formtext(name, rpr) if art == 'T' else formcheckbox(name, rpr)
+        if art == 'C':
+            feld = formcheckbox(name, rpr)
+        else:
+            feld = formtext(name, rpr, unterstrichen=(art == 'U'))
         xml = xml[:start] + feld + xml[ende:]
         anzahl[art] += 1
         namen.append(name)
@@ -123,8 +139,9 @@ def main():
         for name, daten in teile.items():
             zout.writestr(name, daten)
 
-    print(f"{anzahl['T']} Textfelder, {anzahl['C']} Kontrollkaestchen, "
-          f"Formularschutz aktiv -> {ziel}")
+    print(f"{anzahl['T'] + anzahl['U']} Textfelder "
+          f"(davon {anzahl['U']} inline unterstrichen), "
+          f"{anzahl['C']} Kontrollkaestchen, Formularschutz aktiv -> {ziel}")
 
 
 if __name__ == '__main__':

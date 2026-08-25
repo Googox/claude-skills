@@ -163,13 +163,13 @@ Für alles, was unterschrieben oder verschickt wird, gibt es zusätzlich das
 |---|---|
 | 1 | Eigenbeleg mit Kopfdaten, Rechenblöcken A bis D, Rechtsgrundlage, Buchungssatz, Anlagen-Checkliste, Unterschriftszeile |
 | 2 | Kostenaufstellung als Anlage — alle Kostenpositionen einzeln, mit Spalte für die Belegnummer |
-| 3 | Fahrtenbuch-Erfassungsbogen im Querformat, 22 Zeilen (A4 quer) |
+| 3 | Fahrtenbuch-Erfassungsbogen im Querformat, 12 Zeilen (A4 quer) |
 
 Ausfüllbar von Hand nach dem Ausdrucken oder direkt in Word, dann als PDF an
 den Steuerberater. Die Rechenwege stehen als Hinweis neben jedem Feld, damit die
 Zahlen auch ohne den Rechner nachvollziehbar bleiben.
 
-**Echte Formularfelder mit Schutzfunktion.** Das Dokument enthält 238
+**Echte Formularfelder mit Schutzfunktion.** Das Dokument enthält 158
 Texteingabefelder und 8 anklickbare Kontrollkästchen (Methodenwahl, Anlagen).
 Der Formularschutz ist aktiv (`<w:documentProtection w:edit="forms">`): Word
 lässt nur die Felder bearbeiten, Layout, Beschriftungen und Rechenhinweise sind
@@ -193,6 +193,20 @@ python3 scripts/formularfelder.py Eigenbeleg-Fahrzeugkosten.docx
 Der zweite Schritt ersetzt jeden Platzhalter durch ein FORMTEXT- bzw.
 FORMCHECKBOX-Feld, legt `word/settings.xml` mit der Schutzeinstellung an und
 prüft dabei auf doppelte Feldnamen.
+
+**Layout gegenprüfen.** Änderungen am Formular immer rendern und ansehen, sonst
+bleiben Überläufe und umbrechende Spaltenköpfe unbemerkt:
+
+```bash
+soffice --headless --convert-to pdf Eigenbeleg-Fahrzeugkosten.docx
+pdftoppm -jpeg -r 90 Eigenbeleg-Fahrzeugkosten.pdf seite
+```
+
+Dafür müssen `libreoffice-writer` und `poppler-utils` installiert sein —
+`libreoffice-core` allein bringt keine Writer-Filter mit und scheitert an jeder
+Konvertierung. Das Formular muss auf **vier Seiten** kommen: Eigenbeleg auf 1
+und 2, Kostenaufstellung auf 3, Fahrtenbuch auf 4. Läuft eine Fahrtenbuchzeile
+über, die Zeilenzahl in `build_word_formular.js` reduzieren.
 
 Beide rechnen identisch — dieselben Formeln, dieselben Sätze. Die Oberfläche
 speichert Eingaben nur im eigenen Browser, es wird nichts übertragen.
@@ -273,7 +287,7 @@ python3 ../steuerrechner-selbststaendigkeit/scripts/steuerrechner.py \
 | `assets/kilometersatz-rechner.html` | Interaktive Oberfläche — lokal im Browser öffnen, rechnet live, speichert Eingaben im Browser |
 | `assets/fahrzeugprofil-beispiel.json` | Vorlage für die Kostenerfassung |
 | `assets/fahrtenbuch-vorlage.csv` | Fahrtenbuch-Struktur mit Beispieljahr |
-| `assets/Eigenbeleg-Fahrzeugkosten.docx` | **Word-Formular** mit 246 echten Formularfeldern und aktivem Formularschutz |
+| `assets/Eigenbeleg-Fahrzeugkosten.docx` | **Word-Formular** mit 166 echten Formularfeldern und aktivem Formularschutz |
 | `assets/eigenbeleg-vorlage.md` | Eigenbeleg als Markdown-Fassung |
 | `assets/jahresabrechnung-checkliste.md` | Belegpaket für den Steuerberater |
 | `references/rechtsgrundlagen.md` | Nutzungseinlage, Wahlrechte, Rechtsprechung |
