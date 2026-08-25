@@ -169,6 +169,31 @@ Ausfüllbar von Hand nach dem Ausdrucken oder direkt in Word, dann als PDF an
 den Steuerberater. Die Rechenwege stehen als Hinweis neben jedem Feld, damit die
 Zahlen auch ohne den Rechner nachvollziehbar bleiben.
 
+**Echte Formularfelder mit Schutzfunktion.** Das Dokument enthält 238
+Texteingabefelder und 8 anklickbare Kontrollkästchen (Methodenwahl, Anlagen).
+Der Formularschutz ist aktiv (`<w:documentProtection w:edit="forms">`): Word
+lässt nur die Felder bearbeiten, Layout, Beschriftungen und Rechenhinweise sind
+gesperrt. Mit Tab springt man von Feld zu Feld.
+
+Zum Ändern des Formulars selbst: in Word unter *Überprüfen → Bearbeitung
+einschränken → Schutz aufheben*. Es ist bewusst kein Kennwort gesetzt — der
+Schutz verhindert versehentliches Zerschießen des Layouts, nicht den Zugriff
+des Inhabers. Ein Kennwort lässt sich an derselben Stelle in zwei Klicks
+vergeben.
+
+**Formular neu erzeugen** (zwei Schritte, weil die docx-Bibliothek keine
+Formularfelder kann):
+
+```bash
+npm install docx
+node scripts/build_word_formular.js          # Layout + Platzhalter @@T|name@@
+python3 scripts/formularfelder.py Eigenbeleg-Fahrzeugkosten.docx
+```
+
+Der zweite Schritt ersetzt jeden Platzhalter durch ein FORMTEXT- bzw.
+FORMCHECKBOX-Feld, legt `word/settings.xml` mit der Schutzeinstellung an und
+prüft dabei auf doppelte Feldnamen.
+
 Beide rechnen identisch — dieselben Formeln, dieselben Sätze. Die Oberfläche
 speichert Eingaben nur im eigenen Browser, es wird nichts übertragen.
 
@@ -243,11 +268,12 @@ python3 ../steuerrechner-selbststaendigkeit/scripts/steuerrechner.py \
 | Datei | Zweck |
 |---|---|
 | `scripts/km_kostenrechner.py` | Rechner, Fahrtenbuch-Prüfung, Eigenbeleg-Generator |
-| `scripts/build_word_formular.js` | Erzeugt das Word-Formular neu (`node scripts/build_word_formular.js`, benötigt `npm install docx`) |
+| `scripts/build_word_formular.js` | Baut das Word-Formular mit Feld-Platzhaltern (`npm install docx` nötig) |
+| `scripts/formularfelder.py` | Wandelt die Platzhalter in echte Formularfelder und aktiviert den Schutz |
 | `assets/kilometersatz-rechner.html` | Interaktive Oberfläche — lokal im Browser öffnen, rechnet live, speichert Eingaben im Browser |
 | `assets/fahrzeugprofil-beispiel.json` | Vorlage für die Kostenerfassung |
 | `assets/fahrtenbuch-vorlage.csv` | Fahrtenbuch-Struktur mit Beispieljahr |
-| `assets/Eigenbeleg-Fahrzeugkosten.docx` | **Word-Formular** — drei Seiten zum Ausfüllen von Hand oder am Rechner, per Mail versendbar |
+| `assets/Eigenbeleg-Fahrzeugkosten.docx` | **Word-Formular** mit 246 echten Formularfeldern und aktivem Formularschutz |
 | `assets/eigenbeleg-vorlage.md` | Eigenbeleg als Markdown-Fassung |
 | `assets/jahresabrechnung-checkliste.md` | Belegpaket für den Steuerberater |
 | `references/rechtsgrundlagen.md` | Nutzungseinlage, Wahlrechte, Rechtsprechung |

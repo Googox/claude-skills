@@ -44,6 +44,20 @@ const p = (text, o = {}) => new Paragraph({
 
 const spacer = (h = 120) => new Paragraph({ children: [], spacing: { after: h } });
 
+// Platzhalter fuer echte Word-Formularfelder. Werden nach dem Packen durch
+// FORMTEXT- bzw. FORMCHECKBOX-Felder ersetzt (siehe formularfelder.py).
+const FELD = (name, o = {}) => new TextRun({
+  text: "@@T|" + name + "@@", font: FONT,
+  size: o.size || 20, bold: !!o.bold, color: o.color || INK
+});
+const BOX = (name) => new TextRun({ text: "@@C|" + name + "@@", font: FONT, size: 20 });
+
+const feldAbsatz = (name, o = {}) => new Paragraph({
+  children: [FELD(name, o)],
+  spacing: { after: o.after === undefined ? 40 : o.after, line: 260 },
+  alignment: o.align
+});
+
 const h1 = (text) => new Paragraph({
   children: [t(text, { size: 34, bold: true })],
   spacing: { after: 60 }
@@ -83,12 +97,12 @@ const table = (rows, widths) => new Table({
 });
 
 // Ausfuellzeile: Label links, Linie rechts
-const feldZeile = (label, wLabel, wFeld, note) => new TableRow({
+const feldZeile = (label, wLabel, wFeld, note, name) => new TableRow({
   children: [
     cell(p(label, { size: 20, after: 20 }), { width: wLabel, borders: noBorders }),
     cell(
-      note ? [p("", { after: 0 }), new Paragraph({ children: [t(note, { size: 15, color: INK3 })], spacing: { after: 20 } })]
-           : p("", { after: 40 }),
+      note ? [feldAbsatz(name, { after: 0 }), new Paragraph({ children: [t(note, { size: 15, color: INK3 })], spacing: { after: 20 } })]
+           : feldAbsatz(name),
       { width: wFeld, borders: ruleBottom() }
     )
   ]
@@ -99,13 +113,13 @@ const rechenZeile = (label, formel, wL, wF, wB, o = {}) => new TableRow({
   children: [
     cell(p(label, { size: 20, bold: !!o.bold, after: 20 }), { width: wL, borders: o.top ? { ...noBorders, top: { style: BorderStyle.SINGLE, size: 8, color: INK } } : noBorders, mt: o.top ? 100 : 60 }),
     cell(p(formel, { size: 16, color: INK3, after: 20 }), { width: wF, borders: o.top ? { ...noBorders, top: { style: BorderStyle.SINGLE, size: 8, color: INK } } : noBorders, mt: o.top ? 100 : 60 }),
-    cell(p("", { after: 40 }), { width: wB, borders: ruleBottom(o.bold ? INK : LINE), mt: o.top ? 100 : 60 })
+    cell(feldAbsatz(o.name, { bold: !!o.bold, align: AlignmentType.RIGHT }), { width: wB, borders: ruleBottom(o.bold ? INK : LINE), mt: o.top ? 100 : 60 })
   ]
 });
 
 // Leere Erfassungszeile fuer Tabellen mit Rahmen
-const leerZeile = (widths, hoehe = 120) => new TableRow({
-  children: widths.map(w => cell(p("", { after: 0 }), {
+const leerZeile = (widths, hoehe = 120, namen = []) => new TableRow({
+  children: widths.map((w, i) => cell(feldAbsatz(namen[i], { after: 0, size: 18 }), {
     width: w,
     borders: { top: NONE, left: NONE, right: NONE, bottom: { style: BorderStyle.SINGLE, size: 4, color: SOFT } },
     mt: hoehe / 2, mb: hoehe / 2
@@ -143,43 +157,46 @@ const seite1 = [
 
   h2("Beleg"),
   table([
-    feldZeile("Betrieb", W_L, W_F),
-    feldZeile("Inhaber", W_L, W_F),
-    feldZeile("Steuernummer", W_L, W_F),
-    feldZeile("Abrechnungszeitraum", W_L, W_F, "Monat / Jahr oder Kalenderjahr"),
-    feldZeile("Belegdatum", W_L, W_F),
-    feldZeile("Beleg-Nr.", W_L, W_F)
+    feldZeile("Betrieb", W_L, W_F, null, "betrieb"),
+    feldZeile("Inhaber", W_L, W_F, null, "inhaber"),
+    feldZeile("Steuernummer", W_L, W_F, null, "steuernr"),
+    feldZeile("Abrechnungszeitraum", W_L, W_F, "Monat / Jahr oder Kalenderjahr", "zeitraum"),
+    feldZeile("Belegdatum", W_L, W_F, null, "belegdatum"),
+    feldZeile("Beleg-Nr.", W_L, W_F, null, "belegnr")
   ], [W_L, W_F]),
 
   h2("Fahrzeug"),
   table([
-    feldZeile("Bezeichnung", W_L, W_F),
-    feldZeile("Kennzeichen", W_L, W_F),
-    feldZeile("Halter / Leasingnehmer", W_L, W_F, "Inhaber persönlich, privat geleast"),
-    feldZeile("Leasingvertrag Nr.", W_L, W_F),
-    feldZeile("Vertragslaufzeit", W_L, W_F, "in Monaten — Pflichtangabe bei Sonderzahlung")
+    feldZeile("Bezeichnung", W_L, W_F, null, "fzbez"),
+    feldZeile("Kennzeichen", W_L, W_F, null, "kennz"),
+    feldZeile("Halter / Leasingnehmer", W_L, W_F, "Inhaber persönlich, privat geleast", "halter"),
+    feldZeile("Leasingvertrag Nr.", W_L, W_F, null, "leasingnr"),
+    feldZeile("Vertragslaufzeit", W_L, W_F, "in Monaten — Pflichtangabe bei Sonderzahlung", "laufzeit")
   ], [W_L, W_F]),
 
   h2("A · Gesamtkosten und Fahrleistung"),
   hint("Beträge aus der Kostenaufstellung auf Seite 2 übernehmen. Die Leasingsonderzahlung geht nur anteilig ein, verteilt über die Vertragslaufzeit."),
   table([
-    rechenZeile("Fahrzeug-Gesamtkosten des Jahres", "Summe Seite 2", 4400, 2900, 2338),
-    rechenZeile("Kilometerstand am 31. Dezember", "", 4400, 2900, 2338),
-    rechenZeile("Kilometerstand am 1. Januar", "abziehen", 4400, 2900, 2338),
-    rechenZeile("Gesamtfahrleistung des Jahres", "Differenz der Kilometerstände", 4400, 2900, 2338, { bold: true })
+    rechenZeile("Fahrzeug-Gesamtkosten des Jahres", "Summe Seite 2", 4400, 2900, 2338, { name: "aKosten" }),
+    rechenZeile("Kilometerstand am 31. Dezember", "", 4400, 2900, 2338, { name: "aKmEnde" }),
+    rechenZeile("Kilometerstand am 1. Januar", "abziehen", 4400, 2900, 2338, { name: "aKmStart" }),
+    rechenZeile("Gesamtfahrleistung des Jahres", "Differenz der Kilometerstände", 4400, 2900, 2338, { bold: true, name: "aGesamtKm" })
   ], [4400, 2900, 2338]),
 
   h2("B · Kilometersatz"),
   table([
-    rechenZeile("Individueller Kilometersatz", "Gesamtkosten ÷ Gesamtfahrleistung", 4400, 2900, 2338, { bold: true }),
-    rechenZeile("Pauschale je gefahrenem Kilometer", "gesetzlich 0,30 EUR", 4400, 2900, 2338),
-    rechenZeile("Angewandter Satz", "der höhere der beiden Werte", 4400, 2900, 2338, { bold: true })
+    rechenZeile("Individueller Kilometersatz", "Gesamtkosten ÷ Gesamtfahrleistung", 4400, 2900, 2338, { bold: true, name: "bSatzInd" }),
+    rechenZeile("Pauschale je gefahrenem Kilometer", "gesetzlich 0,30 EUR", 4400, 2900, 2338, { name: "bSatzPau" }),
+    rechenZeile("Angewandter Satz", "der höhere der beiden Werte", 4400, 2900, 2338, { bold: true, name: "bSatzAng" })
   ], [4400, 2900, 2338]),
   new Paragraph({
     children: [
-      t("Angewandte Methode:   ", { size: 20 }),
-      t("☐ individueller Satz        ☐ Pauschale 0,30 EUR", { size: 20 }),
-      t("        ☐ vorläufiger Satz   ☐ endgültiger Satz", { size: 18, color: INK2 })
+      t("Angewandte Methode:    ", { size: 20 }),
+      BOX("mIndiv"), t("  individueller Satz        ", { size: 20 }),
+      BOX("mPausch"), t("  Pauschale 0,30 EUR", { size: 20 }),
+      t("          ", { size: 20 }),
+      BOX("mVorl"), t("  vorläufiger Satz    ", { size: 18, color: INK2 }),
+      BOX("mEndg"), t("  endgültiger Satz", { size: 18, color: INK2 })
     ],
     spacing: { before: 120, after: 80 }
   }),
@@ -187,19 +204,23 @@ const seite1 = [
   h2("C · Betrieblich gefahrene Kilometer"),
   hint("Dienstreisen zählen mit jedem gefahrenen Kilometer, Hin- und Rückweg. Fahrten zwischen Wohnung und Betriebsstätte sind dagegen auf die Entfernungspauschale begrenzt und werden nur mit der einfachen Entfernung angesetzt."),
   table([
-    rechenZeile("Dienstreisen im Zeitraum", "Kilometer laut Fahrtenbuch", 4400, 2900, 2338),
-    rechenZeile("Abzug Dienstreisen", "Kilometer × angewandter Satz", 4400, 2900, 2338, { bold: true }),
-    rechenZeile("Fahrten Wohnung ↔ Betriebsstätte", "Tage × einfache Entfernung", 4400, 2900, 2338),
-    rechenZeile("Abzug Entfernungspauschale", "Entfernungskilometer × 0,38 EUR", 4400, 2900, 2338, { bold: true })
+    rechenZeile("Dienstreisen im Zeitraum", "Kilometer laut Fahrtenbuch", 4400, 2900, 2338, { name: "cDienstKm" }),
+    rechenZeile("Abzug Dienstreisen", "Kilometer × angewandter Satz", 4400, 2900, 2338, { bold: true, name: "cAbzugD" }),
+    rechenZeile("Fahrten Wohnung ↔ Betriebsstätte", "Tage × einfache Entfernung", 4400, 2900, 2338, { name: "cBsKm" }),
+    rechenZeile("Abzug Entfernungspauschale", "Entfernungskilometer × 0,38 EUR", 4400, 2900, 2338, { bold: true, name: "cAbzugBs" })
   ], [4400, 2900, 2338]),
 
   h2("D · Betrag der Nutzungseinlage"),
   table([
-    rechenZeile("Betrag gesamt", "Summe der beiden Abzüge aus C", 4400, 2900, 2338, { bold: true, top: true })
+    rechenZeile("Betrag gesamt", "Summe der beiden Abzüge aus C", 4400, 2900, 2338, { bold: true, top: true, name: "dBetrag" })
   ], [4400, 2900, 2338]),
   spacer(80),
   new Paragraph({
-    children: [t("Betrieblicher Nutzungsanteil: ______ Prozent.  Über 50 Prozent gilt dieses Modell nicht mehr — dann greift der volle Kostenabzug mit Versteuerung der Privatnutzung. Vor der Abrechnung mit dem Steuerberater klären.", { size: 17, color: INK2 })],
+    children: [
+      t("Betrieblicher Nutzungsanteil: ", { size: 17, color: INK2 }),
+      FELD("dAnteil", { size: 17 }),
+      t(" Prozent.  Über 50 Prozent gilt dieses Modell nicht mehr — dann greift der volle Kostenabzug mit Versteuerung der Privatnutzung. Vor der Abrechnung mit dem Steuerberater klären.", { size: 17, color: INK2 })
+    ],
     spacing: { after: 100, line: 240 }
   }),
 
@@ -220,14 +241,14 @@ const seite1 = [
   ], [1200, W_PORTRAIT - 1200]),
 
   h2("Anlagen"),
-  new Paragraph({ children: [t("☐   Fahrtenbuch des Abrechnungszeitraums", { size: 19 })], spacing: { after: 70 } }),
-  new Paragraph({ children: [t("☐   Kostenaufstellung mit Einzelbelegen (Seite 2)", { size: 19 })], spacing: { after: 70 } }),
-  new Paragraph({ children: [t("☐   Kilometerstandsnachweis Jahresanfang und Jahresende", { size: 19 })], spacing: { after: 70 } }),
-  new Paragraph({ children: [t("☐   Leasingvertrag mit Sonderzahlung und Laufzeit", { size: 19 })], spacing: { after: 260 } }),
+  new Paragraph({ children: [BOX("anl1"), t("   Fahrtenbuch des Abrechnungszeitraums", { size: 19 })], spacing: { after: 70 } }),
+  new Paragraph({ children: [BOX("anl2"), t("   Kostenaufstellung mit Einzelbelegen (Seite 2)", { size: 19 })], spacing: { after: 70 } }),
+  new Paragraph({ children: [BOX("anl3"), t("   Kilometerstandsnachweis Jahresanfang und Jahresende", { size: 19 })], spacing: { after: 70 } }),
+  new Paragraph({ children: [BOX("anl4"), t("   Leasingvertrag mit Sonderzahlung und Laufzeit", { size: 19 })], spacing: { after: 260 } }),
 
   table([
     new TableRow({ children: [
-      cell(p("", { after: 40 }), { width: 4600, borders: ruleBottom(INK) }),
+      cell(feldAbsatz("ortDatum"), { width: 4600, borders: ruleBottom(INK) }),
       cell(p("", { after: 0 }), { width: 438 }),
       cell(p("", { after: 40 }), { width: 4600, borders: ruleBottom(INK) })
     ]}),
@@ -244,21 +265,25 @@ const seite1 = [
 // ===========================================================
 const KW = [4838, 2000, 2800];
 
-const kostenZeile = (pos, note) => new TableRow({
+const kostenZeile = (pos, note, name) => {
+  // Aufrufe ohne Beschreibungstext liefern den Namen im note-Parameter
+  if (name === undefined) { name = note; note = undefined; }
+  return new TableRow({
   children: [
     cell(note
       ? [p(pos, { size: 19, after: 10 }), new Paragraph({ children: [t(note, { size: 15, color: INK3 })], spacing: { after: 10 } })]
       : p(pos, { size: 19, after: 30 }),
       { width: KW[0], borders: { ...noBorders, bottom: { style: BorderStyle.SINGLE, size: 4, color: SOFT } }, mt: 80, mb: 80 }),
-    cell(p("", { after: 30 }), { width: KW[1], borders: { ...noBorders, bottom: { style: BorderStyle.SINGLE, size: 4, color: SOFT } }, mt: 80, mb: 80 }),
-    cell(p("", { after: 30 }), { width: KW[2], borders: { ...noBorders, bottom: { style: BorderStyle.SINGLE, size: 4, color: SOFT } }, mt: 80, mb: 80 })
+    cell(feldAbsatz(name + "B", { after: 30, align: AlignmentType.RIGHT }), { width: KW[1], borders: { ...noBorders, bottom: { style: BorderStyle.SINGLE, size: 4, color: SOFT } }, mt: 80, mb: 80 }),
+    cell(feldAbsatz(name + "N", { after: 30, size: 18 }), { width: KW[2], borders: { ...noBorders, bottom: { style: BorderStyle.SINGLE, size: 4, color: SOFT } }, mt: 80, mb: 80 })
   ]
-});
+  });
+};
 
 const seite2 = [
   h1("Kostenaufstellung"),
   new Paragraph({
-    children: [t("Anlage zum Eigenbeleg · Kalenderjahr ____________", { size: 20, color: INK2 })],
+    children: [t("Anlage zum Eigenbeleg · Kalenderjahr ", { size: 20, color: INK2 }), FELD("kJahr", { size: 20, color: INK2 })],
     spacing: { after: 140 },
     border: { bottom: { style: BorderStyle.SINGLE, size: 6, color: INK } }
   }),
@@ -267,24 +292,24 @@ const seite2 = [
 
   table([
     kopfZeile(["Position", "Betrag EUR", "Belege / Bemerkung"], KW, [1]),
-    kostenZeile("Leasingraten", "Anzahl der Raten im Jahr × Monatsrate"),
-    kostenZeile("Leasingsonderzahlung, Jahresanteil", "Sonderzahlung ÷ Laufzeit in Monaten × Monate im Jahr"),
-    kostenZeile("Kfz-Versicherung", "Haftpflicht und Kasko"),
-    kostenZeile("Kfz-Steuer"),
-    kostenZeile("Stellplatz oder Garage", "nur bei separater Anmietung"),
-    kostenZeile("Schutzbrief, GAP-Versicherung"),
-    kostenZeile("Hauptuntersuchung, Abgasuntersuchung"),
-    kostenZeile("Kraftstoff oder Ladestrom", "Ladestrom zuhause nur bei messbarer Erfassung"),
-    kostenZeile("Wartung, Inspektion, Ölwechsel"),
-    kostenZeile("Reifen, Wechsel, Einlagerung"),
-    kostenZeile("Reparaturen"),
-    kostenZeile("Wagenwäsche, Pflege"),
-    kostenZeile("Mehrkilometer-Nachzahlung", "anteilig, falls Inklusivkilometer überschritten"),
-    kostenZeile("Sonstiges"),
+    kostenZeile("Leasingraten", "Anzahl der Raten im Jahr × Monatsrate", "kLeas"),
+    kostenZeile("Leasingsonderzahlung, Jahresanteil", "Sonderzahlung ÷ Laufzeit in Monaten × Monate im Jahr", "kSond"),
+    kostenZeile("Kfz-Versicherung", "Haftpflicht und Kasko", "kVers"),
+    kostenZeile("Kfz-Steuer", "kSteu"),
+    kostenZeile("Stellplatz oder Garage", "nur bei separater Anmietung", "kStell"),
+    kostenZeile("Schutzbrief, GAP-Versicherung", "kSchutz"),
+    kostenZeile("Hauptuntersuchung, Abgasuntersuchung", "kHu"),
+    kostenZeile("Kraftstoff oder Ladestrom", "Ladestrom zuhause nur bei messbarer Erfassung", "kSprit"),
+    kostenZeile("Wartung, Inspektion, Ölwechsel", "kWart"),
+    kostenZeile("Reifen, Wechsel, Einlagerung", "kReif"),
+    kostenZeile("Reparaturen", "kRep"),
+    kostenZeile("Wagenwäsche, Pflege", "kPfleg"),
+    kostenZeile("Mehrkilometer-Nachzahlung", "anteilig, falls Inklusivkilometer überschritten", "kMehr"),
+    kostenZeile("Sonstiges", "kSonst"),
     new TableRow({ children: [
       cell(p("Gesamtkosten des Jahres", { size: 20, bold: true, after: 30 }),
         { width: KW[0], borders: { ...noBorders, top: { style: BorderStyle.SINGLE, size: 8, color: INK } }, mt: 110, mb: 60 }),
-      cell(p("", { after: 30 }),
+      cell(feldAbsatz("kSumme", { after: 30, bold: true, align: AlignmentType.RIGHT }),
         { width: KW[1], borders: { top: { style: BorderStyle.SINGLE, size: 8, color: INK }, left: NONE, right: NONE, bottom: { style: BorderStyle.SINGLE, size: 6, color: INK } }, mt: 110, mb: 60 }),
       cell(p("", { after: 30 }),
         { width: KW[2], borders: { ...noBorders, top: { style: BorderStyle.SINGLE, size: 8, color: INK } }, mt: 110, mb: 60 })
@@ -293,10 +318,10 @@ const seite2 = [
 
   h2("Fahrleistung"),
   table([
-    rechenZeile("Kilometerstand am 31. Dezember", "Tacho-Foto als Nachweis", 4400, 2900, 2338),
-    rechenZeile("Kilometerstand am 1. Januar", "", 4400, 2900, 2338),
-    rechenZeile("Gesamtfahrleistung", "Differenz", 4400, 2900, 2338, { bold: true }),
-    rechenZeile("Individueller Kilometersatz", "Gesamtkosten ÷ Gesamtfahrleistung", 4400, 2900, 2338, { bold: true, top: true })
+    rechenZeile("Kilometerstand am 31. Dezember", "Tacho-Foto als Nachweis", 4400, 2900, 2338, { name: "kKmEnde" }),
+    rechenZeile("Kilometerstand am 1. Januar", "", 4400, 2900, 2338, { name: "kKmStart" }),
+    rechenZeile("Gesamtfahrleistung", "Differenz", 4400, 2900, 2338, { bold: true, name: "kGesamtKm" }),
+    rechenZeile("Individueller Kilometersatz", "Gesamtkosten ÷ Gesamtfahrleistung", 4400, 2900, 2338, { bold: true, top: true, name: "kSatz" })
   ], [4400, 2900, 2338]),
 
   h2("Nicht in diese Aufstellung"),
@@ -314,7 +339,11 @@ const FW = [1300, 1200, 1200, 900, 1600, 3400, 2870, 2100];
 const seite3 = [
   h1("Fahrtenbuch"),
   new Paragraph({
-    children: [t("Erfassungsbogen · Monat ________  Jahr ________  ·  Kennzeichen ________________", { size: 20, color: INK2 })],
+    children: [
+      t("Erfassungsbogen · Monat ", { size: 20, color: INK2 }), FELD("fbMonat", { size: 20, color: INK2 }),
+      t("  Jahr ", { size: 20, color: INK2 }), FELD("fbJahr", { size: 20, color: INK2 }),
+      t("  ·  Kennzeichen ", { size: 20, color: INK2 }), FELD("fbKennz", { size: 20, color: INK2 })
+    ],
     spacing: { after: 140 },
     border: { bottom: { style: BorderStyle.SINGLE, size: 6, color: INK } }
   }),
@@ -326,7 +355,10 @@ const seite3 = [
 
   table([
     kopfZeile(["Datum", "km Start", "km Ende", "km", "Kategorie", "Reiseziel mit Adresse", "Reisezweck", "Geschäftspartner"], FW, [1, 2, 3]),
-    ...Array.from({ length: 22 }, () => leerZeile(FW, 190))
+    ...Array.from({ length: 22 }, (_, i) => {
+      const n = String(i + 1).padStart(2, "0");
+      return leerZeile(FW, 190, ["d", "s", "e", "k", "c", "z", "w", "p"].map(sp => "fb" + n + sp));
+    })
   ], FW),
 
   spacer(200),
