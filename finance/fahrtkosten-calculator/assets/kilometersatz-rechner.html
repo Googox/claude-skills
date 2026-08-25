@@ -1,0 +1,905 @@
+<title>Kilometersatz-Rechner</title>
+<style>
+  :root{
+    --ground:#FFFFFF;
+    --surface:#F5F5F7;
+    --surface-2:#FAFAFC;
+    --ink:#1D1D1F;
+    --ink-2:#6E6E73;
+    --ink-3:#8E8E93;
+    --line:#D2D2D7;
+    --line-soft:#E8E8ED;
+    --accent:#0071E3;
+    --accent-soft:#E8F1FD;
+    --good:#1D7A4C;
+    --warn:#9A6400;
+    --warn-soft:#FBF3E2;
+    --crit:#B3261E;
+    --crit-soft:#FBEDEC;
+    --good-soft:#EAF4EF;
+
+    --r-lg:18px;
+    --r-md:12px;
+    --r-sm:8px;
+
+    --sans:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Segoe UI",system-ui,Roboto,"Helvetica Neue",Arial,sans-serif;
+    --mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+  }
+
+  *{box-sizing:border-box}
+
+  body{
+    margin:0;
+    background:var(--ground);
+    color:var(--ink);
+    font-family:var(--sans);
+    font-size:16px;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+    letter-spacing:-0.01em;
+  }
+
+  .wrap{max-width:1120px;margin:0 auto;padding:56px 24px 96px}
+
+  /* ---------- Kopf ---------- */
+  .masthead{margin-bottom:44px;max-width:640px}
+  .eyebrow{
+    font-size:12px;font-weight:590;letter-spacing:0.08em;text-transform:uppercase;
+    color:var(--ink-3);margin:0 0 14px
+  }
+  h1{
+    font-size:clamp(32px,5vw,44px);font-weight:640;letter-spacing:-0.03em;
+    line-height:1.08;margin:0 0 14px;text-wrap:balance
+  }
+  .standfirst{font-size:17px;color:var(--ink-2);margin:0;max-width:58ch;text-wrap:pretty}
+
+  /* ---------- Raster ---------- */
+  .cols{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:28px;align-items:start}
+  @media (max-width:900px){.cols{grid-template-columns:minmax(0,1fr)}}
+
+  .stack{display:flex;flex-direction:column;gap:20px;min-width:0}
+
+  /* ---------- Karten / gruppierte Listen ---------- */
+  .card{
+    background:var(--surface);
+    border-radius:var(--r-lg);
+    padding:6px 18px 8px;
+  }
+  .card > h2{
+    font-size:12px;font-weight:590;letter-spacing:0.07em;text-transform:uppercase;
+    color:var(--ink-3);margin:16px 0 6px;padding:0
+  }
+  .card .note{font-size:13px;color:var(--ink-2);margin:2px 0 14px;line-height:1.45}
+
+  .row{
+    display:flex;align-items:center;gap:16px;
+    padding:11px 0;border-top:1px solid var(--line-soft);min-height:46px
+  }
+  .row:first-of-type{border-top:none}
+  .row label{flex:1;font-size:15px;min-width:0}
+  .row .sub{display:block;font-size:12px;color:var(--ink-3);letter-spacing:0}
+
+  .field{display:flex;align-items:center;gap:6px;flex:0 0 auto}
+  .unit{font-size:13px;color:var(--ink-3);font-family:var(--mono);width:34px;text-align:left}
+
+  input[type="number"]{
+    font-family:var(--mono);font-size:15px;font-variant-numeric:tabular-nums;
+    color:var(--ink);background:var(--ground);
+    border:1px solid var(--line);border-radius:var(--r-sm);
+    padding:7px 10px;width:112px;text-align:right;
+    -moz-appearance:textfield;appearance:textfield;
+  }
+  input[type="number"]::-webkit-outer-spin-button,
+  input[type="number"]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+  input:focus-visible,button:focus-visible,summary:focus-visible{
+    outline:2px solid var(--accent);outline-offset:2px
+  }
+  input:hover{border-color:var(--ink-3)}
+
+  /* Checkbox-Zeile */
+  .check{display:flex;align-items:center;gap:10px;cursor:pointer}
+  input[type="checkbox"]{
+    appearance:none;width:20px;height:20px;border:1px solid var(--line);
+    border-radius:6px;background:var(--ground);cursor:pointer;flex:0 0 auto;
+    display:grid;place-content:center
+  }
+  input[type="checkbox"]:checked{background:var(--accent);border-color:var(--accent)}
+  input[type="checkbox"]:checked::after{
+    content:"";width:10px;height:6px;border:2px solid #fff;border-top:0;border-right:0;
+    transform:rotate(-45deg) translate(1px,-1px)
+  }
+
+  /* ---------- Segmented control ---------- */
+  .segmented{
+    display:inline-flex;background:var(--line-soft);border-radius:9px;padding:2px;gap:2px
+  }
+  .segmented button{
+    font-family:inherit;font-size:13px;font-weight:510;letter-spacing:-0.01em;
+    color:var(--ink-2);background:transparent;border:0;border-radius:7px;
+    padding:5px 14px;cursor:pointer
+  }
+  .segmented button[aria-pressed="true"]{background:var(--ground);color:var(--ink);font-weight:590}
+
+  /* ---------- Ergebnispanel ---------- */
+  .panel{
+    position:sticky;top:24px;
+    background:var(--ground);border:1px solid var(--line);
+    border-radius:var(--r-lg);overflow:hidden
+  }
+  @media (max-width:900px){.panel{position:static}}
+
+  .panel-head{padding:20px 22px 18px;border-bottom:1px solid var(--line-soft)}
+  .panel-head .t{
+    display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:18px
+  }
+  .panel-head .t span{
+    font-size:12px;font-weight:590;letter-spacing:0.07em;text-transform:uppercase;color:var(--ink-3)
+  }
+  .lede{font-size:13px;color:var(--ink-2);margin:0 0 6px}
+  .bignum{
+    font-size:46px;font-weight:640;letter-spacing:-0.04em;line-height:1;
+    font-variant-numeric:tabular-nums;display:flex;align-items:baseline;gap:7px
+  }
+  .bignum em{font-style:normal;font-size:17px;font-weight:510;color:var(--ink-2);letter-spacing:-0.01em}
+
+  .panel-body{padding:16px 22px 20px}
+  .line{
+    display:flex;justify-content:space-between;align-items:baseline;gap:12px;
+    padding:9px 0;border-top:1px solid var(--line-soft);font-size:14px
+  }
+  .line:first-child{border-top:none}
+  .line .k{color:var(--ink-2);min-width:0}
+  .line .k small{display:block;font-size:12px;color:var(--ink-3)}
+  .line .v{font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+  .line.total{border-top:1px solid var(--line);margin-top:4px;padding-top:13px}
+  .line.total .k{color:var(--ink);font-weight:590;font-family:var(--sans)}
+  .line.total .v{font-size:18px;font-weight:590}
+  .line.muted .v{color:var(--ink-3)}
+
+  .badge{
+    display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:590;
+    letter-spacing:0.04em;text-transform:uppercase;padding:3px 8px;border-radius:20px
+  }
+  .badge.good{background:var(--good-soft);color:var(--good)}
+  .badge.neutral{background:var(--line-soft);color:var(--ink-2)}
+
+  /* ---------- Methodenvergleich ---------- */
+  .compare{margin-top:18px;padding-top:16px;border-top:1px solid var(--line-soft)}
+  .compare h3{
+    font-size:12px;font-weight:590;letter-spacing:0.07em;text-transform:uppercase;
+    color:var(--ink-3);margin:0 0 12px
+  }
+  .bar{margin-bottom:12px}
+  .bar .lab{display:flex;justify-content:space-between;font-size:13px;margin-bottom:5px}
+  .bar .lab .v{font-family:var(--mono);font-variant-numeric:tabular-nums}
+  .bar .track{height:6px;background:var(--line-soft);border-radius:3px;overflow:hidden}
+  .bar .fill{height:100%;border-radius:3px;background:var(--ink);transition:width .35s cubic-bezier(.4,0,.2,1)}
+  .bar.alt .fill{background:var(--ink-3)}
+  .delta{font-size:13px;color:var(--ink-2);margin:12px 0 0;line-height:1.45}
+  .delta b{color:var(--ink);font-weight:590;font-family:var(--mono);font-variant-numeric:tabular-nums}
+
+  /* ---------- Nutzungsanteil-Skala ---------- */
+  .gauge{margin-top:18px;padding-top:16px;border-top:1px solid var(--line-soft)}
+  .gauge .lab{display:flex;justify-content:space-between;align-items:baseline;font-size:13px;margin-bottom:8px}
+  .gauge .lab .v{font-family:var(--mono);font-variant-numeric:tabular-nums;font-weight:590}
+  .scale{position:relative;height:8px;background:var(--line-soft);border-radius:4px;overflow:visible}
+  .scale .fill{
+    position:absolute;inset:0 auto 0 0;border-radius:4px;background:var(--good);
+    transition:width .35s cubic-bezier(.4,0,.2,1),background-color .25s
+  }
+  .scale .mark{position:absolute;top:-4px;bottom:-4px;width:1.5px;background:var(--ink);opacity:.55}
+  .scale-legend{display:flex;justify-content:space-between;font-size:11px;color:var(--ink-3);margin-top:6px;font-family:var(--mono)}
+
+  /* ---------- Hinweise ---------- */
+  .notices{display:flex;flex-direction:column;gap:10px}
+  .notice{
+    display:flex;gap:11px;padding:13px 15px;border-radius:var(--r-md);
+    font-size:14px;line-height:1.5;background:var(--surface);color:var(--ink)
+  }
+  .notice .dot{
+    flex:0 0 auto;width:7px;height:7px;border-radius:50%;background:var(--ink-3);margin-top:7px
+  }
+  .notice b{font-weight:590}
+  .notice.crit{background:var(--crit-soft)}
+  .notice.crit .dot{background:var(--crit)}
+  .notice.warn{background:var(--warn-soft)}
+  .notice.warn .dot{background:var(--warn)}
+  .notice.good{background:var(--good-soft)}
+  .notice.good .dot{background:var(--good)}
+
+  /* ---------- Tabelle ---------- */
+  .tablewrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  table{border-collapse:collapse;width:100%;font-size:14px;min-width:440px}
+  th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line-soft)}
+  th{
+    font-size:11px;font-weight:590;letter-spacing:0.06em;text-transform:uppercase;
+    color:var(--ink-3);border-bottom:1px solid var(--line)
+  }
+  td.num,th.num{text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+  th.num{font-family:var(--sans)}
+  tr.sum td{border-top:1px solid var(--line);border-bottom:none;font-weight:590;padding-top:12px}
+  tr.sum td.num{font-size:15px}
+  td .sub{display:block;font-size:12px;color:var(--ink-3)}
+
+  /* ---------- Abschnitte ---------- */
+  section.block{margin-top:40px}
+  section.block > h2{
+    font-size:20px;font-weight:620;letter-spacing:-0.02em;margin:0 0 6px
+  }
+  section.block > .sub{font-size:14px;color:var(--ink-2);margin:0 0 18px;max-width:64ch}
+
+  /* ---------- Beleg ---------- */
+  .beleg{
+    background:var(--surface-2);border:1px solid var(--line);border-radius:var(--r-lg);
+    padding:26px 28px;font-family:var(--mono);font-size:13px;line-height:1.75;
+    white-space:pre-wrap;color:var(--ink);overflow-x:auto
+  }
+  .actions{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
+  .btn{
+    font-family:inherit;font-size:14px;font-weight:510;letter-spacing:-0.01em;
+    padding:9px 18px;border-radius:980px;cursor:pointer;border:1px solid transparent;
+    transition:background-color .15s,border-color .15s
+  }
+  .btn.primary{background:var(--accent);color:#fff}
+  .btn.primary:hover{background:#0062C4}
+  .btn.ghost{background:transparent;color:var(--accent);border-color:var(--line)}
+  .btn.ghost:hover{border-color:var(--ink-3)}
+
+  /* ---------- Fußbereich ---------- */
+  details.legal{margin-top:14px;border-top:1px solid var(--line-soft);padding-top:14px}
+  details.legal summary{
+    cursor:pointer;font-size:14px;font-weight:510;color:var(--ink);list-style:none;
+    display:flex;align-items:center;gap:8px
+  }
+  details.legal summary::-webkit-details-marker{display:none}
+  details.legal summary::before{
+    content:"";width:6px;height:6px;border-right:1.5px solid var(--ink-3);
+    border-bottom:1.5px solid var(--ink-3);transform:rotate(-45deg);transition:transform .2s
+  }
+  details.legal[open] summary::before{transform:rotate(45deg)}
+  details.legal .inner{font-size:14px;color:var(--ink-2);line-height:1.6;padding:12px 0 0;max-width:70ch}
+  details.legal .inner p{margin:0 0 10px}
+  details.legal .inner p:last-child{margin-bottom:0}
+  details.legal code{font-family:var(--mono);font-size:12.5px;background:var(--surface);padding:1px 5px;border-radius:4px}
+
+  footer{
+    margin-top:56px;padding-top:22px;border-top:1px solid var(--line);
+    font-size:13px;color:var(--ink-3);line-height:1.6;max-width:70ch
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    *{transition:none !important;animation:none !important}
+  }
+
+  @media print{
+    .wrap{padding:0;max-width:none}
+    .cols{display:block}
+    .panel{position:static;break-inside:avoid}
+    .actions,.segmented{display:none}
+    .card,.beleg,.panel{break-inside:avoid}
+    body{font-size:12px}
+  }
+</style>
+
+<div class="wrap">
+
+  <header class="masthead">
+    <p class="eyebrow">Einzelunternehmen &middot; Nutzungseinlage</p>
+    <h1>Was kostet ein betrieblicher Kilometer wirklich?</h1>
+    <p class="standfirst">Das Fahrzeug ist privat geleast, gefahren wird teils dienstlich. Dieser Rechner
+      ermittelt aus den Gesamtkosten und der Jahresfahrleistung deinen individuellen Kilometersatz,
+      stellt ihn der 0,30-Euro-Pauschale gegenüber und schreibt den Eigenbeleg für die Buchhaltung.</p>
+  </header>
+
+  <div class="cols">
+
+    <!-- ================= Eingaben ================= -->
+    <div class="stack">
+
+      <div class="card">
+        <h2>Leasing</h2>
+        <div class="row">
+          <label for="rate">Monatsrate<span class="sub">Betrag laut Vertrag</span></label>
+          <div class="field"><input type="number" id="rate" value="549" min="0" step="1"><span class="unit">EUR</span></div>
+        </div>
+        <div class="row">
+          <label for="monate">Raten in diesem Jahr<span class="sub">12 bei ganzjähriger Laufzeit</span></label>
+          <div class="field"><input type="number" id="monate" value="12" min="0" max="12" step="1"><span class="unit">Mon.</span></div>
+        </div>
+        <div class="row">
+          <label for="sonder">Sonderzahlung<span class="sub">wird über die Laufzeit verteilt</span></label>
+          <div class="field"><input type="number" id="sonder" value="5000" min="0" step="1"><span class="unit">EUR</span></div>
+        </div>
+        <div class="row">
+          <label for="laufzeit">Vertragslaufzeit<span class="sub">Pflichtangabe bei Sonderzahlung</span></label>
+          <div class="field"><input type="number" id="laufzeit" value="36" min="0" step="1"><span class="unit">Mon.</span></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Feste Kosten pro Jahr</h2>
+        <div class="row">
+          <label for="vers">Versicherung</label>
+          <div class="field"><input type="number" id="vers" value="780" min="0" step="1"><span class="unit">EUR</span></div>
+        </div>
+        <div class="row">
+          <label for="steuer">Kfz-Steuer</label>
+          <div class="field"><input type="number" id="steuer" value="190" min="0" step="1"><span class="unit">EUR</span></div>
+        </div>
+        <div class="row">
+          <label for="stell">Stellplatz oder Garage</label>
+          <div class="field"><input type="number" id="stell" value="0" min="0" step="1"><span class="unit">EUR</span></div>
+        </div>
+        <div class="row">
+          <label for="sonstfix">Schutzbrief, GAP, HU</label>
+          <div class="field"><input type="number" id="sonstfix" value="96" min="0" step="1"><span class="unit">EUR</span></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Laufende Kosten pro Jahr</h2>
+        <div class="row">
+          <label for="sprit">Kraftstoff oder Ladestrom</label>
+          <div class="field"><input type="number" id="sprit" value="2400" min="0" step="1"><span class="unit">EUR</span></div>
+        </div>
+        <div class="row">
+          <label for="wartung">Wartung und Inspektion</label>
+          <div class="field"><input type="number" id="wartung" value="480" min="0" step="1"><span class="unit">EUR</span></div>
+        </div>
+        <div class="row">
+          <label for="reifen">Reifen und Einlagerung</label>
+          <div class="field"><input type="number" id="reifen" value="300" min="0" step="1"><span class="unit">EUR</span></div>
+        </div>
+        <div class="row">
+          <label for="repa">Reparaturen und Pflege</label>
+          <div class="field"><input type="number" id="repa" value="120" min="0" step="1"><span class="unit">EUR</span></div>
+        </div>
+        <p class="note">Parkgebühren, Maut und Fährkosten gehören nicht hierher. Sie sind Reisenebenkosten
+          und zusätzlich zum Kilometersatz in voller Höhe abziehbar.</p>
+      </div>
+
+      <div class="card">
+        <h2>Fahrleistung</h2>
+        <div class="row">
+          <label for="kmStart">Kilometerstand am 1. Januar<span class="sub">Tacho-Foto aufheben</span></label>
+          <div class="field"><input type="number" id="kmStart" value="41230" min="0" step="1"><span class="unit">km</span></div>
+        </div>
+        <div class="row">
+          <label for="kmEnde">Kilometerstand am 31. Dezember</label>
+          <div class="field"><input type="number" id="kmEnde" value="62807" min="0" step="1"><span class="unit">km</span></div>
+        </div>
+        <div class="row">
+          <label for="inklusiv">Inklusivkilometer laut Vertrag<span class="sub">0 = keine Begrenzung</span></label>
+          <div class="field"><input type="number" id="inklusiv" value="15000" min="0" step="100"><span class="unit">km</span></div>
+        </div>
+        <div class="row">
+          <label for="mehrCent">Preis je Mehrkilometer</label>
+          <div class="field"><input type="number" id="mehrCent" value="12" min="0" step="0.1"><span class="unit">Cent</span></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Betriebliche Fahrten</h2>
+        <p class="note">Dienstreisen zählen mit jedem gefahrenen Kilometer, Hin- und Rückweg.
+          Fahrten zur eigenen Betriebsstätte dagegen nur mit der einfachen Entfernung.</p>
+        <div class="row">
+          <label for="dienstKm">Dienstreisen im Jahr<span class="sub">Kunden, Messen, Termine auswärts</span></label>
+          <div class="field"><input type="number" id="dienstKm" value="7195" min="0" step="1"><span class="unit">km</span></div>
+        </div>
+        <div class="row">
+          <label for="bsTage">Fahrten zur Betriebsstätte<span class="sub">Anzahl der Tage im Jahr</span></label>
+          <div class="field"><input type="number" id="bsTage" value="0" min="0" step="1"><span class="unit">Tage</span></div>
+        </div>
+        <div class="row">
+          <label for="bsKm">Einfache Entfernung dorthin</label>
+          <div class="field"><input type="number" id="bsKm" value="0" min="0" step="0.1"><span class="unit">km</span></div>
+        </div>
+        <div class="row">
+          <label class="check" for="mehrEin">
+            <input type="checkbox" id="mehrEin">
+            <span>Rückstellung für Mehrkilometer in die Gesamtkosten einrechnen</span>
+          </label>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ================= Ergebnis ================= -->
+    <aside class="panel" aria-live="polite">
+      <div class="panel-head">
+        <div class="t">
+          <span>Kilometersatz</span>
+          <span class="badge neutral" id="methodBadge">individuell</span>
+        </div>
+        <p class="lede">Gesamtkosten geteilt durch Gesamtfahrleistung</p>
+        <div class="bignum"><span id="kmSatz">0,5849</span><em>EUR je km</em></div>
+      </div>
+
+      <div class="panel-body">
+        <div class="t" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+          <span style="font-size:12px;font-weight:590;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-3)">Abzug</span>
+          <div class="segmented" role="group" aria-label="Zeitraum">
+            <button type="button" id="segJahr" aria-pressed="true">Jahr</button>
+            <button type="button" id="segMonat" aria-pressed="false">Monat</button>
+          </div>
+        </div>
+
+        <div class="line">
+          <span class="k">Dienstreisen<small id="dienstBasis">7.195 km &times; 0,5849</small></span>
+          <span class="v" id="abzugDienst">4.208,45</span>
+        </div>
+        <div class="line" id="bsLine" hidden>
+          <span class="k">Betriebsstätte<small id="bsBasis">Entfernungspauschale</small></span>
+          <span class="v" id="abzugBs">0,00</span>
+        </div>
+        <div class="line total">
+          <span class="k">Betriebsausgabe</span>
+          <span class="v" id="abzugGesamt">4.208,45</span>
+        </div>
+
+        <div class="compare">
+          <h3>Methodenvergleich</h3>
+          <div class="bar">
+            <div class="lab"><span>Individueller Satz</span><span class="v" id="cmpInd">4.208,45</span></div>
+            <div class="track"><div class="fill" id="barInd" style="width:100%"></div></div>
+          </div>
+          <div class="bar alt">
+            <div class="lab"><span>Pauschale 0,30 EUR</span><span class="v" id="cmpPau">2.158,50</span></div>
+            <div class="track"><div class="fill" id="barPau" style="width:51%"></div></div>
+          </div>
+          <p class="delta" id="deltaText"></p>
+        </div>
+
+        <div class="gauge">
+          <div class="lab"><span>Betrieblicher Nutzungsanteil</span><span class="v" id="anteilVal">33,3 %</span></div>
+          <div class="scale">
+            <div class="fill" id="anteilFill" style="width:33.3%"></div>
+            <div class="mark" style="left:50%"></div>
+          </div>
+          <div class="scale-legend"><span>0 %</span><span>50 %</span><span>100 %</span></div>
+        </div>
+      </div>
+    </aside>
+
+  </div>
+
+  <!-- ================= Hinweise ================= -->
+  <section class="block">
+    <h2>Prüfhinweise</h2>
+    <p class="sub">Aktualisiert sich mit jeder Eingabe. Was hier rot steht, kippt im Zweifel die
+      gesamte Abrechnung.</p>
+    <div class="notices" id="notices"></div>
+  </section>
+
+  <!-- ================= Kostenaufstellung ================= -->
+  <section class="block">
+    <h2>Kostenaufstellung</h2>
+    <p class="sub">Der Zähler des Kilometersatzes. Diese Aufstellung geht als Anlage zum Eigenbeleg
+      an die Buchhaltung, jede Zeile mit Beleg dahinter.</p>
+    <div class="tablewrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Position</th>
+            <th class="num">Betrag</th>
+            <th class="num">Anteil</th>
+            <th class="num">je km</th>
+          </tr>
+        </thead>
+        <tbody id="kostenBody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ================= Eigenbeleg ================= -->
+  <section class="block">
+    <h2>Eigenbeleg</h2>
+    <p class="sub">Als Einzelunternehmer stellst du dir keine Rechnung, sondern legst die betrieblich
+      veranlassten Aufwendungen als Nutzungseinlage in den Betrieb ein. Dieser Text ist der Beleg dazu.</p>
+    <div class="beleg" id="belegText"></div>
+    <div class="actions">
+      <button type="button" class="btn primary" id="copyBtn">Beleg kopieren</button>
+      <button type="button" class="btn ghost" id="printBtn">Drucken oder als PDF sichern</button>
+      <button type="button" class="btn ghost" id="resetBtn">Eingaben zurücksetzen</button>
+    </div>
+
+    <details class="legal">
+      <summary>Warum keine Rechnung und keine Umsatzsteuer</summary>
+      <div class="inner">
+        <p>Ein Einzelunternehmen ist keine eigene Rechtsperson. Zwischen dir privat und deinem Betrieb
+          kann es deshalb keinen Vertrag und keinen umsatzsteuerlichen Leistungsaustausch geben. Was
+          wirtschaftlich wie eine Weiterberechnung aussieht, ist steuerlich eine Nutzungseinlage nach
+          § 4 Abs. 4 EStG.</p>
+        <p>Ein Umsatzsteuerausweis auf einem Beleg an dich selbst würde zu unrichtig ausgewiesener
+          Steuer nach § 14c Abs. 2 UStG führen. Die schuldest du dann tatsächlich.</p>
+        <p>Buchungssatz SKR03: <code>4670 Reisekosten Unternehmer Fahrtkosten</code> an
+          <code>1890 Privateinlagen</code>. SKR04: <code>6670</code> an <code>2180</code>. Eine
+          spätere Überweisung vom Geschäfts- aufs Privatkonto ist eine steuerlich neutrale
+          Privatentnahme, keine Voraussetzung für den Abzug.</p>
+      </div>
+    </details>
+
+    <details class="legal">
+      <summary>Warum die Sonderzahlung verteilt wird</summary>
+      <div class="inner">
+        <p>Eine Leasingsonderzahlung darf nicht in voller Höhe im Jahr der Zahlung in die Gesamtkosten
+          einfließen. Der Bundesfinanzhof hat entschieden, dass sie im Rahmen der Nutzungseinlage
+          zeit- und nutzungsanteilig auf die Vertragslaufzeit zu verteilen ist, unabhängig vom
+          tatsächlichen Abfluss: BFH vom 12.03.2024, VIII R 1/21, bestätigt durch BFH vom 21.11.2024,
+          VI R 9/22.</p>
+        <p>Bei 5.000 Euro auf 36 Monate sind das <code>5000 / 36 × 12 = 1.666,67</code> Euro pro
+          vollem Jahr. Wer stattdessen die vollen 5.000 Euro im ersten Jahr ansetzt, bekommt einen
+          Kilometersatz, der in der Prüfung nicht standhält.</p>
+      </div>
+    </details>
+
+    <details class="legal">
+      <summary>Warum Betriebsstättenfahrten anders zählen</summary>
+      <div class="inner">
+        <p>Für Fahrten zwischen Wohnung und erster Betriebsstätte begrenzt § 4 Abs. 5 Satz 1 Nr. 6 EStG
+          den Abzug auf die Entfernungspauschale, unabhängig davon, was der Kilometer tatsächlich
+          kostet. Seit dem 1. Januar 2026 sind das einheitlich 0,38 Euro je Entfernungskilometer ab
+          dem ersten Kilometer.</p>
+        <p>Gezählt wird die einfache Strecke, obwohl du hin und zurück fährst. Bei 30 Kilometern und
+          200 Tagen also <code>30 × 0,38 × 200 = 2.280</code> Euro. Dienstreisen zu Kunden und Messen
+          zählen dagegen mit jedem gefahrenen Kilometer und bleiben bei der Pauschale von 0,30 Euro
+          oder deinem individuellen Satz.</p>
+        <p>Wer ausschließlich vom häuslichen Arbeitsplatz aus arbeitet, hat diese Kategorie in der
+          Regel gar nicht. Dann bleiben die Felder auf null.</p>
+      </div>
+    </details>
+  </section>
+
+  <footer>
+    Rechenstand 2026: Entfernungspauschale 0,38 Euro ab dem ersten Kilometer laut
+    Steueränderungsgesetz 2025, Dienstreisepauschale unverändert 0,30 Euro je gefahrenem Kilometer.
+    Planungs- und Dokumentationswerkzeug, keine Steuerberatung. Die Methodenwahl und die Jahreswerte
+    vor Abgabe der Steuererklärung mit dem Steuerberater abstimmen. Eingaben bleiben in diesem
+    Browser und werden nirgendwo übertragen.
+  </footer>
+
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  var PAUSCHALE = 0.30;
+  var ENTFERNUNGSPAUSCHALE = 0.38;
+  var SPEICHER = "aa-kmsatz-v1";
+
+  var felder = ["rate","monate","sonder","laufzeit","vers","steuer","stell","sonstfix",
+                "sprit","wartung","reifen","repa","kmStart","kmEnde","inklusiv","mehrCent",
+                "dienstKm","bsTage","bsKm"];
+  var el = {};
+  felder.concat(["mehrEin"]).forEach(function(id){ el[id] = document.getElementById(id); });
+
+  var zeitraum = "jahr";
+
+  function num(id){
+    var v = parseFloat(el[id].value);
+    return isFinite(v) ? v : 0;
+  }
+
+  function eur(x, nk){
+    if(nk === undefined) nk = 2;
+    if(!isFinite(x)) x = 0;
+    return x.toLocaleString("de-DE", {minimumFractionDigits:nk, maximumFractionDigits:nk});
+  }
+  function km(x){ return Math.round(x).toLocaleString("de-DE"); }
+  function pct(x, nk){
+    if(nk === undefined) nk = 1;
+    return (x*100).toLocaleString("de-DE", {minimumFractionDigits:nk, maximumFractionDigits:nk}) + " %";
+  }
+
+  function rechne(){
+    var monate    = Math.max(0, Math.min(12, num("monate")));
+    var laufzeit  = num("laufzeit");
+    var sonder    = num("sonder");
+
+    var leasing   = num("rate") * monate;
+    var sonderAnt = laufzeit > 0 ? (sonder / laufzeit) * monate : 0;
+    var fix       = num("vers") + num("steuer") + num("stell") + num("sonstfix");
+    var lauf      = num("sprit") + num("wartung") + num("reifen") + num("repa");
+
+    var gesamtKm  = Math.max(0, num("kmEnde") - num("kmStart"));
+
+    var inklusiv  = num("inklusiv");
+    var mehrKm    = (inklusiv > 0 && gesamtKm > inklusiv) ? (gesamtKm - inklusiv) : 0;
+    var mehrKost  = mehrKm * (num("mehrCent") / 100);
+    var mehrAktiv = el.mehrEin.checked && mehrKost > 0;
+
+    var gesamt    = leasing + sonderAnt + fix + lauf + (mehrAktiv ? mehrKost : 0);
+    var kmSatz    = gesamtKm > 0 ? gesamt / gesamtKm : 0;
+
+    var dienstKm  = num("dienstKm");
+    var bsTage    = num("bsTage");
+    var bsEinfach = num("bsKm");
+    var bsGefahren = bsTage * bsEinfach * 2;
+
+    var indiv     = dienstKm * kmSatz;
+    var pausch    = dienstKm * PAUSCHALE;
+    var methode   = indiv >= pausch ? "individuell" : "pauschal";
+    var abzugD    = Math.max(indiv, pausch);
+    var abzugBs   = bsTage * bsEinfach * ENTFERNUNGSPAUSCHALE;
+
+    var betriebKm = dienstKm + bsGefahren;
+    var anteil    = gesamtKm > 0 ? betriebKm / gesamtKm : 0;
+
+    return {
+      leasing:leasing, sonderAnt:sonderAnt, fix:fix, lauf:lauf,
+      mehrKm:mehrKm, mehrKost:mehrKost, mehrAktiv:mehrAktiv,
+      gesamt:gesamt, gesamtKm:gesamtKm, kmSatz:kmSatz,
+      dienstKm:dienstKm, bsTage:bsTage, bsEinfach:bsEinfach, bsGefahren:bsGefahren,
+      indiv:indiv, pausch:pausch, methode:methode,
+      abzugD:abzugD, abzugBs:abzugBs, abzugGes:abzugD + abzugBs,
+      betriebKm:betriebKm, anteil:anteil,
+      laufzeit:laufzeit, sonder:sonder, inklusiv:inklusiv
+    };
+  }
+
+  function zeichne(){
+    var r = rechne();
+    var t = zeitraum === "monat" ? 12 : 1;
+    var satzAngewandt = r.methode === "individuell" ? r.kmSatz : PAUSCHALE;
+
+    document.getElementById("kmSatz").textContent = eur(r.kmSatz, 4);
+
+    var badge = document.getElementById("methodBadge");
+    badge.textContent = r.methode;
+    badge.className = "badge " + (r.methode === "individuell" ? "good" : "neutral");
+
+    document.getElementById("abzugDienst").textContent = eur(r.abzugD / t);
+    document.getElementById("dienstBasis").textContent =
+      km(r.dienstKm / t) + " km × " + eur(satzAngewandt, r.methode === "individuell" ? 4 : 2);
+
+    var bsLine = document.getElementById("bsLine");
+    if(r.bsTage > 0 && r.bsEinfach > 0){
+      bsLine.hidden = false;
+      document.getElementById("abzugBs").textContent = eur(r.abzugBs / t);
+      document.getElementById("bsBasis").textContent =
+        km(r.bsTage / t) + " Tage × " + eur(r.bsEinfach, 1) + " km × 0,38";
+    } else {
+      bsLine.hidden = true;
+    }
+
+    document.getElementById("abzugGesamt").textContent = eur(r.abzugGes / t);
+
+    // Methodenvergleich
+    var maxV = Math.max(r.indiv, r.pausch, 1);
+    document.getElementById("cmpInd").textContent = eur(r.indiv / t);
+    document.getElementById("cmpPau").textContent = eur(r.pausch / t);
+    document.getElementById("barInd").style.width = (r.indiv / maxV * 100) + "%";
+    document.getElementById("barPau").style.width = (r.pausch / maxV * 100) + "%";
+
+    var diff = Math.abs(r.indiv - r.pausch);
+    var dt = document.getElementById("deltaText");
+    if(r.dienstKm <= 0){
+      dt.textContent = "Ohne dienstliche Kilometer gibt es nichts zu vergleichen.";
+    } else if(r.methode === "individuell"){
+      dt.innerHTML = "Der Einzelnachweis bringt <b>" + eur(diff) +
+        " EUR</b> mehr Betriebsausgaben im Jahr. Der Preis dafür: lückenloses Fahrtenbuch und alle Kostenbelege.";
+    } else {
+      dt.innerHTML = "Die Pauschale liegt <b>" + eur(diff) +
+        " EUR</b> über dem Einzelnachweis. Nimm die Pauschale, der Kostennachweis lohnt hier nicht.";
+    }
+
+    // Nutzungsanteil
+    document.getElementById("anteilVal").textContent = pct(r.anteil);
+    var fill = document.getElementById("anteilFill");
+    fill.style.width = Math.min(100, r.anteil * 100) + "%";
+    fill.style.background = r.anteil > 0.5 ? "var(--crit)"
+                          : r.anteil > 0.4 ? "var(--warn)" : "var(--good)";
+
+    zeichneKosten(r);
+    zeichneHinweise(r);
+    zeichneBeleg(r, satzAngewandt);
+    speichern();
+  }
+
+  function zeichneKosten(r){
+    var zeilen = [
+      ["Leasingraten", r.leasing, num("monate") + " Raten"],
+      ["Leasingsonderzahlung", r.sonderAnt,
+        r.laufzeit > 0 ? "Jahresanteil aus " + eur(r.sonder, 0) + " EUR / " + r.laufzeit + " Mon." : "ohne Laufzeit nicht verteilbar"],
+      ["Feste Kosten", r.fix, "Versicherung, Steuer, Stellplatz, Schutzbrief"],
+      ["Laufende Kosten", r.lauf, "Kraftstoff, Wartung, Reifen, Pflege"]
+    ];
+    if(r.mehrAktiv){
+      zeilen.push(["Rückstellung Mehrkilometer", r.mehrKost, km(r.mehrKm) + " km über der Inklusivleistung"]);
+    }
+
+    var html = "";
+    zeilen.forEach(function(z){
+      var anteil = r.gesamt > 0 ? z[1] / r.gesamt : 0;
+      var jeKm = r.gesamtKm > 0 ? z[1] / r.gesamtKm : 0;
+      html += '<tr><td>' + z[0] + '<span class="sub">' + z[2] + '</span></td>' +
+              '<td class="num">' + eur(z[1]) + '</td>' +
+              '<td class="num">' + pct(anteil, 0) + '</td>' +
+              '<td class="num">' + eur(jeKm, 4) + '</td></tr>';
+    });
+    html += '<tr class="sum"><td>Gesamtkosten<span class="sub">geteilt durch ' + km(r.gesamtKm) + ' km Jahresfahrleistung</span></td>' +
+            '<td class="num">' + eur(r.gesamt) + '</td><td class="num">100 %</td>' +
+            '<td class="num">' + eur(r.kmSatz, 4) + '</td></tr>';
+    document.getElementById("kostenBody").innerHTML = html;
+  }
+
+  function zeichneHinweise(r){
+    var h = [];
+
+    if(r.gesamtKm <= 0){
+      h.push(["crit","Keine Fahrleistung erfasst.","Ohne Jahresfahrleistung lässt sich kein Kilometersatz bilden. Kilometerstand am Jahresanfang und Jahresende eintragen."]);
+    }
+    if(r.sonder > 0 && r.laufzeit <= 0){
+      h.push(["crit","Sonderzahlung ohne Laufzeit.","Die Sonderzahlung muss über die Vertragslaufzeit verteilt werden. Ohne Laufzeitangabe fehlt sie in den Gesamtkosten und der Kilometersatz ist zu niedrig."]);
+    }
+    if(r.betriebKm > r.gesamtKm && r.gesamtKm > 0){
+      h.push(["crit","Mehr betriebliche als gesamte Kilometer.","Dienstreisen und Betriebsstättenfahrten zusammen ergeben " + km(r.betriebKm) + " km, die Jahresfahrleistung nur " + km(r.gesamtKm) + " km. Eine der beiden Angaben stimmt nicht."]);
+    }
+    if(r.anteil > 0.5){
+      h.push(["crit","Betrieblicher Anteil über 50 Prozent.","Ab dieser Schwelle behandelt die Finanzverwaltung das Fahrzeug in der Regel als betriebliches Fahrzeug: voller Kostenabzug, dafür Versteuerung der Privatnutzung über die Ein-Prozent-Regelung oder ein Fahrtenbuch. Dieses Modell passt dann nicht mehr. Vor der Jahresabrechnung mit dem Steuerberater klären."]);
+    } else if(r.anteil > 0.4){
+      h.push(["warn","Betrieblicher Anteil bei " + pct(r.anteil) + ".","Der Abstand zur 50-Prozent-Schwelle wird knapp. Fahrleistung im Blick behalten, ein starkes viertes Quartal kippt das Modell."]);
+    }
+    if(r.mehrKm > 0){
+      h.push([r.mehrAktiv ? "warn" : "warn","Inklusivkilometer überschritten.",
+        km(r.mehrKm) + " km über der vertraglichen Freigrenze. Bei " + eur(num("mehrCent"),0) +
+        " Cent je Mehrkilometer sind das " + eur(r.mehrKost) + " EUR, fällig bei Vertragsende. " +
+        (r.mehrAktiv ? "Aktuell anteilig in den Gesamtkosten enthalten." : "Aktuell nicht in den Gesamtkosten enthalten.")]);
+    }
+    if(r.anteil > 0 && r.anteil < 0.05){
+      h.push(["warn","Nur " + pct(r.anteil) + " betriebliche Nutzung.","Der Aufwand für den Einzelnachweis steht in keinem Verhältnis. Die 0,30-Euro-Pauschale ohne Gesamtkostennachweis ist hier der pragmatische Weg."]);
+    }
+    if(r.bsTage > 0 && r.bsEinfach > 0){
+      var tatsaechlich = r.bsGefahren * r.kmSatz;
+      h.push(["", "Betriebsstättenfahrten sind gedeckelt.",
+        "Die " + km(r.bsGefahren) + " gefahrenen Kilometer kosten dich " + eur(tatsaechlich) +
+        " EUR, abziehbar sind über die Entfernungspauschale aber nur " + eur(r.abzugBs) +
+        " EUR. Die Differenz von " + eur(Math.max(0, tatsaechlich - r.abzugBs)) + " EUR trägst du privat."]);
+    }
+    if(r.sonder > 0 && r.laufzeit > 0){
+      h.push(["","Sonderzahlung wird verteilt.",
+        "Von " + eur(r.sonder,0) + " EUR fließen " + eur(r.sonderAnt) +
+        " EUR in dieses Jahr, verteilt über " + r.laufzeit + " Monate Laufzeit. Der volle Ansatz im Zahlungsjahr hält der Prüfung nicht stand (BFH VIII R 1/21)."]);
+    }
+    if(r.methode === "individuell" && r.dienstKm > 0){
+      h.push(["good","Einzelnachweis lohnt sich.",
+        "Dein Kilometer kostet " + eur(r.kmSatz,4) + " EUR statt der pauschalen 0,30 EUR. Voraussetzung ist ein lückenloses Fahrtenbuch inklusive der Privatfahrten, sonst fehlt der Nenner."]);
+    }
+
+    document.getElementById("notices").innerHTML = h.map(function(n){
+      return '<div class="notice ' + n[0] + '"><span class="dot"></span><span><b>' +
+             n[1] + '</b> ' + n[2] + '</span></div>';
+    }).join("");
+  }
+
+  function zeichneBeleg(r, satz){
+    var heute = new Date().toLocaleDateString("de-DE", {day:"2-digit", month:"2-digit", year:"numeric"});
+    var jahr  = new Date().getFullYear();
+    var mon   = zeitraum === "monat";
+    var t     = mon ? 12 : 1;
+
+    function z(label, wert){ return label.padEnd(36) + String(wert).padStart(16); }
+    var linie = "\u2500".repeat(52);
+
+    var zeilen = [
+      "EIGENBELEG \u2014 NUTZUNGSEINLAGE FAHRZEUGKOSTEN",
+      linie,
+      "",
+      z("Betrieb", "______________________"),
+      z("Inhaber", "______________________"),
+      z("Abrechnungszeitraum", mon ? "Monat ____ / " + jahr : "Kalenderjahr " + jahr),
+      z("Belegdatum", heute),
+      "",
+      z("Fahrzeug", "______________________"),
+      z("Kennzeichen", "______________________"),
+      z("Halter", "privat geleast"),
+      "",
+      "BERECHNUNG",
+      linie,
+      z("Fahrzeug-Gesamtkosten des Jahres", eur(r.gesamt) + " EUR"),
+      z("Jahresfahrleistung", km(r.gesamtKm) + " km"),
+      z("Individueller Kilometersatz", eur(r.kmSatz, 4) + " EUR"),
+      z("Angewandte Methode", r.methode),
+      z("Angesetzter Satz", eur(satz, r.methode === "individuell" ? 4 : 2) + " EUR"),
+      z("Dienstlich gefahrene Kilometer", km(r.dienstKm / t) + " km")
+    ];
+
+    if(r.bsTage > 0 && r.bsEinfach > 0){
+      zeilen.push(z("Entfernungspauschale Betriebsst\u00e4tte", eur(r.abzugBs / t) + " EUR"));
+    }
+
+    zeilen = zeilen.concat([
+      linie,
+      z("BETRAG DER NUTZUNGSEINLAGE", eur(r.abzugGes / t) + " EUR"),
+      "",
+      "",
+      "RECHTSGRUNDLAGE",
+      "Nutzungseinlage der auf betriebliche Fahrten entfallenden",
+      "Aufwendungen eines privat geleasten Fahrzeugs, \u00a7 4 Abs. 4 EStG.",
+      "Kein Leistungsaustausch, daher keine Umsatzsteuer und kein",
+      "gesonderter Vorsteuerausweis.",
+      "",
+      "BUCHUNG",
+      "SKR03  4670 Reisekosten Unternehmer Fahrtkosten an 1890 Privateinlagen",
+      "SKR04  6670 Reisekosten Unternehmer Fahrtkosten an 2180 Privateinlagen",
+      "",
+      "ANLAGEN",
+      "[ ] Fahrtenbuch des Abrechnungszeitraums",
+      "[ ] Kostenaufstellung mit Einzelbelegen",
+      "[ ] Kilometerstandsnachweis Jahresanfang und Jahresende",
+      "[ ] Leasingvertrag mit Sonderzahlung und Laufzeit",
+      "",
+      "",
+      "Ort, Datum                Unterschrift",
+      "______________________    ______________________"
+    ]);
+
+    var text = zeilen.join("\n");
+
+    document.getElementById("belegText").textContent = text;
+  }
+
+  // ---------- Zeitraumumschalter ----------
+  function setZeitraum(z){
+    zeitraum = z;
+    document.getElementById("segJahr").setAttribute("aria-pressed", String(z === "jahr"));
+    document.getElementById("segMonat").setAttribute("aria-pressed", String(z === "monat"));
+    zeichne();
+  }
+  document.getElementById("segJahr").addEventListener("click", function(){ setZeitraum("jahr"); });
+  document.getElementById("segMonat").addEventListener("click", function(){ setZeitraum("monat"); });
+
+  // ---------- Aktionen ----------
+  document.getElementById("copyBtn").addEventListener("click", function(){
+    var btn = this;
+    var text = document.getElementById("belegText").textContent;
+    var fertig = function(ok){
+      btn.textContent = ok ? "Kopiert" : "Kopieren nicht möglich";
+      setTimeout(function(){ btn.textContent = "Beleg kopieren"; }, 1800);
+    };
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(function(){ fertig(true); }, function(){ fertig(false); });
+    } else {
+      fertig(false);
+    }
+  });
+
+  document.getElementById("printBtn").addEventListener("click", function(){ window.print(); });
+
+  document.getElementById("resetBtn").addEventListener("click", function(){
+    try { localStorage.removeItem(SPEICHER); } catch(e){}
+    location.reload();
+  });
+
+  // ---------- Speichern ----------
+  function speichern(){
+    try {
+      var d = {};
+      felder.forEach(function(id){ d[id] = el[id].value; });
+      d.mehrEin = el.mehrEin.checked;
+      localStorage.setItem(SPEICHER, JSON.stringify(d));
+    } catch(e){}
+  }
+
+  function laden(){
+    try {
+      var roh = localStorage.getItem(SPEICHER);
+      if(!roh) return;
+      var d = JSON.parse(roh);
+      felder.forEach(function(id){
+        if(typeof d[id] === "string" || typeof d[id] === "number") el[id].value = d[id];
+      });
+      if(typeof d.mehrEin === "boolean") el.mehrEin.checked = d.mehrEin;
+    } catch(e){}
+  }
+
+  // ---------- Start ----------
+  laden();
+  felder.forEach(function(id){
+    el[id].addEventListener("input", zeichne);
+  });
+  el.mehrEin.addEventListener("change", zeichne);
+  zeichne();
+})();
+</script>

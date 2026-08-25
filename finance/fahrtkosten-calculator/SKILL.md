@@ -147,6 +147,18 @@ vollen Kilometersatz anzusetzen. Der Rechner trennt das automatisch.
 5. Belegpaket für den Steuerberater zusammenstellen:
    [assets/jahresabrechnung-checkliste.md](assets/jahresabrechnung-checkliste.md).
 
+## Zwei Wege zum selben Ergebnis
+
+| | Oberfläche | Kommandozeile |
+|---|---|---|
+| Datei | `assets/kilometersatz-rechner.html` im Browser öffnen | `scripts/km_kostenrechner.py` |
+| Eingabe | Formularfelder, Ergebnis rechnet live mit | Fahrzeugprofil (JSON) + Fahrtenbuch (CSV) |
+| Stärke | schnelles Durchspielen von Szenarien, Schwellen auf einen Blick | echtes Fahrtenbuch, Lückenprüfung, Monatsabrechnung, JSON-Export |
+| Gedacht für | „Was passiert, wenn ich 3.000 km mehr dienstlich fahre?" | die tatsächliche Jahresabrechnung mit Belegen |
+
+Beide rechnen identisch — dieselben Formeln, dieselben Sätze. Die Oberfläche
+speichert Eingaben nur im eigenen Browser, es wird nichts übertragen.
+
 ## Kommandos
 
 ```bash
@@ -218,6 +230,7 @@ python3 ../steuerrechner-selbststaendigkeit/scripts/steuerrechner.py \
 | Datei | Zweck |
 |---|---|
 | `scripts/km_kostenrechner.py` | Rechner, Fahrtenbuch-Prüfung, Eigenbeleg-Generator |
+| `assets/kilometersatz-rechner.html` | Interaktive Oberfläche — lokal im Browser öffnen, rechnet live, speichert Eingaben im Browser |
 | `assets/fahrzeugprofil-beispiel.json` | Vorlage für die Kostenerfassung |
 | `assets/fahrtenbuch-vorlage.csv` | Fahrtenbuch-Struktur mit Beispieljahr |
 | `assets/eigenbeleg-vorlage.md` | Eigenbeleg zum Ausfüllen von Hand |
