@@ -1,12 +1,12 @@
 # Engineering Skills — Developer Guide
 
-This guide covers the **24 practical engineering tool skills** in the `engineering/` domain. These are tool-focused skills (CI/CD, database design, MCP servers, RAG, observability) distinct from the role-based skills in `engineering-team/`.
+This guide covers the **25 practical engineering tool skills** in the `engineering/` domain. These are tool-focused skills (CI/CD, database design, MCP servers, RAG, observability) distinct from the role-based skills in `engineering-team/`.
 
 ## Domain Overview
 
 | Aspect | Detail |
 |--------|--------|
-| **Skills** | 24 production-ready tool skills |
+| **Skills** | 25 production-ready tool skills |
 | **Focus** | Practical engineering workflows and tooling |
 | **Differs from** | `engineering-team/` — that domain covers engineering *roles* (senior-backend, senior-devops, etc.) |
 | **Plugin** | `.claude-plugin/plugin.json` for Claude Code marketplace |
@@ -40,6 +40,7 @@ This guide covers the **24 practical engineering tool skills** in the `engineeri
 | runbook-generator | Operational runbook creation |
 | skill-tester | Validate and test new skills |
 | tech-debt-tracker | Technical debt identification and prioritization |
+| web-scraper-builder | Build resilient adaptive web scrapers with Scrapling (fetcher tiers, self-healing selectors, Spider crawls) |
 
 ## Skill Package Structure
 
@@ -83,5 +84,5 @@ engineering/skill-name/
 ---
 
 **Last Updated:** June 2026
-**Skills Deployed:** 24/24 engineering tool skills production-ready
+**Skills Deployed:** 25/25 engineering tool skills production-ready
 **Focus:** Practical engineering workflows, tooling, and infrastructure design

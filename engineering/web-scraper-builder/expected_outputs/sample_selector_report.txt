@@ -1,0 +1,26 @@
+$ python scripts/selector_robustness_checker.py assets/sample_snapshot.html \
+    --selector '.product-list > div:nth-child(3) > span.css-1a2b3c' \
+    --selector '[data-testid="product-price"]'
+
+Selector: .product-list > div:nth-child(3) > span.css-1a2b3c
+  Matches: 1
+  Fragility score: 40/100 (fragile)
+    - Positional pseudo-class ':nth-child(3)' - breaks if siblings are added/removed/reordered
+    - Auto-generated/hashed class name '.css-1a2b3c' - regenerates on every build from CSS-in-JS tooling
+  Stable alternatives found on matched elements:
+    (ancestor +1) [data-testid="product-3"]
+    (ancestor +1) [id="p3"]
+    [data-testid="product-price"]
+
+Selector: [data-testid="product-price"]
+  Matches: 3
+  Fragility score: 100/100 (robust)
+    - No fragility patterns detected
+  Stable alternatives found on matched elements:
+    (ancestor +1) [data-testid="product-1"]
+    (ancestor +1) [data-testid="product-2"]
+    (ancestor +1) [data-testid="product-3"]
+    (ancestor +1) [id="p1"]
+    (ancestor +1) [id="p2"]
+    (ancestor +1) [id="p3"]
+    [data-testid="product-price"]

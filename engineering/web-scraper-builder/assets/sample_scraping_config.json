@@ -1,0 +1,31 @@
+{
+  "project": "product-price-monitor",
+  "start_url": "https://example-shop.com/catalog",
+  "fetcher": "stealthy",
+  "fetcher_options": {
+    "headless": true,
+    "solve_cloudflare": true,
+    "network_idle": true
+  },
+  "extraction": {
+    "item_selector": ".product-card",
+    "adaptive": true,
+    "auto_save": true,
+    "fields": {
+      "title": "h2.product-title::text",
+      "price": "span[data-testid='price']::text",
+      "url": "a.product-link::attr(href)",
+      "in_stock": ".availability::text"
+    }
+  },
+  "pagination": {
+    "next_selector": "a[rel='next']::attr(href)",
+    "max_pages": 50
+  },
+  "crawl": {
+    "concurrent_requests": 5,
+    "rate_limit_seconds": 1.5,
+    "respect_robots_txt": true,
+    "crawldir": "./crawl_data"
+  }
+}
