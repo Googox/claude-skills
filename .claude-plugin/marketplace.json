@@ -165,6 +165,21 @@
       },
       "keywords": ["scrum", "agile", "sprint", "retrospective"],
       "category": "project-management"
+    },
+    {
+      "name": "deep-discovery",
+      "source": "https://github.com/forsonny/deep-discovery",
+      "description": "100-question deep discovery process: a structured self-interrogation framework for thoroughly exploring a topic, architecture, strategy, or problem space before committing to a design",
+      "version": "1.0.0",
+      "author": {
+        "name": "forsonny",
+        "url": "https://github.com/forsonny"
+      },
+      "keywords": ["discovery", "brainstorming", "architecture", "strategy", "planning", "review"],
+      "category": "productivity",
+      "external": true,
+      "repository": "https://github.com/forsonny/deep-discovery",
+      "license": "MIT"
     }
   ]
 }

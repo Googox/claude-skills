@@ -3,7 +3,7 @@
   "name": "claude-code-skills",
   "description": "Production-ready skill packages for AI agents - Marketing, Engineering, Product, C-Level, PM, and RA/QM",
   "repository": "https://github.com/alirezarezvani/claude-skills",
-  "total_skills": 61,
+  "total_skills": 62,
   "skills": [
     {
       "name": "contract-and-proposal-writer",
@@ -376,6 +376,12 @@
       "source": "../../ra-qm-team/risk-management-specialist",
       "category": "ra-qm",
       "description": "Medical device risk management specialist implementing ISO 14971 throughout product lifecycle. Provides risk analysis, risk evaluation, risk control, and post-production information analysis."
+    },
+    {
+      "name": "deep-discovery",
+      "source": "https://github.com/forsonny/deep-discovery",
+      "category": "external",
+      "description": "100-question structured self-interrogation framework for exhaustively exploring a topic, architecture, strategy, or problem space. Stress-tests ideas through sequential questions then summarizes critical issues, strengths, recommended changes, and an honest bottom line. Use when asked to run deep discovery, stress-test a plan, interrogate a strategy, review architecture thoroughly, or explore a problem space before committing to a design."
     }
   ],
   "categories": {
@@ -418,6 +424,11 @@
       "count": 12,
       "source": "../../ra-qm-team",
       "description": "Regulatory affairs and quality management skills"
+    },
+    "external": {
+      "count": 1,
+      "source": "https://github.com/forsonny/deep-discovery",
+      "description": "External community plugins from the Codex marketplace"
     }
   }
 }
