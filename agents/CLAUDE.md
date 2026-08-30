@@ -14,6 +14,16 @@ This guide provides comprehensive instructions for creating **cs-* prefixed agen
 
 **Key Principle**: Agents ORCHESTRATE skills, they don't replace them. Skills remain self-contained and portable.
 
+### Installing Agents
+
+Install all `cs-*` agents to your Claude Code agents directory (`~/.claude/agents/`):
+
+```bash
+./scripts/install.sh --tool claude-code
+```
+
+Other useful flags: `--agent cs-product-manager` (install a single agent), `--dry-run` (preview), `--list` (list available agents). Run `./scripts/install.sh --help` for full usage, including `--tool codex` / `--tool openclaw` to delegate to the existing skill installers.
+
 ### Production Agents
 
 **5 Agents Currently Available** (as of November 5, 2025):

@@ -44,6 +44,16 @@ Use Claude Code's built-in plugin system for native integration:
 - ✅ Version management with git tags
 - ✅ Skills available in `~/.claude/skills/`
 
+To also install the production `cs-*` agents (orchestration layer on top of the skills) to `~/.claude/agents/`:
+
+```bash
+git clone https://github.com/alirezarezvani/claude-skills.git
+cd claude-skills
+./scripts/install.sh --tool claude-code
+```
+
+See [agents/CLAUDE.md](agents/CLAUDE.md) for the full agent catalog and installer options (`--agent`, `--dry-run`, `--list`).
+
 ---
 
 ### Method 2: OpenAI Codex Installation
