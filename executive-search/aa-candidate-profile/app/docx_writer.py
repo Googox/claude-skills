@@ -8,6 +8,7 @@ Tabelle, kein Kopfbild. Ein Steckbrief braucht nichts davon.
 Nur Standardbibliothek, Python 3.8+.
 """
 
+import re
 import zipfile
 from xml.sax.saxutils import escape
 
@@ -38,14 +39,35 @@ STILE = {
 }
 
 
+# Offene Felder werden im Text als [[...]] geschrieben und im Word-Dokument
+# gruen hinterlegt. So sieht man auf einen Blick, was noch zu ergaenzen ist,
+# und kann direkt hineinschreiben.
+LUECKE_FILL = "C6EFCE"
+LUECKE = re.compile(r"\[\[(.+?)\]\]", re.DOTALL)
+
+
+def _run(text, groesse, fett, luecke=False):
+    if not text:
+        return ""
+    schatten = ('<w:shd w:val="clear" w:color="auto" w:fill="%s"/>' % LUECKE_FILL) if luecke else ""
+    return ('<w:r><w:rPr><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/>'
+            '<w:sz w:val="%d"/>%s%s%s</w:rPr><w:t xml:space="preserve">%s</w:t></w:r>'
+            % (groesse, "<w:b/>" if fett else "", "<w:i/>" if luecke else "",
+               schatten, escape(text)))
+
+
 def _absatz(text, art="text"):
     groesse, fett, davor = STILE.get(art, STILE["text"])
     runs = []
-    for teil in str(text).split("\n"):
-        runs.append(
-            '<w:r><w:rPr><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/>'
-            '<w:sz w:val="%d"/>%s</w:rPr><w:t xml:space="preserve">%s</w:t></w:r>'
-            % (groesse, "<w:b/>" if fett else "", escape(teil)))
+    for zeilennr, teil in enumerate(str(text).split("\n")):
+        if zeilennr:
+            runs.append("<w:r><w:br/></w:r>")
+        pos = 0
+        for treffer in LUECKE.finditer(teil):
+            runs.append(_run(teil[pos:treffer.start()], groesse, fett))
+            runs.append(_run(treffer.group(1), groesse, fett, luecke=True))
+            pos = treffer.end()
+        runs.append(_run(teil[pos:], groesse, fett))
     return ('<w:p><w:pPr><w:spacing w:before="%d" w:after="60" w:line="264" '
             'w:lineRule="auto"/></w:pPr>%s</w:p>' % (davor, "".join(runs)))
 

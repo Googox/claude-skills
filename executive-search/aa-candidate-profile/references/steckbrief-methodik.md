@@ -30,6 +30,14 @@ Keine Superlative ohne Beleg. "Exzellent", "herausragend", "absolute Ausnahmeers
 
 Branchensprache verwenden. Im Premium-Automobilhandel bedeuten Deckungsbeitrag pro Einheit, Standleistung, Herstellerbindung, Servicedurchdringung, Eintauschquote etwas Konkretes. Generische Managementsprache signalisiert, dass der Berater die Branche nicht kennt.
 
+## Offene Felder
+
+Jede fehlende Angabe wird als grünes Feld ausgewiesen, nicht als Prosa. Statt "Führungsspanne im Lebenslauf nicht angegeben" steht dort [[Führungsspanne ergänzen: direkt / gesamt]]. Die Ausfüllanweisung ist konkret genug, dass sie ohne Rückfrage bearbeitet werden kann.
+
+Das hat drei Effekte. Erstens sieht Aaron beim Durchblättern in Sekunden, was noch fehlt. Zweitens ist das Dokument ein tauglicher Interviewleitfaden, weil die grünen Felder genau die Fragen sind. Drittens sieht der Auftraggeber niemals ein grünes Feld, weil vor dem Versand jedes Feld gefüllt oder die Zeile gestrichen ist.
+
+Ein Steckbrief mit grünen Feldern ist ein Arbeitsstand. Ein Steckbrief ohne grüne Felder ist versandfertig. Diese Unterscheidung ist der Grund für die Konvention.
+
 ## Umgang mit Schwachstellen
 
 Lücken über drei Monate immer ausweisen. Ungeklärte Lücken sind kein Ausschluss, verschwiegene Lücken schon.

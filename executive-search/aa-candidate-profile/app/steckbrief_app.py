@@ -45,7 +45,12 @@ Kandidatenprofil im JSON-Format um.
 
 Harte Regeln:
 1. Erfinde nichts. Keine Zahl, kein Titel, kein Erfolg, der nicht im Text steht.
-   Fehlt eine Zahl, schreibe woertlich "Im Lebenslauf nicht angegeben, zu erheben".
+   Fehlt eine Angabe, setze ein offenes Feld in doppelten eckigen Klammern mit
+   einer konkreten Ausfuellanweisung, zum Beispiel [[Umsatz und Ergebnis ergaenzen]]
+   oder [[Fuehrungsspanne ergaenzen: direkt / gesamt]]. Solche Felder werden im
+   Word-Dokument gruen hinterlegt. Schreibe niemals "nicht angegeben" als Fliesstext.
+   Ein Feld, fuer das es keine Angabe gibt, laesst du im JSON leer; der Generator
+   setzt das gruene Feld dann selbst.
 2. Platzhalter in eckigen Klammern wie [KANDIDAT_1] oder [ARBEITGEBER_2] bleiben
    unveraendert stehen. Ersetze sie nicht und rate nicht, wer dahintersteckt.
 3. Die Executive Summary hat genau fuenf Saetze in dieser Reihenfolge:

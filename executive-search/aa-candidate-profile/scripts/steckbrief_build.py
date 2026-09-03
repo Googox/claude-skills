@@ -126,10 +126,14 @@ def modus_bestimmen(daten, override):
 def pruefe(daten, modus):
     befunde = []
 
+    # Ein leerer Pflichtblock ist kein Fehler, sondern ein offenes Feld. Der
+    # Renderer setzt dort eine gruene Markierung. Fehler sind den harten
+    # Verstoessen vorbehalten: unzulaessige Merkmale, fehlende Einwilligung,
+    # Klartext im Blindprofil.
     for schluessel, blockname in PFLICHTBLOECKE:
-        wert = daten.get(schluessel)
-        if not wert:
-            befunde.append(Befund("fehler", schluessel, "%s fehlt oder ist leer." % blockname))
+        if not daten.get(schluessel):
+            befunde.append(Befund("warnung", schluessel,
+                                  "%s ist leer und erscheint als grünes Feld." % blockname))
 
     summary = daten.get("summary") or []
     if isinstance(summary, list) and 0 < len(summary) < 5:
@@ -144,6 +148,11 @@ def pruefe(daten, modus):
         befunde.append(Befund("warnung", "offene_fragen",
                               "Keine offenen Fragen fuer das naechste Gespraech hinterlegt."))
 
+    offen = zaehle_offene_felder(render(daten, modus))
+    if offen:
+        befunde.append(Befund("hinweis", "offene Felder",
+                              "%d grün markierte Felder im Profil. Vor Versand an den "
+                              "Auftraggeber ausfüllen oder Zeile streichen." % offen))
     if daten.get("assessment") in (None, {}, []):
         befunde.append(Befund("hinweis", "assessment",
                               "A/A-Assessment nicht enthalten. Block 7 wird ausgelassen."))
@@ -218,8 +227,23 @@ def pruefe(daten, modus):
     return befunde
 
 
-def zeile(label, wert):
-    return "%s: %s" % (label, wert) if wert else None
+LUECKE_MUSTER = re.compile(r"\[\[(.+?)\]\]", re.DOTALL)
+
+
+def feld(text):
+    """Offenes Feld. Im Text als [[...]], im Word-Dokument gruen hinterlegt."""
+    return "[[%s]]" % text
+
+
+def zeile(label, wert, platzhalter=None):
+    """Gibt die Zeile immer aus. Fehlt der Wert, steht dort ein offenes Feld."""
+    if wert:
+        return "%s: %s" % (label, wert)
+    return "%s: %s" % (label, feld(platzhalter or ("%s ergänzen" % label)))
+
+
+def zaehle_offene_felder(text):
+    return len(LUECKE_MUSTER.findall(text or ""))
 
 
 def render(daten, modus):
@@ -239,9 +263,7 @@ def render(daten, modus):
         ("Profil-ID", mandat.get("profil_id")),
         ("Datum", mandat.get("datum")),
     ]:
-        z = zeile(label, wert)
-        if z:
-            out.append(z)
+        out.append(zeile(label, wert))
     if mandat.get("berater"):
         out.append("Berater: %s, A/A Executive Search" % mandat["berater"])
     out.append("Modus: %s" % ("Blindprofil, anonymisiert" if blind else "Vollprofil mit Freigabe"))
@@ -261,19 +283,19 @@ def render(daten, modus):
         out.append("Name: %s" % kandidat["name"])
     if kandidat.get("jahrgang") and kandidat.get("jahrgang_einwilligung"):
         out.append("Jahrgang: %s, Einwilligung zur Nennung liegt vor" % kandidat["jahrgang"])
-    for label, schluessel in [
-        ("Wohnregion", "wohnregion"),
-        ("Mobilität", "mobilitaet"),
-        ("Aktuelle Führungsspanne", "fuehrungsspanne"),
-        ("Budget- oder Ergebnisverantwortung", "ergebnisverantwortung"),
-        ("Verfügbarkeit", "verfuegbarkeit"),
-        ("Kündigungsfrist", "kuendigungsfrist"),
+    for label, schluessel, hinweis in [
+        ("Wohnregion", "wohnregion", "Wohnregion ergänzen"),
+        ("Mobilität", "mobilitaet", "Umzugs- und Reisebereitschaft ergänzen"),
+        ("Aktuelle Führungsspanne", "fuehrungsspanne", "Führungsspanne ergänzen: direkt / gesamt"),
+        ("Budget- oder Ergebnisverantwortung", "ergebnisverantwortung",
+         "Umsatz- und Ergebnisverantwortung in Euro ergänzen"),
+        ("Verfügbarkeit", "verfuegbarkeit", "Verfügbarkeit ergänzen"),
+        ("Kündigungsfrist", "kuendigungsfrist", "Kündigungsfrist ergänzen"),
     ]:
-        z = zeile(label, kandidat.get(schluessel))
-        if z:
-            out.append(z)
-    if kandidat.get("sprachen"):
-        out.append("Sprachen: %s" % ", ".join(kandidat["sprachen"]))
+        out.append(zeile(label, kandidat.get(schluessel), hinweis))
+    sprachen = kandidat.get("sprachen") or []
+    out.append("Sprachen: %s" % (", ".join(sprachen) if sprachen
+                                 else feld("Sprachen mit Niveau nach GER ergänzen")))
     out.append("")
 
     out.append("Block 4, Werdegang")
@@ -282,19 +304,23 @@ def render(daten, modus):
         firma = eintrag.get("unternehmenstyp") if blind else (
             eintrag.get("unternehmen") or eintrag.get("unternehmenstyp"))
         kopf = "%s bis %s, %s" % (eintrag.get("von", "?"), eintrag.get("bis", "?"), firma or "?")
-        if eintrag.get("groesse"):
-            kopf += ", %s" % eintrag["groesse"]
+        kopf += ", %s" % (eintrag.get("groesse")
+                          or feld("Umsatz, Mitarbeitende, Standorte ergänzen"))
         out.append(kopf)
-        if eintrag.get("rolle"):
-            out.append("Rolle: %s" % eintrag["rolle"])
-        if eintrag.get("verantwortung"):
-            out.append("Verantwortung: %s" % eintrag["verantwortung"])
+        out.append(zeile("Rolle", eintrag.get("rolle"), "Rollenbezeichnung ergänzen"))
+        out.append(zeile("Verantwortung", eintrag.get("verantwortung"),
+                         "Verantwortungsumfang in einem Satz ergänzen"))
         ergebnisse = eintrag.get("ergebnisse") or []
-        out.append("Ergebnisse: %s" % ("; ".join(ergebnisse) if ergebnisse
-                                       else "Im Lebenslauf keine Kennzahlen angegeben, im Interview zu erheben."))
+        if ergebnisse:
+            out.append("Ergebnisse: %s" % "; ".join(ergebnisse))
+        else:
+            out.append("Ergebnisse: %s" % feld(
+                "Zwei bis drei messbare Ergebnisse ergänzen: Umsatz, Ertrag, "
+                "Stückzahlen, Führungsspanne, Standortzahl"))
         out.append("")
     luecken = daten.get("luecken") or []
-    out.append("Lücken: %s" % (" ".join(luecken) if luecken else "Nicht geprüft."))
+    out.append("Lücken: %s" % (" ".join(luecken) if luecken
+                               else feld("Lücken über drei Monate prüfen und eintragen")))
     out.append("")
 
     out.append("Block 5, Kompetenzprofil")
@@ -304,17 +330,20 @@ def render(daten, modus):
                               ("Führungskompetenz", "fuehrung"),
                               ("Branchenkompetenz", "branche")]:
         werte = kompetenzen.get(schluessel) or []
-        if werte:
-            out.append("%s: %s" % (label, "; ".join(werte)))
+        out.append("%s: %s" % (label, "; ".join(werte) if werte
+                               else feld("%s belegt ergänzen, mit Station" % label)))
     out.append("")
 
     out.append("Block 6, Passung zum Mandat")
     out.append("")
-    for eintrag in daten.get("passung") or []:
+    passung = daten.get("passung") or []
+    if not passung:
+        out.append(feld("Anforderungsprofil des Mandats Punkt für Punkt eintragen"))
+    for eintrag in passung:
         out.append("%s: %s. Beleg: %s" % (
-            eintrag.get("anforderung", "?"),
-            eintrag.get("status", "nicht bewertet"),
-            eintrag.get("beleg", "offen")))
+            eintrag.get("anforderung") or feld("Anforderung ergänzen"),
+            eintrag.get("status") or feld("erfüllt, teilweise erfüllt oder nicht erfüllt"),
+            eintrag.get("beleg") or feld("Beleg in einer Zeile ergänzen")))
     out.append("")
 
     assessment = daten.get("assessment")
@@ -338,23 +367,26 @@ def render(daten, modus):
 
     out.append("Block 8, Motivation und Wechselgrund")
     out.append("")
-    out.append(daten.get("motivation") or "Nicht erfasst, im Gespräch zu klären.")
+    out.append(daten.get("motivation")
+               or feld("Wechselmotiv aus dem Interview ergänzen, als Selbstauskunft gekennzeichnet"))
     out.append("")
 
     out.append("Block 9, Risiken und offene Punkte")
     out.append("")
-    for risiko in daten.get("risiken") or ["Nicht erfasst."]:
+    for risiko in daten.get("risiken") or [feld("Risiken und offene Punkte ergänzen")]:
         out.append(risiko)
     fragen = daten.get("offene_fragen") or []
-    if fragen:
-        out.append("Im nächsten Gespräch zu klären: %s" % "; ".join(fragen))
+    out.append("Im nächsten Gespräch zu klären: %s" % ("; ".join(fragen) if fragen
+                                                       else feld("Drei Fragen ergänzen")))
     out.append("")
 
     out.append("Block 10, Empfehlung des Beraters")
     out.append("")
     empfehlung = daten.get("empfehlung") or {}
-    out.append("Votum: %s" % empfehlung.get("votum", "offen"))
-    out.append("Begründung: %s" % empfehlung.get("begruendung", "fehlt."))
+    out.append("Votum: %s" % (empfehlung.get("votum")
+                              or feld("Vorstellen, mit Vorbehalt vorstellen oder nicht vorstellen")))
+    out.append("Begründung: %s" % (empfehlung.get("begruendung")
+                                   or feld("Begründung in zwei bis drei Sätzen ergänzen")))
 
     return "\n".join(out).rstrip() + "\n"
 

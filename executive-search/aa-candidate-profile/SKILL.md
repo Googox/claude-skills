@@ -39,6 +39,14 @@ Schritt 6, Compliance-Prüfung vor Ausgabe. Der Prüflauf in references/agg-dsgv
 
 Schritt 7, Ausgabe. Kopierfreundlich als Fließtext-Blöcke, geeignet für Word und PowerPoint. Wenn Aaron eine Datei will, den docx-Skill für das Einseiten-Layout nutzen.
 
+## Offene Felder statt Fehlstellen
+
+Fehlt eine Angabe, steht dort niemals ein entschuldigender Satz wie "im Lebenslauf nicht angegeben", sondern ein offenes Feld mit konkreter Ausfüllanweisung. Im Text wird es als doppelte eckige Klammer geschrieben, im Word-Dokument erscheint es grün hinterlegt und kursiv. Beispiel: [[Umsatz- und Ergebnisverantwortung in Euro ergänzen]].
+
+Der Grund ist praktisch. Ein grünes Feld ist eine Arbeitsanweisung an sich selbst und an den Kandidaten, ein entschuldigender Satz ist eine Kapitulation im fertigen Dokument. Der Steckbrief wird damit zum Arbeitsstand, den man im Interview abarbeitet, statt zu einer Liste dessen, was fehlt.
+
+Die Prüfung zählt die offenen Felder und meldet sie als Hinweis. Ein leerer Pflichtblock ist deshalb kein Fehler, sondern eine Warnung: er erscheint als grünes Feld. Fehler bleiben den harten Verstößen vorbehalten, also unzulässigen Merkmalen, fehlender Einwilligung und Klartext im Blindprofil. Vor dem Versand an den Auftraggeber ist jedes grüne Feld auszufüllen oder die Zeile zu streichen.
+
 ## Aufbau des Steckbriefs
 
 Block 1, Kopf: Mandat und Position, Auftraggeber, Profil-ID, Datum, Berater, Vertraulichkeitsvermerk, Modus (Vollprofil oder Blindprofil).

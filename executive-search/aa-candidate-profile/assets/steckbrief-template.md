@@ -1,6 +1,6 @@
 # Kandidaten-Steckbrief, Vorlage
 
-Kopierfreundliche Vorlage. Platzhalter in eckigen Klammern ersetzen, nicht ausgefüllte Blöcke löschen statt leer stehen lassen.
+Kopierfreundliche Vorlage. Platzhalter in einfachen eckigen Klammern ersetzen. Angaben, die noch fehlen, in doppelte eckige Klammern setzen, zum Beispiel [[Umsatz ergänzen]]. Diese offenen Felder werden im Word-Export grün hinterlegt und sind vor dem Versand an den Auftraggeber auszufüllen oder zu streichen.
 
 ## Block 1, Kopf
 
