@@ -106,6 +106,7 @@ references/agg-dsgvo-leitplanken.md, verpflichtende Prüfliste vor jeder Ausgabe
 assets/steckbrief-template.md, leere Vorlage zum Ausfüllen.
 assets/steckbrief-beispiel.md, ausgefülltes Beispiel mit fiktivem Kandidaten.
 assets/kandidat-beispiel.json, Eingabestruktur für das Skript.
+assets/aa-candidate-profile-chat-SKILL.md, eigenständige Chat-Fassung dieses Skills zum Installieren als persönlicher Skill. Ohne Skript- und Dateiabhängigkeiten, für Testläufe und eigenes Material. Für echte Mandate bleibt die lokale Anwendung der Produktionsweg.
 scripts/anforderungen.py, zerlegt ein schriftliches Anforderungsprofil in prüfbare Punkte und trennt Muss von Kann.
 scripts/steckbrief_build.py, erzeugt Steckbrief aus JSON, prüft Vollständigkeit und AGG-Merkmale, Freigabe-Gate, Word- und PDF-Export.
 scripts/docx_writer.py, minimaler Word-Schreiber für den Arbeitsstand mit grünen Feldern.
