@@ -186,7 +186,10 @@ def pruefe(daten, modus):
         name = str(kandidat.get("name") or "").strip()
         namensteile = [t for t in name.split() if len(t) > 2]
         for pfad, _key, wert in walk(daten):
-            if not isinstance(wert, str) or pfad == "kandidat.name":
+            # mandat.berater und mandat.auftraggeber duerfen Namen enthalten:
+            # das sind Beraterin oder Berater und Auftraggeber, nicht der Kandidat.
+            if not isinstance(wert, str) or pfad in (
+                    "kandidat.name", "mandat.berater", "mandat.auftraggeber"):
                 continue
             for teil in namensteile:
                 if teil.lower() in wert.lower():
