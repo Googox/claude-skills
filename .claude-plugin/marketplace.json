@@ -101,6 +101,17 @@
       "category": "finance"
     },
     {
+      "name": "executive-search-skills",
+      "source": "./executive-search",
+      "description": "1 executive search skill: candidate profile builder (CV to client-ready Steckbrief, named or blind mode, AGG and GDPR compliance check)",
+      "version": "1.0.0",
+      "author": {
+        "name": "Aaron Arena"
+      },
+      "keywords": ["executive-search", "recruiting", "candidate-profile", "hr", "dach"],
+      "category": "business"
+    },
+    {
       "name": "content-creator",
       "source": "./marketing-skill/content-creator",
       "description": "Brand voice analysis, SEO optimization, content frameworks for marketing content creation",

@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This is a **comprehensive skills library** for Claude AI — reusable, production-ready skill packages that bundle domain expertise, best practices, analysis tools, and strategic frameworks. The repository provides modular skills that teams can download and use directly in their workflows.
 
-**Current Scope:** 87 production-ready skills across 9 domains with 5 production agents.
+**Current Scope:** 88 production-ready skills across 10 domains with 5 production agents.
 
 **Key Distinction**: This is NOT a traditional application. It's a library of skill packages meant to be extracted and deployed by users into their own Claude workflows. It supports Claude Code natively, and also integrates with OpenAI Codex and OpenClaw.
 
@@ -26,6 +26,7 @@ This repository uses **modular documentation**. For domain-specific guidance, se
 | **RA/QM Compliance** | [ra-qm-team/CLAUDE.md](ra-qm-team/CLAUDE.md) | 12 | ISO 13485, MDR, FDA compliance workflows |
 | **Business & Growth** | [business-growth/CLAUDE.md](business-growth/CLAUDE.md) | 4 | Customer success, sales engineering, revenue operations |
 | **Finance** | [finance/CLAUDE.md](finance/CLAUDE.md) | 2 | Financial analysis, DCF valuation, budgeting, forecasting |
+| **Executive Search** | [executive-search/CLAUDE.md](executive-search/CLAUDE.md) | 1 | Candidate profiles (Steckbrief) from CVs, AGG/GDPR guardrails |
 | **Standards Library** | [standards/CLAUDE.md](standards/CLAUDE.md) | 5 docs | Communication, quality, git, security standards |
 | **Templates** | [templates/CLAUDE.md](templates/CLAUDE.md) | — | Agent template system |
 
@@ -48,6 +49,7 @@ claude-skills/
 ├── ra-qm-team/                # 12 RA/QM compliance skills
 ├── business-growth/           # 4 business & growth skills
 ├── finance/                   # 2 finance skills
+├── executive-search/          # 1 executive search skill (candidate Steckbrief)
 ├── standards/                 # 5 standards documents
 ├── templates/                 # agent-template.md for new agent creation
 ├── documentation/             # Implementation plans, sprints, delivery
@@ -97,6 +99,7 @@ Each domain has a `.claude-plugin/plugin.json` manifest enabling Claude Code plu
 | **business-growth/** | 4 | customer-success-manager, sales-engineer, revenue-operations, contract-and-proposal-writer |
 | **c-level-advisor/** | 2 | ceo-advisor, cto-advisor |
 | **finance/** | 2 | financial-analyst, steuerrechner-selbststaendigkeit |
+| **executive-search/** | 1 | aa-candidate-profile |
 
 ## Agent Architecture
 
@@ -141,7 +144,7 @@ git push -u origin feature/your-feature-name
 # Create PR via GitHub
 ```
 
-**Conventional commit scopes:** `agents`, `engineering`, `marketing`, `product`, `pm`, `ra-qm`, `business`, `finance`, `standards`, `docs`, `scripts`, `tools`
+**Conventional commit scopes:** `agents`, `engineering`, `marketing`, `product`, `pm`, `ra-qm`, `business`, `finance`, `executive-search`, `standards`, `docs`, `scripts`, `tools`
 
 **Branch Protection Rules:**
 - Main: Requires PR approval, no direct push
@@ -245,6 +248,6 @@ See [standards/git/git-workflow-standards.md](standards/git/git-workflow-standar
 ---
 
 **Last Updated:** June 2026
-**Skills:** 87 production-ready across 9 domains
+**Skills:** 88 production-ready across 10 domains
 **Agents:** 5 production agents (cs-* prefixed)
 **Active Sprint:** sprint-11-06-2025 (CS- Orchestrator Framework — in progress)

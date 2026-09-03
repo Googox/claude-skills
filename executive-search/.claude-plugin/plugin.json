@@ -1,0 +1,12 @@
+{
+  "name": "executive-search-skills",
+  "description": "1 production-ready executive search skill: candidate profile builder (CV to client-ready Steckbrief, named or blind mode, AGG and GDPR compliance check) for DACH premium automotive retail search mandates",
+  "version": "1.0.0",
+  "author": {
+    "name": "Aaron Arena"
+  },
+  "homepage": "https://github.com/Googox/claude-skills/tree/main/executive-search",
+  "repository": "https://github.com/Googox/claude-skills",
+  "license": "MIT",
+  "skills": "./"
+}

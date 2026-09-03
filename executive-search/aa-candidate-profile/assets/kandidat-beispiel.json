@@ -1,0 +1,92 @@
+{
+  "_hinweis": "Alle Angaben frei erfunden. Eingabestruktur fuer scripts/steckbrief_build.py.",
+  "mandat": {
+    "position": "Geschaeftsfuehrer Vertrieb, Premium-Handelsgruppe",
+    "auftraggeber": "Musterhaus Automobile GmbH, Region Nord",
+    "profil_id": "MHA-GFV-03",
+    "datum": "14.03.2026",
+    "berater": "Aaron Arena",
+    "modus": "vollprofil"
+  },
+  "freigabe": {
+    "einwilligung_dokumentiert": true,
+    "einwilligung_datum": "12.03.2026"
+  },
+  "kandidat": {
+    "name": "Thomas Berger",
+    "jahrgang": 1979,
+    "jahrgang_einwilligung": true,
+    "wohnregion": "Grossraum Hannover",
+    "mobilitaet": "Umzugsbereitschaft innerhalb Norddeutschland, Reisebereitschaft bis 40 Prozent",
+    "sprachen": ["Deutsch Muttersprache", "Englisch C1", "Franzoesisch A2"],
+    "fuehrungsspanne": "6 direkt, 145 gesamt",
+    "ergebnisverantwortung": "rund 210 Millionen Euro Umsatz, Ergebnisverantwortung Vertrieb",
+    "verfuegbarkeit": "ab 01.10.2026",
+    "kuendigungsfrist": "6 Monate zum Quartalsende"
+  },
+  "summary": [
+    "Thomas Berger ist seit vierzehn Jahren im Premium-Automobilhandel in Fuehrungsverantwortung, davon sieben Jahre auf Geschaeftsleitungsebene.",
+    "Er hat den Neuwagenabsatz ueber vier Standorte von 2.100 auf 3.400 Einheiten jaehrlich gesteigert und den Deckungsbeitrag pro Einheit um rund 340 Euro erhoeht.",
+    "Zweite tragende Staerke ist der Aufbau von Fuehrungsstrukturen in familiengefuehrten Haeusern, belegt durch die Einfuehrung einer Standortleiter-Ebene bei seiner vorherigen Station.",
+    "Er sucht den Wechsel, weil sein aktuelles Haus nach dem Verkauf an eine Konzerngruppe zentralisiert wird, so seine Angabe im Gespraech.",
+    "Groesster Vorbehalt: bisher ausschliesslich Zweimarkenstrukturen gefuehrt, das Mandat verlangt fuenf Marken."
+  ],
+  "werdegang": [
+    {
+      "von": "04.2019",
+      "bis": "heute",
+      "unternehmen": "Nordstern Automobile GmbH",
+      "unternehmenstyp": "Premium-Handelsgruppe, Norddeutschland",
+      "groesse": "rund 210 Millionen Euro Umsatz, 340 Mitarbeitende, 4 Standorte",
+      "rolle": "Geschaeftsleiter Vertrieb",
+      "verantwortung": "Neu- und Gebrauchtwagenvertrieb ueber vier Standorte, zwei Marken, Ergebnisverantwortung",
+      "ergebnisse": [
+        "Neuwagenabsatz von 2.100 auf 3.400 Einheiten jaehrlich gesteigert",
+        "Deckungsbeitrag pro Einheit um rund 340 Euro erhoeht",
+        "Eintauschquote von 31 auf 44 Prozent gesteigert"
+      ]
+    },
+    {
+      "von": "01.2015",
+      "bis": "03.2019",
+      "unternehmen": "Weser Motors KG",
+      "unternehmenstyp": "Familiengefuehrtes Autohaus, Norddeutschland",
+      "groesse": "rund 95 Millionen Euro Umsatz, 160 Mitarbeitende, 2 Standorte",
+      "rolle": "Verkaufsleiter, ab 2017 Prokurist",
+      "verantwortung": "Vertrieb beider Standorte, Aufbau der Fuehrungsstruktur",
+      "ergebnisse": [
+        "Standortleiter-Ebene mit Ergebniszielen eingefuehrt",
+        "Fluktuation im Verkauf von 27 auf 12 Prozent gesenkt"
+      ]
+    }
+  ],
+  "luecken": ["Keine Luecke ueber drei Monate seit 09.2010."],
+  "kompetenzen": {
+    "fachlich": ["Ertragssteuerung Neu- und Gebrauchtwagen ueber mehrere Standorte, erworben bei Nordstern Automobile"],
+    "fuehrung": ["Aufbau einer zweiten Fuehrungsebene, erworben bei Weser Motors"],
+    "branche": ["Premium-Automobilhandel Norddeutschland, vierzehn Jahre, zwei Herstellerbindungen"]
+  },
+  "passung": [
+    {"anforderung": "Mindestens zehn Jahre Fuehrungserfahrung im Automobilhandel", "status": "erfuellt", "beleg": "Vierzehn Jahre, davon sieben auf Geschaeftsleitungsebene"},
+    {"anforderung": "Ergebnisverantwortung ab 150 Millionen Euro Umsatz", "status": "erfuellt", "beleg": "Rund 210 Millionen Euro aktuell"},
+    {"anforderung": "Fuehrung von Mehrmarkenstrukturen ab drei Marken", "status": "nicht erfuellt", "beleg": "Bisher maximal zwei Marken"},
+    {"anforderung": "Verfuegbarkeit im dritten Quartal", "status": "teilweise erfuellt", "beleg": "Fruehestens 01.10.2026 wegen sechsmonatiger Kuendigungsfrist"}
+  ],
+  "assessment": null,
+  "motivation": "Selbstauskunft im Gespraech vom 10.03.2026: Nach dem Verkauf des Hauses an eine Konzerngruppe werden Vertriebssteuerung und Preisfindung zentralisiert. Er sucht ein inhabergefuehrtes Haus mit Gestaltungsspielraum. Nicht durch Dritte verifiziert.",
+  "risiken": [
+    "Mehrmarkenkompetenz fehlt, harte Luecke gegen das Anforderungsprofil",
+    "Kuendigungsfrist von sechs Monaten kollidiert mit dem gewuenschten Besetzungstermin",
+    "Gehaltserwartung 195.000 Euro gegen Mandatsrahmen 175.000 bis 185.000 Euro",
+    "Referenzen zugesagt, noch nicht eingeholt"
+  ],
+  "offene_fragen": [
+    "Wie geht er konkret an eine fuenfte Marke heran, mit welchem Plan fuer die ersten sechs Monate",
+    "Ist die Kuendigungsfrist verhandelbar",
+    "Wie belastbar ist die Gehaltsvorstellung bei staerkerem variablem Anteil"
+  ],
+  "empfehlung": {
+    "votum": "mit vorbehalt vorstellen",
+    "begruendung": "Ertragssteuerung und Strukturaufbau treffen den Kern des Mandats, die gefuehrte Standortzahl liegt ueber der des Auftraggebers. Der Vorbehalt betrifft ausschliesslich die Mehrmarkenerfahrung und den Besetzungstermin."
+  }
+}
