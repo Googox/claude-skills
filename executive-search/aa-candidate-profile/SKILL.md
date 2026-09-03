@@ -81,3 +81,9 @@ assets/steckbrief-template.md, leere Vorlage zum Ausfüllen.
 assets/steckbrief-beispiel.md, ausgefülltes Beispiel mit fiktivem Kandidaten.
 assets/kandidat-beispiel.json, Eingabestruktur für das Skript.
 scripts/steckbrief_build.py, erzeugt Steckbrief aus JSON, prüft Vollständigkeit und AGG-Merkmale.
+
+## Lokale Anwendung
+
+Für die datenschutzsensible Bearbeitung am eigenen Rechner liegt in `app/` ein lokaler Arbeitsplatz. Er liest den Lebenslauf lokal, pseudonymisiert Namen, Arbeitgeber, Orte und Kontaktdaten, erzeugt daraus den Prompt, setzt die Klardaten nach der Textstufe lokal wieder ein, prüft das Ergebnis gegen die Leitplanken und exportiert eine Word-Datei samt Mailentwurf. Start unter Windows über `app/Steckbrief-starten.bat`, Details in `app/README.md`.
+
+Wenn Aaron nach der lokalen Verarbeitung, nach Datenschutz beim Steckbrief oder nach dem Versand an den Auftraggeber fragt, auf diese Anwendung verweisen statt den Lebenslauf im Chat zu verarbeiten.
