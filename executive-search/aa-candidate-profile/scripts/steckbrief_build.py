@@ -81,7 +81,7 @@ PFLICHTBLOECKE = [
 
 VERTRAULICHKEIT = (
     "Vertraulich. Dieses Kandidatenprofil wurde von A/A Executive Search "
-    "ausschliesslich fuer den benannten Auftraggeber und die benannte Position "
+    "ausschließlich für den benannten Auftraggeber und die benannte Position "
     "erstellt. Weitergabe an Dritte nur nach schriftlicher Zustimmung."
 )
 
@@ -263,11 +263,11 @@ def render(daten, modus):
         out.append("Jahrgang: %s, Einwilligung zur Nennung liegt vor" % kandidat["jahrgang"])
     for label, schluessel in [
         ("Wohnregion", "wohnregion"),
-        ("Mobilitaet", "mobilitaet"),
-        ("Aktuelle Fuehrungsspanne", "fuehrungsspanne"),
+        ("Mobilität", "mobilitaet"),
+        ("Aktuelle Führungsspanne", "fuehrungsspanne"),
         ("Budget- oder Ergebnisverantwortung", "ergebnisverantwortung"),
-        ("Verfuegbarkeit", "verfuegbarkeit"),
-        ("Kuendigungsfrist", "kuendigungsfrist"),
+        ("Verfügbarkeit", "verfuegbarkeit"),
+        ("Kündigungsfrist", "kuendigungsfrist"),
     ]:
         z = zeile(label, kandidat.get(schluessel))
         if z:
@@ -294,14 +294,14 @@ def render(daten, modus):
                                        else "Im Lebenslauf keine Kennzahlen angegeben, im Interview zu erheben."))
         out.append("")
     luecken = daten.get("luecken") or []
-    out.append("Luecken: %s" % (" ".join(luecken) if luecken else "Nicht geprueft."))
+    out.append("Lücken: %s" % (" ".join(luecken) if luecken else "Nicht geprüft."))
     out.append("")
 
     out.append("Block 5, Kompetenzprofil")
     out.append("")
     kompetenzen = daten.get("kompetenzen") or {}
     for label, schluessel in [("Fachkompetenz", "fachlich"),
-                              ("Fuehrungskompetenz", "fuehrung"),
+                              ("Führungskompetenz", "fuehrung"),
                               ("Branchenkompetenz", "branche")]:
         werte = kompetenzen.get(schluessel) or []
         if werte:
@@ -318,7 +318,13 @@ def render(daten, modus):
     out.append("")
 
     assessment = daten.get("assessment")
-    if assessment:
+    if not assessment:
+        out.append("Block 7, A/A-Assessment")
+        out.append("")
+        out.append("Nicht enthalten. Die A/A-Assessment-Methodik lag bei Erstellung "
+                   "dieses Profils nicht vor und wird nachgereicht.")
+        out.append("")
+    else:
         out.append("Block 7, A/A-Assessment")
         out.append("")
         if isinstance(assessment, dict):
@@ -332,7 +338,7 @@ def render(daten, modus):
 
     out.append("Block 8, Motivation und Wechselgrund")
     out.append("")
-    out.append(daten.get("motivation") or "Nicht erfasst, im Gespraech zu klaeren.")
+    out.append(daten.get("motivation") or "Nicht erfasst, im Gespräch zu klären.")
     out.append("")
 
     out.append("Block 9, Risiken und offene Punkte")
@@ -341,15 +347,14 @@ def render(daten, modus):
         out.append(risiko)
     fragen = daten.get("offene_fragen") or []
     if fragen:
-        out.append("Im naechsten Gespraech zu klaeren: %s" % "; ".join(fragen))
+        out.append("Im nächsten Gespräch zu klären: %s" % "; ".join(fragen))
     out.append("")
 
     out.append("Block 10, Empfehlung des Beraters")
     out.append("")
     empfehlung = daten.get("empfehlung") or {}
-    out.append("%s, weil %s" % (
-        empfehlung.get("votum", "Votum offen"),
-        empfehlung.get("begruendung", "Begruendung fehlt.")))
+    out.append("Votum: %s" % empfehlung.get("votum", "offen"))
+    out.append("Begründung: %s" % empfehlung.get("begruendung", "fehlt."))
 
     return "\n".join(out).rstrip() + "\n"
 
