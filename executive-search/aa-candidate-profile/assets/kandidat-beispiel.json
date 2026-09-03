@@ -18,7 +18,11 @@
     "jahrgang_einwilligung": true,
     "wohnregion": "Grossraum Hannover",
     "mobilitaet": "Umzugsbereitschaft innerhalb Norddeutschland, Reisebereitschaft bis 40 Prozent",
-    "sprachen": ["Deutsch Muttersprache", "Englisch C1", "Franzoesisch A2"],
+    "sprachen": [
+      "Deutsch Muttersprache",
+      "Englisch C1",
+      "Franzoesisch A2"
+    ],
     "fuehrungsspanne": "6 direkt, 145 gesamt",
     "ergebnisverantwortung": "rund 210 Millionen Euro Umsatz, Ergebnisverantwortung Vertrieb",
     "verfuegbarkeit": "ab 01.10.2026",
@@ -60,17 +64,45 @@
       ]
     }
   ],
-  "luecken": ["Keine Luecke ueber drei Monate seit 09.2010."],
+  "luecken": [
+    "Keine Luecke ueber drei Monate seit 09.2010."
+  ],
   "kompetenzen": {
-    "fachlich": ["Ertragssteuerung Neu- und Gebrauchtwagen ueber mehrere Standorte, erworben bei Nordstern Automobile"],
-    "fuehrung": ["Aufbau einer zweiten Fuehrungsebene, erworben bei Weser Motors"],
-    "branche": ["Premium-Automobilhandel Norddeutschland, vierzehn Jahre, zwei Herstellerbindungen"]
+    "fachlich": [
+      "Ertragssteuerung Neu- und Gebrauchtwagen ueber mehrere Standorte, erworben bei Nordstern Automobile"
+    ],
+    "fuehrung": [
+      "Aufbau einer zweiten Fuehrungsebene, erworben bei Weser Motors"
+    ],
+    "branche": [
+      "Premium-Automobilhandel Norddeutschland, vierzehn Jahre, zwei Herstellerbindungen"
+    ]
   },
   "passung": [
-    {"anforderung": "Mindestens zehn Jahre Fuehrungserfahrung im Automobilhandel", "status": "erfuellt", "beleg": "Vierzehn Jahre, davon sieben auf Geschaeftsleitungsebene"},
-    {"anforderung": "Ergebnisverantwortung ab 150 Millionen Euro Umsatz", "status": "erfuellt", "beleg": "Rund 210 Millionen Euro aktuell"},
-    {"anforderung": "Fuehrung von Mehrmarkenstrukturen ab drei Marken", "status": "nicht erfuellt", "beleg": "Bisher maximal zwei Marken"},
-    {"anforderung": "Verfuegbarkeit im dritten Quartal", "status": "teilweise erfuellt", "beleg": "Fruehestens 01.10.2026 wegen sechsmonatiger Kuendigungsfrist"}
+    {
+      "anforderung": "Mindestens zehn Jahre Fuehrungserfahrung im Automobilhandel",
+      "status": "erfuellt",
+      "beleg": "Vierzehn Jahre, davon sieben auf Geschaeftsleitungsebene",
+      "gewichtung": "muss"
+    },
+    {
+      "anforderung": "Ergebnisverantwortung ab 150 Millionen Euro Umsatz",
+      "status": "erfuellt",
+      "beleg": "Rund 210 Millionen Euro aktuell",
+      "gewichtung": "muss"
+    },
+    {
+      "anforderung": "Fuehrung von Mehrmarkenstrukturen ab drei Marken",
+      "status": "nicht erfuellt",
+      "beleg": "Bisher maximal zwei Marken",
+      "gewichtung": "muss"
+    },
+    {
+      "anforderung": "Verfuegbarkeit im dritten Quartal",
+      "status": "teilweise erfuellt",
+      "beleg": "Fruehestens 01.10.2026 wegen sechsmonatiger Kuendigungsfrist",
+      "gewichtung": "muss"
+    }
   ],
   "assessment": null,
   "motivation": "Selbstauskunft im Gespraech vom 10.03.2026: Nach dem Verkauf des Hauses an eine Konzerngruppe werden Vertriebssteuerung und Preisfindung zentralisiert. Er sucht ein inhabergefuehrtes Haus mit Gestaltungsspielraum. Nicht durch Dritte verifiziert.",

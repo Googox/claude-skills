@@ -11,9 +11,11 @@ Zweck: Der Steckbrief ist das sichtbarste Produkt der Suche. Der Kunde sieht sel
 
 Pflicht: der Lebenslauf als Datei (PDF, DOCX, Bilddatei mit lesbarem Text) oder als eingefügter Text.
 
-Optional, aber qualitätsentscheidend: Anforderungsprofil oder Stellenbeschreibung des Mandats, Aarons Interviewnotizen, Gehaltsrahmen und Kündigungsfrist, Wechselmotiv, Zeugnisse, Referenzstand.
+Qualitätsentscheidend, wenn vorhanden: das schriftliche Anforderungsprofil oder die Stellenbeschreibung des Auftraggebers als Datei oder Text. Weiter optional: Aarons Interviewnotizen, Gehaltsrahmen und Kündigungsfrist, Wechselmotiv, Zeugnisse, Referenzstand.
 
-Fehlt das Anforderungsprofil, den Steckbrief trotzdem erstellen, aber die Passungsbewertung ausdrücklich als nicht mandatsbezogen kennzeichnen und Aaron einmal fragen, ob er das Profil nachreichen will. Nicht raten, welche Position gemeint ist.
+Fehlt das Anforderungsprofil, den Steckbrief trotzdem erstellen, aber Block 6 als offenes Feld ausweisen und Aaron einmal fragen, ob er das Profil nachreichen kann. Nicht raten, welche Position gemeint ist und keine Anforderungen erfinden.
+
+Vertraulichkeit des Auftraggebers: der Name des suchenden Hauses ist selbst schutzwürdig. Dass dieses Unternehmen eine Position besetzt, ist vertrauliche Marktinformation. In der lokalen Anwendung wird er deshalb mit pseudonymisiert und erst lokal wieder eingesetzt.
 
 ## Zwei Modi
 
@@ -31,7 +33,11 @@ Schritt 2, Fakten von Behauptungen trennen. Was steht belegt im Lebenslauf, was 
 
 Schritt 3, Erfolge quantifizieren. Für jede relevante Station zwei bis drei messbare Ergebnisse suchen: Umsatz, Ertrag, Stückzahlen, Führungsspanne, Standortzahl, Turnaround, Aufbauleistung. Stehen keine Zahlen im Lebenslauf, keine erfinden. Stattdessen als offene Frage in Block 9 aufnehmen, das ist Interviewstoff.
 
-Schritt 4, Gegen das Mandat spiegeln. Anforderungsprofil Punkt für Punkt gegen den Werdegang legen. Erfüllt, teilweise erfüllt, nicht erfüllt. Nicht erfüllte Punkte gehören in den Steckbrief, nicht in die Schublade. Ein Profil ohne Schwachstellen ist unglaubwürdig und beschädigt Aarons Ruf beim ersten Interview.
+Schritt 4, Gegen das Anforderungsprofil spiegeln. Liegt ein schriftliches Anforderungsprofil des Auftraggebers vor, wird es zerlegt und Punkt für Punkt gegen den Werdegang gelegt. Jede Anforderung wird im Wortlaut des Auftraggebers übernommen, nicht umformuliert, und in Muss- und Kann-Kriterien getrennt. Diese Trennung ist der eigentliche Hebel: ein gerissenes Kann-Kriterium hält den Kandidaten im Rennen, ein gerissenes Muss-Kriterium nicht. Auftraggeber vermischen beides regelmäßig im selben Absatz, und wer die Liste sauber trennt, führt das Briefinggespräch.
+
+Status je Anforderung: erfüllt, teilweise erfüllt, nicht erfüllt, jeweils mit einer Zeile Beleg aus dem Lebenslauf. Nicht erfüllte Punkte gehören in den Steckbrief, nicht in die Schublade. Ein Profil ohne Schwachstellen ist unglaubwürdig und beschädigt Aarons Ruf beim ersten Interview. Block 6 schließt mit einer Abgleichszeile, die zählt, wie viele Anforderungen erfüllt sind, und die nicht erfüllten Muss-Kriterien einzeln benennt.
+
+Liegt kein schriftliches Profil vor, danach fragen. Ein Mandat ohne schriftliches Anforderungsprofil ist ein Mandat mit beweglichen Zielen, und die Beweglichkeit geht immer zulasten des Beraters.
 
 Schritt 5, A/A-Assessment anwenden. Die Bewertung folgt Aarons proprietärer Methodik: Knock-out-Kriterien angeführt von mangelnder Integrität, sieben positive Fitness-Signale, gewichtetes Scoring null bis hundert, Kandidat-zu-JD-Matching. Diese Kriterien liegen im separaten A/A-Assessment-SKILL.md. Sie nicht erfinden. Das SKILL.md laden und anwenden. Liegt es nicht vor, Aaron bitten, es beizulegen, und den Steckbrief zunächst ohne den Scoring-Block ausliefern statt mit ausgedachten Achsen.
 
@@ -59,7 +65,7 @@ Block 4, Werdegang: rückwärts chronologisch. Pro Station Zeitraum, Unternehmen
 
 Block 5, Kompetenzprofil: Fachkompetenz, Führungskompetenz, Branchenkompetenz. Je Achse belegt statt behauptet, also mit Verweis auf die Station, an der sie erworben wurde.
 
-Block 6, Passung zum Mandat: Anforderung für Anforderung mit Status erfüllt, teilweise, nicht erfüllt, jeweils eine Zeile Beleg.
+Block 6, Passung zum Mandat: Anforderung für Anforderung im Wortlaut des Auftraggebers, mit Kennzeichnung Muss oder Kann, Status erfüllt, teilweise, nicht erfüllt und jeweils einer Zeile Beleg. Abschließend die Abgleichszeile mit der Zählung und den nicht erfüllten Muss-Kriterien.
 
 Block 7, A/A-Assessment: Knock-out-Check, Fitness-Signale, gewichteter Score. Nur wenn die Methodik vorliegt.
 
@@ -100,6 +106,7 @@ references/agg-dsgvo-leitplanken.md, verpflichtende Prüfliste vor jeder Ausgabe
 assets/steckbrief-template.md, leere Vorlage zum Ausfüllen.
 assets/steckbrief-beispiel.md, ausgefülltes Beispiel mit fiktivem Kandidaten.
 assets/kandidat-beispiel.json, Eingabestruktur für das Skript.
+scripts/anforderungen.py, zerlegt ein schriftliches Anforderungsprofil in prüfbare Punkte und trennt Muss von Kann.
 scripts/steckbrief_build.py, erzeugt Steckbrief aus JSON, prüft Vollständigkeit und AGG-Merkmale, Freigabe-Gate, Word- und PDF-Export.
 scripts/docx_writer.py, minimaler Word-Schreiber für den Arbeitsstand mit grünen Feldern.
 scripts/pdf_writer.py, minimaler PDF-Schreiber für das Freigabedokument.

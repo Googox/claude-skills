@@ -18,15 +18,21 @@ Schritt 1, Mandat: Position, Auftraggeber, Profil-ID, Datum, Berater und Modus e
 
 Schritt 2, Lebenslauf laden: .docx oder .txt auswählen, oder Text einfügen. PDF wird bewusst nicht gelesen, weil eine zuverlässige PDF-Extraktion ohne Fremdbibliothek nicht möglich ist. Bei PDF den Text im Reader kopieren und einfügen. Interviewnotizen sind optional, verbessern das Ergebnis aber deutlich.
 
-Schritt 3, Pseudonymisieren: Kandidatenname eintragen. Die Anwendung schlägt erkannte Arbeitgeber vor, Vorschläge lassen sich per Klick abwählen. Weitere Begriffe wie Orte oder Standorte kommagetrennt ergänzen. Dann Prompt erzeugen. Die Anwendung meldet, ob die Rückstandsprüfung sauber ist.
+Schritt 3, Anforderungsprofil des Auftraggebers: optional, aber der größte Qualitätssprung. Datei laden oder Text einfügen, dann Anforderungen herauslesen. Die Anwendung zerlegt das Profil in einzelne Punkte und trennt Muss- von Kann-Kriterien anhand von Signalwörtern wie wünschenswert, von Vorteil oder idealerweise. Die Liste steht danach bearbeitbar in einem Textfeld, eine Anforderung je Zeile mit dem Präfix muss: oder kann:. Die Heuristik ist zu prüfen, nicht zu glauben, deshalb ist die Liste editierbar. Block 6 wird später Punkt für Punkt gegen diese Liste abgeglichen und schließt mit einer Zählung sowie den nicht erfüllten Muss-Kriterien.
 
-Schritt 4, Antwort zurückspielen: den Prompt in die Zwischenablage kopieren, in Claude einfügen und die JSON-Antwort zurück in das Feld kopieren. Alternativ, wenn ein API-Schlüssel hinterlegt ist, direkt über die Schaltfläche senden. Die Anwendung setzt die Klardaten lokal wieder ein, prüft auf AGG- und DSGVO-Verstöße und zeigt eine Vorschau.
+Schritt 4, Pseudonymisieren: Kandidatenname eintragen. Die Anwendung schlägt erkannte Arbeitgeber vor, Vorschläge lassen sich per Klick abwählen. Weitere Begriffe wie Orte oder Standorte kommagetrennt ergänzen. Dann Prompt erzeugen. Die Anwendung meldet, ob die Rückstandsprüfung sauber ist.
 
-Schritt 5, Arbeitsstand ausgeben: Word-Datei mit grünen Feldern erzeugen. Das ist der Arbeitsstand für das Interview, nicht das Dokument für den Auftraggeber.
+Schritt 5, Antwort zurückspielen: den Prompt in die Zwischenablage kopieren, in Claude einfügen und die JSON-Antwort zurück in das Feld kopieren. Alternativ, wenn ein API-Schlüssel hinterlegt ist, direkt über die Schaltfläche senden. Die Anwendung setzt die Klardaten lokal wieder ein, prüft auf AGG- und DSGVO-Verstöße und zeigt eine Vorschau.
 
-Schritt 6, Finalisieren und freigeben: Hier steht, ob das Profil freigabefaehig ist. Das PDF ist das Dokument, das beim Auftraggeber landet, deshalb ist das Gate hart. Es entsteht nur, wenn kein grünes Feld mehr offen ist, kein Compliance-Fehler vorliegt, die Einwilligung des Kandidaten dokumentiert ist, ein Votum in Block 10 steht und der Freigabehaken gesetzt ist. Fehlt etwas, nennt die Anwendung die offenen Punkte statt eine Datei zu erzeugen. Für die Abstimmung mit dem Kandidaten gibt es daneben das Entwurfs-PDF, erkennbar am Vermerk in der Fußzeile jeder Seite und am Kürzel ENTWURF im Dateinamen.
+Schritt 6, Arbeitsstand ausgeben: Word-Datei mit grünen Feldern erzeugen. Das ist der Arbeitsstand für das Interview, nicht das Dokument für den Auftraggeber.
 
-Schritt 7, Versenden: Mailentwurf öffnen. Liegt Outlook vor, wird ein Entwurf mit Anhang erstellt. Sonst öffnet sich der Ordner mit der Datei und ein Mailentwurf ohne Anhang, die Datei ist dann manuell anzufügen. Es werden keine Zugangsdaten gespeichert und keine Mail automatisch versendet.
+Schritt 7, Finalisieren und freigeben: Hier steht, ob das Profil freigabefaehig ist. Das PDF ist das Dokument, das beim Auftraggeber landet, deshalb ist das Gate hart. Es entsteht nur, wenn kein grünes Feld mehr offen ist, kein Compliance-Fehler vorliegt, die Einwilligung des Kandidaten dokumentiert ist, ein Votum in Block 10 steht und der Freigabehaken gesetzt ist. Fehlt etwas, nennt die Anwendung die offenen Punkte statt eine Datei zu erzeugen. Für die Abstimmung mit dem Kandidaten gibt es daneben das Entwurfs-PDF, erkennbar am Vermerk in der Fußzeile jeder Seite und am Kürzel ENTWURF im Dateinamen.
+
+Schritt 8, Versenden: Mailentwurf öffnen. Liegt Outlook vor, wird ein Entwurf mit Anhang erstellt. Sonst öffnet sich der Ordner mit der Datei und ein Mailentwurf ohne Anhang, die Datei ist dann manuell anzufügen. Es werden keine Zugangsdaten gespeichert und keine Mail automatisch versendet.
+
+## Was pseudonymisiert wird
+
+Kandidatenname mit allen Varianten, Arbeitgeber, Orte, E-Mail-Adressen, Telefonnummern und Web-Adressen. Dazu der Name des Auftraggebers: dass dieses Haus eine Position besetzt, ist vertrauliche Marktinformation und verlässt den Rechner nicht im Klartext. Der Mandatskopf mit Auftraggeber, Berater und Profil-ID geht überhaupt nicht an die Textstufe, er wird lokal in das fertige Profil eingesetzt.
 
 ## Wo liegen die Dateien
 

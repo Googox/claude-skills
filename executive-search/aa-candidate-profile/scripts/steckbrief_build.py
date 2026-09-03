@@ -369,12 +369,35 @@ def render(daten, modus):
     out.append("")
     passung = daten.get("passung") or []
     if not passung:
-        out.append(feld("Anforderungsprofil des Mandats Punkt für Punkt eintragen"))
+        out.append(feld("Anforderungsprofil des Auftraggebers Punkt für Punkt eintragen"))
+    zaehler = {"erfuellt": 0, "teilweise": 0, "nicht erfuellt": 0}
+    muss_gerissen = []
     for eintrag in passung:
-        out.append("%s: %s. Beleg: %s" % (
+        status = (eintrag.get("status") or "").strip().lower()
+        gewichtung = (eintrag.get("gewichtung") or "").strip().lower()
+        marke = "Muss" if gewichtung == "muss" else ("Kann" if gewichtung == "kann" else "")
+        out.append("%s%s: %s. Beleg: %s" % (
+            ("[%s] " % marke) if marke else "",
             eintrag.get("anforderung") or feld("Anforderung ergänzen"),
             eintrag.get("status") or feld("erfüllt, teilweise erfüllt oder nicht erfüllt"),
             eintrag.get("beleg") or feld("Beleg in einer Zeile ergänzen")))
+        # Umlaute falten, damit "erfuellt" und "erfüllt" gleich zaehlen.
+        status = (status.replace("ü", "ue").replace("ä", "ae").replace("ö", "oe"))
+        if "nicht" in status:
+            zaehler["nicht erfuellt"] += 1
+        elif "teilweise" in status:
+            zaehler["teilweise"] += 1
+        elif "erfuellt" in status:
+            zaehler["erfuellt"] += 1
+        if gewichtung == "muss" and "nicht" in status:
+            muss_gerissen.append(eintrag.get("anforderung", ""))
+    if passung:
+        out.append("")
+        out.append("Abgleich: %d von %d Anforderungen erfüllt, %d teilweise, %d nicht erfüllt."
+                   % (zaehler["erfuellt"], len(passung), zaehler["teilweise"],
+                      zaehler["nicht erfuellt"]))
+        if muss_gerissen:
+            out.append("Nicht erfüllte Muss-Kriterien: %s" % "; ".join(muss_gerissen))
     out.append("")
 
     assessment = daten.get("assessment")

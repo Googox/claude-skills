@@ -31,6 +31,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(HIER), "scripts"))
 import cv_extract                      # noqa: E402
 import docx_writer                     # noqa: E402
 import pdf_writer                      # noqa: E402
+import anforderungen                   # noqa: E402
 import llm_client                      # noqa: E402
 import pseudonymize                    # noqa: E402
 import steckbrief_build                # noqa: E402
@@ -42,7 +43,7 @@ KONFIG_PFAD = os.path.join(os.path.expanduser("~"), ".aa-steckbrief", "config.js
 PROMPT_VORLAGE = """Du arbeitest als Research-Unterstuetzung fuer A/A Executive Search.
 
 Aufgabe: Wandle den folgenden pseudonymisierten Lebenslauf in ein strukturiertes
-Kandidatenprofil im JSON-Format um.
+Kandidatenprofil im JSON-Format um und gleiche ihn gegen das Anforderungsprofil ab.
 
 Harte Regeln:
 1. Erfinde nichts. Keine Zahl, kein Titel, kein Erfolg, der nicht im Text steht.
@@ -54,20 +55,30 @@ Harte Regeln:
    setzt das gruene Feld dann selbst.
 2. Platzhalter in eckigen Klammern wie [KANDIDAT_1] oder [ARBEITGEBER_2] bleiben
    unveraendert stehen. Ersetze sie nicht und rate nicht, wer dahintersteckt.
-3. Die Executive Summary hat genau fuenf Saetze in dieser Reihenfolge:
+3. Das Feld "mandat" laesst du komplett leer. Es wird lokal gefuellt.
+4. Die Executive Summary hat genau fuenf Saetze in dieser Reihenfolge:
    berufliche Identitaet, staerkster Beleg mit Zahl, zweite tragende Kompetenz,
    Wechselgrund, groesster Vorbehalt offen benannt.
-4. Beschoenige nicht. Kurze Verweildauern, Luecken ueber drei Monate und fehlende
+5. Beschoenige nicht. Kurze Verweildauern, Luecken ueber drei Monate und fehlende
    Belege gehoeren in "risiken", nicht in schoene Formulierungen.
-5. Keine Angaben zu Geburtsdatum, Foto, Familienstand, Kindern, Staatsangehoerigkeit,
+6. Keine Angaben zu Geburtsdatum, Foto, Familienstand, Kindern, Staatsangehoerigkeit,
    Religion, Gesundheit, Behinderung. Diese Felder existieren im Schema nicht.
-6. Antworte ausschliesslich mit dem JSON-Objekt, ohne Vor- und Nachtext.
+7. Zum Abgleich: uebernimm JEDE Anforderung aus der Liste unten als eigenen Eintrag
+   in "passung", in derselben Reihenfolge und mit derselben Gewichtung muss oder kann.
+   Formuliere die Anforderung nicht um. Setze "status" auf genau einen der Werte
+   "erfuellt", "teilweise erfuellt" oder "nicht erfuellt" und begruende ihn in
+   "beleg" mit einer Zeile aus dem Lebenslauf. Laesst sich der Status aus dem
+   Lebenslauf nicht bestimmen, lass status und beleg leer.
+8. Antworte ausschliesslich mit dem JSON-Objekt, ohne Vor- und Nachtext.
 
 JSON-Schema:
 {SCHEMA}
 
-Mandatsdaten (uebernimm sie unveraendert in "mandat"):
-{MANDAT}
+Anforderungsprofil des Auftraggebers, pseudonymisiert:
+{ANFORDERUNGSPROFIL}
+
+Anforderungen als Liste, jede einzeln in "passung" abzugleichen:
+{ANFORDERUNGSLISTE}
 
 Pseudonymisierter Lebenslauf:
 {LEBENSLAUF}
@@ -84,7 +95,7 @@ SCHEMA_KURZ = """{
   "werdegang": [{"von": "MM.JJJJ", "bis": "MM.JJJJ", "unternehmen": "", "unternehmenstyp": "", "groesse": "", "rolle": "", "verantwortung": "", "ergebnisse": []}],
   "luecken": [],
   "kompetenzen": {"fachlich": [], "fuehrung": [], "branche": []},
-  "passung": [{"anforderung": "", "status": "erfuellt | teilweise erfuellt | nicht erfuellt", "beleg": ""}],
+  "passung": [{"anforderung": "", "gewichtung": "muss | kann", "status": "erfuellt | teilweise erfuellt | nicht erfuellt", "beleg": ""}],
   "assessment": null,
   "motivation": "",
   "risiken": [],
@@ -217,6 +228,7 @@ class Handler(BaseHTTPRequestHandler):
         aktionen = {
             "/api/extract": self.a_extract,
             "/api/prompt": self.a_prompt,
+            "/api/anforderungen": self.a_anforderungen,
             "/api/llm": self.a_llm,
             "/api/build": self.a_build,
             "/api/export": self.a_export,
@@ -241,27 +253,57 @@ class Handler(BaseHTTPRequestHandler):
     def a_prompt(self, daten):
         text = daten.get("text") or ""
         notizen = daten.get("notizen") or ""
+        profiltext = daten.get("anforderungsprofil") or ""
+        liste = daten.get("anforderungen") or []
         kandidat = (daten.get("kandidat") or "").strip()
         arbeitgeber = [a for a in (daten.get("arbeitgeber") or []) if a.strip()]
         orte = [o for o in (daten.get("orte") or []) if o.strip()]
         mandat = daten.get("mandat") or {}
 
+        # Der Auftraggeber ist selbst schutzwuerdig: dass dieses Haus sucht, ist
+        # vertrauliche Marktinformation. Er wird deshalb mit pseudonymisiert.
+        auftraggeber = str(mandat.get("auftraggeber") or "").strip()
+        zu_ersetzen = list(arbeitgeber) + ([auftraggeber] if auftraggeber else [])
+
+        mapping = pseudonymize.Mapping()
         pseudo_lebenslauf, mapping = pseudonymize.pseudonymisieren(
-            text, kandidat, arbeitgeber, orte)
+            text, kandidat, zu_ersetzen, orte, mapping)
         pseudo_notizen, mapping = pseudonymize.pseudonymisieren(
-            notizen, kandidat, arbeitgeber, orte, mapping)
+            notizen, kandidat, zu_ersetzen, orte, mapping)
+        pseudo_profil, mapping = pseudonymize.pseudonymisieren(
+            profiltext, kandidat, zu_ersetzen, orte, mapping)
+
+        pseudo_liste = []
+        for eintrag in liste:
+            roh = eintrag if isinstance(eintrag, dict) else {"anforderung": str(eintrag)}
+            pseudo_text, mapping = pseudonymize.pseudonymisieren(
+                roh.get("anforderung", ""), kandidat, zu_ersetzen, orte, mapping)
+            pseudo_liste.append("- [%s] %s" % (roh.get("gewichtung", "muss"), pseudo_text))
 
         prompt = (PROMPT_VORLAGE
                   .replace("{SCHEMA}", SCHEMA_KURZ)
-                  .replace("{MANDAT}", json.dumps(mandat, ensure_ascii=False, indent=2))
+                  .replace("{ANFORDERUNGSPROFIL}", pseudo_profil or "kein schriftliches Profil erhalten")
+                  .replace("{ANFORDERUNGSLISTE}", "\n".join(pseudo_liste)
+                           or "keine Liste vorhanden, Block passung leer lassen")
                   .replace("{LEBENSLAUF}", pseudo_lebenslauf)
                   .replace("{NOTIZEN}", pseudo_notizen or "keine"))
-        # Berater und Auftraggeber stehen legitim im Mandatskopf und sind keine
-        # Kandidatendaten. Sie sind von der Rueckstandspruefung ausgenommen.
-        ausnahmen = [str(mandat.get("berater") or ""), str(mandat.get("auftraggeber") or "")]
-        rest = pseudonymize.restbestand(prompt, kandidat, arbeitgeber, orte, ausnahmen)
+
+        # Das Mandat geht nicht mit an das Modell, deshalb braucht die
+        # Rueckstandspruefung hier keine Ausnahme mehr.
+        rest = pseudonymize.restbestand(prompt, kandidat, zu_ersetzen, orte)
         return {"prompt": prompt, "mapping": mapping.as_dict(), "rest": rest,
-                "sauber": not rest, "ausnahmen": [x for x in ausnahmen if x]}
+                "sauber": not rest}
+
+    def a_anforderungen(self, daten):
+        """Zerlegt das schriftliche Anforderungsprofil in pruefbare Punkte."""
+        rohdaten = daten.get("inhalt_base64")
+        if rohdaten:
+            text = cv_extract.aus_datei(daten.get("dateiname") or "",
+                                        base64.b64decode(rohdaten))
+        else:
+            text = daten.get("text") or ""
+        liste, abschnitt = anforderungen.extrahiere(text)
+        return {"text": text, "anforderungen": liste, "abschnitt_erkannt": abschnitt}
 
     def a_llm(self, daten):
         prompt = daten.get("prompt") or ""
@@ -283,9 +325,14 @@ class Handler(BaseHTTPRequestHandler):
         mapping = daten.get("mapping") or {}
         modus = daten.get("modus") or profil.get("mandat", {}).get("modus") or "vollprofil"
 
-        if modus == "vollprofil":
-            roh = json.dumps(profil, ensure_ascii=False)
-            profil = json.loads(pseudonymize.repersonalisieren(roh, mapping))
+        roh = json.dumps(profil, ensure_ascii=False)
+        profil = json.loads(pseudonymize.repersonalisieren(roh, mapping)
+                            if modus == "vollprofil" else roh)
+        # Der Mandatskopf kommt aus dem Formular, nicht vom Modell.
+        if daten.get("mandat"):
+            profil["mandat"] = daten["mandat"]
+        if daten.get("freigabe"):
+            profil["freigabe"] = daten["freigabe"]
 
         befunde = steckbrief_build.pruefe(profil, modus)
         text = steckbrief_build.render(profil, modus)
@@ -321,7 +368,7 @@ class Handler(BaseHTTPRequestHandler):
             c for c in (daten.get("profil_id") or "ohne-id") if c.isalnum() or c in "-_"))
         pfad_profil = os.path.join(ordner, "profil.json")
         if not os.path.exists(pfad_profil):
-            return {"fehler": "Kein gespeichertes Profil. Bitte zuerst Schritt 4 ausfuehren."}
+            return {"fehler": "Kein gespeichertes Profil. Bitte zuerst Schritt 5 ausfuehren."}
         with open(pfad_profil, "r", encoding="utf-8") as handle:
             profil = json.load(handle)
         modus = daten.get("modus") or profil.get("mandat", {}).get("modus") or "vollprofil"
@@ -400,7 +447,10 @@ footer{padding:14px 22px;font-size:12px;color:#5c5a55;text-align:center}
 <div><label>Modus</label><select id="m_modus">
 <option value="vollprofil">Vollprofil, Klarname, Freigabe liegt vor</option>
 <option value="blindprofil">Blindprofil, anonymisiert</option></select></div>
-</div></section>
+</div>
+<label style="font-weight:400;margin-top:12px"><input type="checkbox" id="einw"> Einwilligung der Kandidatin oder des Kandidaten zur Uebermittlung an genau diesen Auftraggeber liegt dokumentiert vor.</label>
+<p class="hint">Der Name des Auftraggebers wird mit pseudonymisiert. Dass dieses Haus sucht, ist vertrauliche Marktinformation und verlaesst den Rechner nicht im Klartext.</p>
+</section>
 
 <section><h2>2 Lebenslauf laden</h2>
 <label>Datei (.docx oder .txt)</label><input type="file" id="datei" accept=".docx,.txt,.md">
@@ -409,7 +459,17 @@ footer{padding:14px 22px;font-size:12px;color:#5c5a55;text-align:center}
 <label>Interviewnotizen, optional</label><textarea id="notizen" style="min-height:80px" placeholder="Wechselmotiv, Gehaltsrahmen, Kuendigungsfrist, Referenzstand"></textarea>
 </section>
 
-<section><h2>3 Pseudonymisieren</h2>
+<section><h2>3 Anforderungsprofil des Auftraggebers</h2>
+<p class="hint">Optional, aber der groesste Qualitaetssprung. Liegt ein schriftliches Profil vor, wird Block 6 Punkt fuer Punkt dagegen abgeglichen statt frei formuliert.</p>
+<label>Datei (.docx oder .txt)</label><input type="file" id="jddatei" accept=".docx,.txt,.md">
+<label>oder Text einfuegen</label><textarea id="jdtext" style="min-height:90px" placeholder="Stellenbeschreibung oder Anforderungsprofil"></textarea>
+<button class="sek" onclick="anforderungenLesen()">Anforderungen herauslesen</button>
+<div id="s_jd" class="status"></div>
+<label>Anforderungen, eine je Zeile. Praefix muss: oder kann: steuert die Gewichtung</label>
+<textarea id="jdliste" style="min-height:110px" placeholder="muss: Mindestens zehn Jahre Fuehrungserfahrung im Automobilhandel"></textarea>
+</section>
+
+<section><h2>4 Pseudonymisieren</h2>
 <label>Name der Kandidatin oder des Kandidaten</label><input type="text" id="kandidat" placeholder="Vorname Nachname">
 <label>Arbeitgeber, die ersetzt werden (anklicken zum Abwaehlen)</label>
 <div id="entitaeten"></div>
@@ -422,7 +482,7 @@ footer{padding:14px 22px;font-size:12px;color:#5c5a55;text-align:center}
 <button id="b_api" class="sek" style="display:none" onclick="apiSenden()">Ueber API senden, falls Schluessel hinterlegt</button>
 </section>
 
-<section><h2>4 Antwort zurueckspielen</h2>
+<section><h2>5 Antwort zurueckspielen</h2>
 <p class="hint">Prompt in Claude einfuegen, die JSON-Antwort hier hereinkopieren. Die Klardaten werden lokal wieder eingesetzt.</p>
 <textarea id="antwort" placeholder="JSON-Antwort des Modells"></textarea>
 <button onclick="bauen()">Steckbrief erzeugen und pruefen</button>
@@ -431,13 +491,13 @@ footer{padding:14px 22px;font-size:12px;color:#5c5a55;text-align:center}
 <pre id="vorschau" style="display:none"></pre>
 </section>
 
-<section><h2>5 Arbeitsstand ausgeben</h2>
+<section><h2>6 Arbeitsstand ausgeben</h2>
 <button id="b_export" disabled onclick="exportieren()">Word-Datei erzeugen, mit gruenen Feldern</button>
 <div id="s_export" class="status"></div>
 <p class="hint">Die Word-Datei ist der Arbeitsstand. Gruene Felder darin sind noch offen und gehoeren nicht zum Auftraggeber.</p>
 </section>
 
-<section><h2>6 Finalisieren, freigeben, PDF</h2>
+<section><h2>7 Finalisieren, freigeben, PDF</h2>
 <div id="gate" class="status warn" style="display:block">Noch kein Profil erzeugt.</div>
 <p class="hint">Das PDF ist das Freigabedokument. Es entsteht erst, wenn kein gruenes Feld mehr offen ist, kein Compliance-Fehler vorliegt, die Einwilligung des Kandidaten dokumentiert ist und ein Votum im Block 10 steht.</p>
 <label style="font-weight:400"><input type="checkbox" id="freigabe_ok"> Ich habe das Profil final geprueft und gebe es zur Weitergabe an den Auftraggeber frei.</label>
@@ -446,7 +506,7 @@ footer{padding:14px 22px;font-size:12px;color:#5c5a55;text-align:center}
 <div id="s_pdf" class="status"></div>
 </section>
 
-<section><h2>7 Versenden</h2>
+<section><h2>8 Versenden</h2>
 <div class="grid">
 <div><label>Empfaenger</label><input type="text" id="mail_to" placeholder="name@auftraggeber.de"></div>
 <div><label>Betreff</label><input type="text" id="mail_betreff" value="Kandidatenprofil, vertraulich"></div>
@@ -503,10 +563,45 @@ function zeichneEnts(){
   });
 }
 
+document.getElementById("jddatei").addEventListener("change",async e=>{
+  const f=e.target.files[0]; if(!f) return;
+  const buf=await f.arrayBuffer();
+  const b64=btoa(Array.from(new Uint8Array(buf),c=>String.fromCharCode(c)).join(""));
+  try{
+    const j=await post("/api/anforderungen",{dateiname:f.name,inhalt_base64:b64});
+    document.getElementById("jdtext").value=j.text;
+    setzeAnforderungen(j);
+  }catch(err){zeige("s_jd",err.message,"err");}
+});
+
+async function anforderungenLesen(){
+  try{ setzeAnforderungen(await post("/api/anforderungen",{text:v("jdtext")})); }
+  catch(err){ zeige("s_jd",err.message,"err"); }
+}
+
+function setzeAnforderungen(j){
+  document.getElementById("jdliste").value =
+    j.anforderungen.map(a=>a.gewichtung+": "+a.anforderung).join("\n");
+  const mu=j.anforderungen.filter(a=>a.gewichtung==="muss").length;
+  zeige("s_jd", j.anforderungen.length+" Anforderungen erkannt, "+mu+" Muss und "+
+    (j.anforderungen.length-mu)+" Kann."+
+    (j.abschnitt_erkannt?"":" Kein Anforderungsabschnitt gefunden, Liste bitte pruefen."),
+    j.anforderungen.length?"ok":"warn");
+}
+
+function anforderungsListe(){
+  return document.getElementById("jdliste").value.split("\n").map(z=>z.trim()).filter(Boolean)
+    .map(z=>{
+      const m=z.match(/^(muss|kann)\s*:\s*(.+)$/i);
+      return m?{gewichtung:m[1].toLowerCase(),anforderung:m[2]}:{gewichtung:"muss",anforderung:z};
+    });
+}
+
 async function promptBauen(){
   try{
     const j=await post("/api/prompt",{text:v("cvtext"),notizen:v("notizen"),kandidat:v("kandidat"),
-      arbeitgeber:[...AKTIV],orte:orteListe(),mandat:mandat()});
+      arbeitgeber:[...AKTIV],orte:orteListe(),mandat:mandat(),
+      anforderungsprofil:v("jdtext"),anforderungen:anforderungsListe()});
     MAPPING=j.mapping;
     document.getElementById("promptbox").style.display="block";
     document.getElementById("promptbox").textContent=j.prompt;
@@ -519,7 +614,7 @@ async function promptBauen(){
 
 function kopieren(){
   navigator.clipboard.writeText(document.getElementById("promptbox").textContent)
-    .then(()=>zeige("s_prompt","Prompt kopiert. In Claude einfuegen, Antwort in Schritt 4 zurueckspielen.","ok"))
+    .then(()=>zeige("s_prompt","Prompt kopiert. In Claude einfuegen, Antwort in Schritt 5 zurueckspielen.","ok"))
     .catch(()=>zeige("s_prompt","Kopieren nicht moeglich, Text bitte manuell markieren.","warn"));
 }
 
@@ -530,13 +625,15 @@ async function apiSenden(){
       kandidat:v("kandidat"),arbeitgeber:[...AKTIV],orte:orteListe(),
       ausnahmen:[v("m_berater"),v("m_kunde")].filter(Boolean)});
     document.getElementById("antwort").value=j.antwort;
-    zeige("s_prompt","Antwort empfangen. Weiter mit Schritt 4.","ok");
+    zeige("s_prompt","Antwort empfangen. Weiter mit Schritt 5.","ok");
   }catch(err){zeige("s_prompt",err.message,"err");}
 }
 
 async function bauen(){
   try{
-    const j=await post("/api/build",{antwort:v("antwort"),mapping:MAPPING,modus:v("m_modus")});
+    const j=await post("/api/build",{antwort:v("antwort"),mapping:MAPPING,modus:v("m_modus"),
+      mandat:mandat(),freigabe:{einwilligung_dokumentiert:document.getElementById("einw").checked,
+                                einwilligung_datum:v("m_datum")}});
     document.getElementById("vorschau").style.display="block";
     document.getElementById("vorschau").textContent=j.steckbrief;
     const box=document.getElementById("befunde"); box.innerHTML="";
