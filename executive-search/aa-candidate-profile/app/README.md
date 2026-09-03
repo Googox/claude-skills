@@ -8,7 +8,9 @@ Windows 10 oder 11 und Python 3.8 oder neuer. Beim Installieren von Python die O
 
 ## Starten
 
-Doppelklick auf `Steckbrief-starten.bat`. Es öffnet sich ein Konsolenfenster und der Standardbrowser mit der Oberfläche. Das Konsolenfenster muss offen bleiben, solange gearbeitet wird. Beenden mit Strg+C oder Schließen des Fensters.
+Doppelklick auf `Steckbrief-starten.bat`. Die Datei sucht Python automatisch an den üblichen Stellen: über den Befehl `py`, über `python` oder `python3` im PATH, und falls das nichts findet, direkt in den Standard-Installationsordnern von python.org. Wird eine passende Installation gefunden, öffnet sich ein Konsolenfenster und der Standardbrowser mit der Oberfläche. Das Konsolenfenster muss offen bleiben, solange gearbeitet wird. Beenden mit Strg+C oder Schließen des Fensters.
+
+Wird kein Python gefunden, zeigt das Fenster eine Fehlermeldung mit der Installationsanleitung und einer kurzen Diagnose (wo gesucht wurde, was gefunden wurde). Nach der Installation die Datei erneut starten, ein Neustart des Rechners ist normalerweise nicht nötig.
 
 Alternativ in der Eingabeaufforderung: `py -3 steckbrief_app.py`. Optionen: `--port 8731` und `--kein-browser`.
 
