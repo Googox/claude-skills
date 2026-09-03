@@ -69,6 +69,18 @@ Block 9, Risiken und offene Punkte: ehrlich. Lücken, fehlende Nachweise, Gehalt
 
 Block 10, Empfehlung des Beraters: klare Position mit Begründung. Vorstellen, mit Vorbehalt vorstellen, oder nicht vorstellen. Kein Sowohl-als-auch.
 
+## Finalisierung und Freigabe
+
+Der Steckbrief hat zwei Zustaende. Arbeitsstand ist die Word-Datei mit gruenen Feldern, damit wird im Interview gearbeitet. Freigabedokument ist das PDF, das beim Auftraggeber landet. Das PDF entsteht nur, wenn das Freigabe-Gate haelt.
+
+Das Gate prueft vier Punkte: kein offenes gruenes Feld mehr, kein Compliance-Fehler aus der AGG- und DSGVO-Pruefung, dokumentierte Einwilligung des Kandidaten fuer diesen Auftraggeber, und ein eindeutiges Votum in Block 10. Faellt einer dieser Punkte durch, wird kein Freigabe-PDF erzeugt, sondern die Liste der offenen Punkte ausgegeben.
+
+Ein Entwurfs-PDF ist trotzdem moeglich, etwa zur Abstimmung mit dem Kandidaten. Es traegt in der Fusszeile jeder Seite den Vermerk "ENTWURF, nicht freigegeben" und im Dateinamen das Kuerzel ENTWURF. Ein Entwurf geht nie an den Auftraggeber.
+
+Jede PDF-Seite traegt eine Fusszeile mit Vertraulichkeitsvermerk, Firmenname, Profil-ID, Datum und Seitenzaehlung. Damit bleibt ein einzelnes ausgedrucktes Blatt zuordenbar.
+
+Auf der Kommandozeile: `scripts/steckbrief_build.py profil.json --freigabe` prueft nur das Gate, `--pdf datei.pdf` erzeugt das Freigabe-PDF, `--entwurf` erlaubt den Entwurf, `--docx datei.docx` den Arbeitsstand. In der lokalen Anwendung uebernimmt das Schritt 6.
+
 ## Ehrlichkeit
 
 Nichts erfinden. Keine Zahlen, keine Titel, keine Erfolge, keine Zertifikate, die nicht im Lebenslauf oder in den Notizen stehen. Nicht glättende Formulierungen für harte Fakten wählen: aus drei Stationen in vier Jahren wird nicht "dynamischer Werdegang", sondern "drei Stationen in vier Jahren, Wechselgründe im Interview zu klären". Ein Steckbrief, der beim ersten Kundeninterview auffliegt, kostet das Mandat und die Beziehung. Unsicheres als unsicher ausweisen.
@@ -88,7 +100,9 @@ references/agg-dsgvo-leitplanken.md, verpflichtende Prüfliste vor jeder Ausgabe
 assets/steckbrief-template.md, leere Vorlage zum Ausfüllen.
 assets/steckbrief-beispiel.md, ausgefülltes Beispiel mit fiktivem Kandidaten.
 assets/kandidat-beispiel.json, Eingabestruktur für das Skript.
-scripts/steckbrief_build.py, erzeugt Steckbrief aus JSON, prüft Vollständigkeit und AGG-Merkmale.
+scripts/steckbrief_build.py, erzeugt Steckbrief aus JSON, prüft Vollständigkeit und AGG-Merkmale, Freigabe-Gate, Word- und PDF-Export.
+scripts/docx_writer.py, minimaler Word-Schreiber für den Arbeitsstand mit grünen Feldern.
+scripts/pdf_writer.py, minimaler PDF-Schreiber für das Freigabedokument.
 
 ## Lokale Anwendung
 

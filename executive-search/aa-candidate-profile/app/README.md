@@ -22,11 +22,15 @@ Schritt 3, Pseudonymisieren: Kandidatenname eintragen. Die Anwendung schlägt er
 
 Schritt 4, Antwort zurückspielen: den Prompt in die Zwischenablage kopieren, in Claude einfügen und die JSON-Antwort zurück in das Feld kopieren. Alternativ, wenn ein API-Schlüssel hinterlegt ist, direkt über die Schaltfläche senden. Die Anwendung setzt die Klardaten lokal wieder ein, prüft auf AGG- und DSGVO-Verstöße und zeigt eine Vorschau.
 
-Schritt 5, Ausgeben und versenden: Word-Datei erzeugen, Mailentwurf öffnen. Liegt Outlook vor, wird ein Entwurf mit Anhang erstellt. Sonst öffnet sich der Ordner mit der Datei und ein Mailentwurf ohne Anhang, die Datei ist dann manuell anzufügen. Es werden keine Zugangsdaten gespeichert und keine Mail automatisch versendet.
+Schritt 5, Arbeitsstand ausgeben: Word-Datei mit grünen Feldern erzeugen. Das ist der Arbeitsstand für das Interview, nicht das Dokument für den Auftraggeber.
+
+Schritt 6, Finalisieren und freigeben: Hier steht, ob das Profil freigabefaehig ist. Das PDF ist das Dokument, das beim Auftraggeber landet, deshalb ist das Gate hart. Es entsteht nur, wenn kein grünes Feld mehr offen ist, kein Compliance-Fehler vorliegt, die Einwilligung des Kandidaten dokumentiert ist, ein Votum in Block 10 steht und der Freigabehaken gesetzt ist. Fehlt etwas, nennt die Anwendung die offenen Punkte statt eine Datei zu erzeugen. Für die Abstimmung mit dem Kandidaten gibt es daneben das Entwurfs-PDF, erkennbar am Vermerk in der Fußzeile jeder Seite und am Kürzel ENTWURF im Dateinamen.
+
+Schritt 7, Versenden: Mailentwurf öffnen. Liegt Outlook vor, wird ein Entwurf mit Anhang erstellt. Sonst öffnet sich der Ordner mit der Datei und ein Mailentwurf ohne Anhang, die Datei ist dann manuell anzufügen. Es werden keine Zugangsdaten gespeichert und keine Mail automatisch versendet.
 
 ## Wo liegen die Dateien
 
-`%USERPROFILE%\Documents\AA-Steckbriefe\<Profil-ID>\` mit `profil.json`, `zuordnung.json`, `Steckbrief_<ID>.docx` und `Steckbrief_<ID>.txt`.
+`%USERPROFILE%\Documents\AA-Steckbriefe\<Profil-ID>\` mit `profil.json`, `zuordnung.json`, `Steckbrief_<ID>.docx`, `Steckbrief_<ID>.txt` und nach der Freigabe `Steckbrief_<ID>.pdf`, im Entwurfsfall `Steckbrief_<ID>_ENTWURF.pdf`.
 
 Die Datei `zuordnung.json` enthält die Zuordnung von Platzhaltern zu Klarnamen. Sie ist der sensibelste Teil des Falls. Sie gehört nicht in eine Cloud, nicht in einen geteilten Ordner und wird nach Abschluss des Mandats zusammen mit den übrigen Kandidatendaten gelöscht.
 

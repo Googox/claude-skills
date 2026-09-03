@@ -36,7 +36,7 @@ Jede fehlende Angabe wird als grünes Feld ausgewiesen, nicht als Prosa. Statt "
 
 Das hat drei Effekte. Erstens sieht Aaron beim Durchblättern in Sekunden, was noch fehlt. Zweitens ist das Dokument ein tauglicher Interviewleitfaden, weil die grünen Felder genau die Fragen sind. Drittens sieht der Auftraggeber niemals ein grünes Feld, weil vor dem Versand jedes Feld gefüllt oder die Zeile gestrichen ist.
 
-Ein Steckbrief mit grünen Feldern ist ein Arbeitsstand. Ein Steckbrief ohne grüne Felder ist versandfertig. Diese Unterscheidung ist der Grund für die Konvention.
+Ein Steckbrief mit grünen Feldern ist ein Arbeitsstand. Ein Steckbrief ohne grüne Felder ist versandfertig. Diese Unterscheidung ist der Grund für die Konvention, und sie ist im Werkzeug hart verdrahtet: der Arbeitsstand ist die Word-Datei, das Freigabedokument ist das PDF, und das PDF entsteht erst, wenn kein grünes Feld mehr offen ist.
 
 ## Umgang mit Schwachstellen
 

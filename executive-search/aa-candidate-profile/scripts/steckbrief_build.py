@@ -235,6 +235,37 @@ def feld(text):
     return "[[%s]]" % text
 
 
+def freigabe_pruefen(daten, modus):
+    """Prueft, ob das Profil zur PDF-Freigabe taugt. Liefert die Blocker.
+
+    Leere Liste heisst freigabefaehig. Das PDF ist das Freigabedokument,
+    das beim Auftraggeber landet, deshalb ist das Gate hart: kein offenes
+    Feld, kein Compliance-Fehler, dokumentierte Einwilligung, klares Votum.
+    """
+    blocker = []
+    for befund in pruefe(daten, modus):
+        if befund.tier == "fehler":
+            blocker.append("%s: %s" % (befund.ort, befund.text))
+    offen = zaehle_offene_felder(render(daten, modus))
+    if offen:
+        blocker.append("%d offene grüne Felder. Ausfüllen oder Zeile streichen." % offen)
+    if not (daten.get("freigabe") or {}).get("einwilligung_dokumentiert"):
+        blocker.append("Freigabe des Kandidaten nicht dokumentiert.")
+    if not (daten.get("empfehlung") or {}).get("votum"):
+        blocker.append("Kein Votum im Block 10.")
+    return blocker
+
+
+def fusszeile(daten):
+    mandat = daten.get("mandat") or {}
+    teile = ["Vertraulich", "A/A Executive Search"]
+    if mandat.get("profil_id"):
+        teile.append("Profil-ID %s" % mandat["profil_id"])
+    if mandat.get("datum"):
+        teile.append(mandat["datum"])
+    return "     ".join(teile)
+
+
 def zeile(label, wert, platzhalter=None):
     """Gibt die Zeile immer aus. Fehlt der Wert, steht dort ein offenes Feld."""
     if wert:
@@ -402,6 +433,12 @@ def main(argv=None):
     parser.add_argument("--json", action="store_true", dest="als_json",
                         help="Pruefergebnis maschinenlesbar ausgeben")
     parser.add_argument("--out", help="Ausgabedatei statt stdout")
+    parser.add_argument("--docx", help="zusaetzlich eine Word-Datei schreiben")
+    parser.add_argument("--pdf", help="Freigabe-PDF schreiben, nur wenn das Gate haelt")
+    parser.add_argument("--entwurf", action="store_true",
+                        help="PDF trotz offener Felder schreiben, mit Entwurfsvermerk")
+    parser.add_argument("--freigabe", action="store_true",
+                        help="nur pruefen, ob das Profil PDF-freigabefaehig ist")
     args = parser.parse_args(argv)
 
     try:
@@ -417,6 +454,16 @@ def main(argv=None):
     modus = modus_bestimmen(daten, args.modus)
     befunde = pruefe(daten, modus)
     fehler = [b for b in befunde if b.tier == "fehler"]
+
+    if args.freigabe:
+        blocker = freigabe_pruefen(daten, modus)
+        if blocker:
+            print("Nicht freigabefaehig. %d Punkt(e) offen:" % len(blocker))
+            for eintrag in blocker:
+                print("  - %s" % eintrag)
+            return 2
+        print("Freigabefaehig. Das PDF kann erstellt werden.")
+        return 0
 
     if args.check:
         if args.als_json:
@@ -450,6 +497,27 @@ def main(argv=None):
         print("Geschrieben: %s" % args.out, file=sys.stderr)
     else:
         sys.stdout.write(text)
+
+    if args.docx:
+        import docx_writer
+        docx_writer.schreibe_docx(args.docx, docx_writer.steckbrief_zu_absaetzen(text))
+        print("Word-Datei: %s" % args.docx, file=sys.stderr)
+
+    if args.pdf:
+        blocker = freigabe_pruefen(daten, modus)
+        if blocker and not args.entwurf:
+            print("", file=sys.stderr)
+            print("PDF nicht erstellt. Das Freigabe-Gate haelt, %d Punkt(e) offen:"
+                  % len(blocker), file=sys.stderr)
+            for eintrag in blocker:
+                print("  - %s" % eintrag, file=sys.stderr)
+            print("Mit --entwurf laesst sich ein Entwurfs-PDF erzeugen.", file=sys.stderr)
+            return 2
+        import pdf_writer
+        pdf_writer.schreibe_pdf(args.pdf, pdf_writer.steckbrief_zu_absaetzen(text),
+                                fusszeile(daten), entwurf=bool(blocker))
+        print("PDF: %s%s" % (args.pdf, " (Entwurf)" if blocker else " (freigegeben)"),
+              file=sys.stderr)
 
     if fehler:
         print("", file=sys.stderr)

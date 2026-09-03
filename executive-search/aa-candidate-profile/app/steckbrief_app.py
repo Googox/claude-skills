@@ -30,6 +30,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(HIER), "scripts"))
 
 import cv_extract                      # noqa: E402
 import docx_writer                     # noqa: E402
+import pdf_writer                      # noqa: E402
 import llm_client                      # noqa: E402
 import pseudonymize                    # noqa: E402
 import steckbrief_build                # noqa: E402
@@ -219,6 +220,7 @@ class Handler(BaseHTTPRequestHandler):
             "/api/llm": self.a_llm,
             "/api/build": self.a_build,
             "/api/export": self.a_export,
+            "/api/pdf": self.a_pdf,
             "/api/mail": self.a_mail,
         }
         aktion = aktionen.get(pfad)
@@ -298,6 +300,8 @@ class Handler(BaseHTTPRequestHandler):
             "ordner": ordner,
             "befunde": [b.as_dict() for b in befunde],
             "fehler_anzahl": len([b for b in befunde if b.tier == "fehler"]),
+            "blocker": steckbrief_build.freigabe_pruefen(profil, modus),
+            "offene_felder": steckbrief_build.zaehle_offene_felder(text),
         }
 
     def a_export(self, daten):
@@ -310,6 +314,36 @@ class Handler(BaseHTTPRequestHandler):
         with open(txt_pfad, "w", encoding="utf-8") as handle:
             handle.write(text)
         return {"docx": docx_pfad, "txt": txt_pfad, "ordner": ordner}
+
+    def a_pdf(self, daten):
+        """Erzeugt das Freigabe-PDF. Das Gate ist hart, Entwurf nur auf Ansage."""
+        ordner = os.path.join(AUSGABE_WURZEL, "".join(
+            c for c in (daten.get("profil_id") or "ohne-id") if c.isalnum() or c in "-_"))
+        pfad_profil = os.path.join(ordner, "profil.json")
+        if not os.path.exists(pfad_profil):
+            return {"fehler": "Kein gespeichertes Profil. Bitte zuerst Schritt 4 ausfuehren."}
+        with open(pfad_profil, "r", encoding="utf-8") as handle:
+            profil = json.load(handle)
+        modus = daten.get("modus") or profil.get("mandat", {}).get("modus") or "vollprofil"
+
+        blocker = steckbrief_build.freigabe_pruefen(profil, modus)
+        entwurf = bool(daten.get("entwurf"))
+        if blocker and not entwurf:
+            return {"freigegeben": False, "blocker": blocker,
+                    "meldung": "PDF nicht erstellt. %d Punkt(e) offen." % len(blocker)}
+        if not blocker and not daten.get("freigabe_bestaetigt"):
+            return {"freigegeben": False, "blocker": ["Freigabe nicht bestaetigt."],
+                    "meldung": "Bitte die Freigabe bestaetigen, bevor das PDF entsteht."}
+
+        text = steckbrief_build.render(profil, modus)
+        name = "Steckbrief_%s%s.pdf" % (daten.get("profil_id") or "ohne-id",
+                                        "_ENTWURF" if blocker else "")
+        pfad = os.path.join(ordner, name)
+        pdf_writer.schreibe_pdf(pfad, pdf_writer.steckbrief_zu_absaetzen(text),
+                                steckbrief_build.fusszeile(profil), entwurf=bool(blocker))
+        return {"freigegeben": not blocker, "pfad": pfad, "blocker": blocker,
+                "meldung": "%s erstellt: %s" % ("Entwurfs-PDF" if blocker
+                                                else "Freigabe-PDF", pfad)}
 
     def a_mail(self, daten):
         ok, meldung = mail_entwurf(
@@ -397,9 +431,22 @@ footer{padding:14px 22px;font-size:12px;color:#5c5a55;text-align:center}
 <pre id="vorschau" style="display:none"></pre>
 </section>
 
-<section><h2>5 Ausgeben und versenden</h2>
-<button id="b_export" disabled onclick="exportieren()">Word-Datei erzeugen</button>
+<section><h2>5 Arbeitsstand ausgeben</h2>
+<button id="b_export" disabled onclick="exportieren()">Word-Datei erzeugen, mit gruenen Feldern</button>
 <div id="s_export" class="status"></div>
+<p class="hint">Die Word-Datei ist der Arbeitsstand. Gruene Felder darin sind noch offen und gehoeren nicht zum Auftraggeber.</p>
+</section>
+
+<section><h2>6 Finalisieren, freigeben, PDF</h2>
+<div id="gate" class="status warn" style="display:block">Noch kein Profil erzeugt.</div>
+<p class="hint">Das PDF ist das Freigabedokument. Es entsteht erst, wenn kein gruenes Feld mehr offen ist, kein Compliance-Fehler vorliegt, die Einwilligung des Kandidaten dokumentiert ist und ein Votum im Block 10 steht.</p>
+<label style="font-weight:400"><input type="checkbox" id="freigabe_ok"> Ich habe das Profil final geprueft und gebe es zur Weitergabe an den Auftraggeber frei.</label>
+<button id="b_pdf" disabled onclick="pdfBauen(false)">Freigabe-PDF erzeugen</button>
+<button class="sek" id="b_pdf_e" disabled onclick="pdfBauen(true)">Entwurfs-PDF, mit Vermerk</button>
+<div id="s_pdf" class="status"></div>
+</section>
+
+<section><h2>7 Versenden</h2>
 <div class="grid">
 <div><label>Empfaenger</label><input type="text" id="mail_to" placeholder="name@auftraggeber.de"></div>
 <div><label>Betreff</label><input type="text" id="mail_betreff" value="Kandidatenprofil, vertraulich"></div>
@@ -499,6 +546,11 @@ async function bauen(){
     });
     LETZTE_ID=(j.profil.mandat&&j.profil.mandat.profil_id)||v("m_id")||"ohne-id";
     document.getElementById("b_export").disabled=false;
+    document.getElementById("b_pdf").disabled=false;
+    document.getElementById("b_pdf_e").disabled=false;
+    const g=document.getElementById("gate");
+    if(j.blocker.length===0){g.className="status ok";g.textContent="Freigabefaehig. Alle Felder gefuellt, keine Compliance-Fehler.";}
+    else{g.className="status warn";g.textContent="Noch nicht freigabefaehig ("+j.offene_felder+" offene Felder): "+j.blocker.join(" | ");}
     if(j.fehler_anzahl>0){zeige("s_build",j.fehler_anzahl+" Fehler. Nicht freigabefaehig, bitte beheben.","err");}
     else{zeige("s_build","Keine Fehler. Freigabefaehig. Dateien unter "+j.ordner,"ok");}
   }catch(err){zeige("s_build",err.message,"err");}
@@ -510,6 +562,16 @@ async function exportieren(){
     LETZTER_PFAD=j.docx; document.getElementById("b_mail").disabled=false;
     zeige("s_export","Word-Datei erzeugt: "+j.docx,"ok");
   }catch(err){zeige("s_export",err.message,"err");}
+}
+
+async function pdfBauen(entwurf){
+  try{
+    const j=await post("/api/pdf",{profil_id:LETZTE_ID,modus:v("m_modus"),entwurf:entwurf,
+      freigabe_bestaetigt:document.getElementById("freigabe_ok").checked});
+    if(j.pfad){LETZTER_PFAD=j.pfad;document.getElementById("b_mail").disabled=false;}
+    zeige("s_pdf",j.meldung+(j.blocker&&j.blocker.length?" Offen: "+j.blocker.join(" | "):""),
+          j.freigegeben?"ok":"warn");
+  }catch(err){zeige("s_pdf",err.message,"err");}
 }
 
 async function mailen(){
