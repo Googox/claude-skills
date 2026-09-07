@@ -209,14 +209,39 @@ class Handler(BaseHTTPRequestHandler):
         host = (self.headers.get("Host") or "").split(":")[0]
         return host in ("127.0.0.1", "localhost", "[::1]", "::1")
 
+    def _korrekte_adresse(self):
+        host = (self.headers.get("Host") or "").strip() or ("127.0.0.1:%d" % self.server.server_address[1])
+        return "http://%s/?t=%s" % (host, TOKEN)
+
+    def _token_fehlt_seite(self):
+        adresse = self._korrekte_adresse()
+        html = ("<!doctype html><meta charset='utf-8'>"
+                "<title>Zugriffstoken fehlt</title>"
+                "<body style='font:16px sans-serif;max-width:640px;margin:60px auto;line-height:1.5'>"
+                "<h2>Zugriffstoken fehlt oder ist falsch</h2>"
+                "<p>Diese Seite ohne das Zugriffstoken in der Adresse aufgerufen, zum Beispiel "
+                "ueber ein altes Lesezeichen oder eine neu geladene Seite nach einem Neustart. "
+                "Jeder Start der Anwendung erzeugt ein neues Token.</p>"
+                "<p>Richtige Adresse fuer den aktuell laufenden Server:</p>"
+                "<p><a href='%s' style='font-family:monospace;font-size:15px'>%s</a></p>"
+                "<p>Diese Adresse nicht dauerhaft als Lesezeichen speichern, sie gilt nur, "
+                "solange das Konsolenfenster mit der Anwendung offen ist. Nach einem Neustart "
+                "steht im Konsolenfenster die neue Adresse.</p>"
+                "</body>" % (adresse, adresse))
+        koerper = html.encode("utf-8")
+        self.send_response(403)
+        self.send_header("Content-Type", "text/html; charset=utf-8")
+        self.send_header("Content-Length", str(len(koerper)))
+        self.end_headers()
+        self.wfile.write(koerper)
+
     def do_GET(self):                            # noqa: N802
         if not self._host_ok():
             return json_antwort(self, {"fehler": "Nur lokaler Zugriff."}, 403)
         pfad = urllib.parse.urlparse(self.path).path
         if pfad in ("/", "/index.html"):
             if not self._token_ok():
-                return json_antwort(self, {"fehler": "Token fehlt. Bitte die im Terminal "
-                                                     "angezeigte Adresse verwenden."}, 403)
+                return self._token_fehlt_seite()
             koerper = OBERFLAECHE.replace("__TOKEN__", TOKEN).encode("utf-8")
             self.send_response(200)
             self.send_header("Content-Type", "text/html; charset=utf-8")
