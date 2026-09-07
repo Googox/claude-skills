@@ -62,6 +62,7 @@ TEXTMUSTER = [
     ("fehler", r"\bstaatsangeh\w*|\bnationalit\w*", "Staatsangehoerigkeit"),
     ("fehler", r"\br(oe|ö)misch-katholisch\b|\bevangelisch\b|\bkonfession\w*", "Religionszugehoerigkeit"),
     ("fehler", r"\bgewerkschaft\w*", "Gewerkschaftszugehoerigkeit"),
+    ("fehler", r"\bgeburtsdatum\b", "Geburtsdatum"),
     ("fehler", r"\bgeb(oren|\.)\s*(am\s*)?\d{1,2}\.\d{1,2}\.\d{4}", "Geburtsdatum"),
     ("warnung", r"\belternzeit\b|\bmutterschutz\b", "Elternzeit oder Mutterschutz"),
     ("warnung", r"\bschwanger\w*", "Schwangerschaft"),
@@ -71,13 +72,17 @@ TEXTMUSTER = [
 PFLICHTBLOECKE = [
     ("mandat", "Block 1, Kopf"),
     ("summary", "Block 2, Executive Summary"),
-    ("kandidat", "Block 3, Eckdaten"),
-    ("werdegang", "Block 4, Werdegang"),
-    ("kompetenzen", "Block 5, Kompetenzprofil"),
-    ("passung", "Block 6, Passung zum Mandat"),
-    ("risiken", "Block 9, Risiken und offene Punkte"),
-    ("empfehlung", "Block 10, Empfehlung des Beraters"),
+    ("schwerpunkte", "Block 3, Fachliche Schwerpunkte"),
+    ("kandidat", "Block 4, Eckdaten"),
+    ("werdegang", "Block 5, Werdegang"),
+    ("kompetenzen", "Block 6, Kompetenzprofil"),
+    ("managementprofil", "Block 7, Managementprofil"),
+    ("passung", "Block 9, Passung zum Mandat"),
+    ("risiken", "Block 12, Risiken und offene Punkte"),
+    ("empfehlung", "Block 13, Empfehlung des Beraters"),
 ]
+# Block 8, Auszeichnungen ist absichtlich kein Pflichtblock: er erscheint nur,
+# wenn tatsaechlich Auszeichnungen belegt sind, sonst wird er ganz weggelassen.
 
 VERTRAULICHKEIT = (
     "Vertraulich. Dieses Kandidatenprofil wurde von A/A Executive Search "
@@ -155,7 +160,7 @@ def pruefe(daten, modus):
                               "Auftraggeber ausfüllen oder Zeile streichen." % offen))
     if daten.get("assessment") in (None, {}, []):
         befunde.append(Befund("hinweis", "assessment",
-                              "A/A-Assessment nicht enthalten. Block 7 wird ausgelassen."))
+                              "A/A-Assessment nicht enthalten. Block 10 wird ausgelassen."))
 
     for eintrag in daten.get("werdegang") or []:
         if not isinstance(eintrag, dict):
@@ -252,7 +257,7 @@ def freigabe_pruefen(daten, modus):
     if not (daten.get("freigabe") or {}).get("einwilligung_dokumentiert"):
         blocker.append("Freigabe des Kandidaten nicht dokumentiert.")
     if not (daten.get("empfehlung") or {}).get("votum"):
-        blocker.append("Kein Votum im Block 10.")
+        blocker.append("Kein Votum im Block 13.")
     return blocker
 
 
@@ -308,7 +313,14 @@ def render(daten, modus):
     out.append(" ".join(daten.get("summary") or ["Nicht erfasst."]))
     out.append("")
 
-    out.append("Block 3, Eckdaten")
+    out.append("Block 3, Fachliche Schwerpunkte")
+    out.append("")
+    schwerpunkte = daten.get("schwerpunkte") or []
+    out.append(", ".join(schwerpunkte) if schwerpunkte
+              else feld("Zwölf bis achtzehn Schlagworte aus Werdegang und Kompetenzprofil ergänzen"))
+    out.append("")
+
+    out.append("Block 4, Eckdaten")
     out.append("")
     if not blind and kandidat.get("name"):
         out.append("Name: %s" % kandidat["name"])
@@ -329,7 +341,7 @@ def render(daten, modus):
                                  else feld("Sprachen mit Niveau nach GER ergänzen")))
     out.append("")
 
-    out.append("Block 4, Werdegang")
+    out.append("Block 5, Werdegang")
     out.append("")
     for eintrag in daten.get("werdegang") or []:
         firma = eintrag.get("unternehmenstyp") if blind else (
@@ -354,7 +366,7 @@ def render(daten, modus):
                                else feld("Lücken über drei Monate prüfen und eintragen")))
     out.append("")
 
-    out.append("Block 5, Kompetenzprofil")
+    out.append("Block 6, Kompetenzprofil")
     out.append("")
     kompetenzen = daten.get("kompetenzen") or {}
     for label, schluessel in [("Fachkompetenz", "fachlich"),
@@ -365,7 +377,26 @@ def render(daten, modus):
                                else feld("%s belegt ergänzen, mit Station" % label)))
     out.append("")
 
-    out.append("Block 6, Passung zum Mandat")
+    out.append("Block 7, Managementprofil")
+    out.append("")
+    out.append(daten.get("managementprofil")
+               or feld("Führungsstil über die gesamte Karriere zusammenfassen, "
+                       "belegt durch mindestens zwei Stationen"))
+    out.append("")
+
+    auszeichnungen = daten.get("auszeichnungen") or []
+    if auszeichnungen:
+        out.append("Block 8, Auszeichnungen")
+        out.append("")
+        for eintrag in auszeichnungen:
+            if isinstance(eintrag, dict):
+                jahr, bezeichnung = eintrag.get("jahr"), eintrag.get("bezeichnung", "")
+                out.append("%s%s" % ("%s, " % jahr if jahr else "", bezeichnung))
+            else:
+                out.append(str(eintrag))
+        out.append("")
+
+    out.append("Block 9, Passung zum Mandat")
     out.append("")
     passung = daten.get("passung") or []
     if not passung:
@@ -402,13 +433,13 @@ def render(daten, modus):
 
     assessment = daten.get("assessment")
     if not assessment:
-        out.append("Block 7, A/A-Assessment")
+        out.append("Block 10, A/A-Assessment")
         out.append("")
         out.append("Nicht enthalten. Die A/A-Assessment-Methodik lag bei Erstellung "
                    "dieses Profils nicht vor und wird nachgereicht.")
         out.append("")
     else:
-        out.append("Block 7, A/A-Assessment")
+        out.append("Block 10, A/A-Assessment")
         out.append("")
         if isinstance(assessment, dict):
             for key, value in assessment.items():
@@ -419,13 +450,13 @@ def render(daten, modus):
             out.append(str(assessment))
         out.append("")
 
-    out.append("Block 8, Motivation und Wechselgrund")
+    out.append("Block 11, Motivation und Wechselgrund")
     out.append("")
     out.append(daten.get("motivation")
                or feld("Wechselmotiv aus dem Interview ergänzen, als Selbstauskunft gekennzeichnet"))
     out.append("")
 
-    out.append("Block 9, Risiken und offene Punkte")
+    out.append("Block 12, Risiken und offene Punkte")
     out.append("")
     for risiko in daten.get("risiken") or [feld("Risiken und offene Punkte ergänzen")]:
         out.append(risiko)
@@ -434,7 +465,7 @@ def render(daten, modus):
                                                        else feld("Drei Fragen ergänzen")))
     out.append("")
 
-    out.append("Block 10, Empfehlung des Beraters")
+    out.append("Block 13, Empfehlung des Beraters")
     out.append("")
     empfehlung = daten.get("empfehlung") or {}
     out.append("Votum: %s" % (empfehlung.get("votum")

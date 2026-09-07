@@ -19,7 +19,7 @@ Pflicht: der Lebenslauf als Datei oder eingefügter Text.
 
 Qualitätsentscheidend, wenn vorhanden: das schriftliche Anforderungsprofil oder die Stellenbeschreibung des Auftraggebers. Weiter hilfreich: Interviewnotizen, Gehaltsrahmen, Kündigungsfrist, Wechselmotiv, Referenzstand.
 
-Fehlt das Anforderungsprofil, den Steckbrief trotzdem erstellen, Block 6 als offenes Feld ausweisen und einmal fragen, ob es nachgereicht werden kann. Keine Anforderungen erfinden. Ein Mandat ohne schriftliches Anforderungsprofil ist ein Mandat mit beweglichen Zielen, und die Beweglichkeit geht immer zulasten des Beraters.
+Fehlt das Anforderungsprofil, den Steckbrief trotzdem erstellen, Block 9 als offenes Feld ausweisen und einmal fragen, ob es nachgereicht werden kann. Keine Anforderungen erfinden. Ein Mandat ohne schriftliches Anforderungsprofil ist ein Mandat mit beweglichen Zielen, und die Beweglichkeit geht immer zulasten des Beraters.
 
 Fehlt der Modus, nachfragen. Nicht raten. Die falsche Wahl ist entweder ein Vertraulichkeitsbruch oder ein wertloses Profil.
 
@@ -39,7 +39,7 @@ Schritt 3, Erfolge quantifizieren. Pro relevanter Station zwei bis drei messbare
 
 Schritt 4, Anforderungsprofil zerlegen und abgleichen. Jede Anforderung im Wortlaut des Auftraggebers übernehmen, nicht umformulieren, und in Muss- und Kann-Kriterien trennen. Kann-Kriterien erkennt man an Abschwächungen wie wünschenswert, von Vorteil, idealerweise. Diese Trennung ist der eigentliche Hebel: ein gerissenes Kann-Kriterium hält den Kandidaten im Rennen, ein gerissenes Muss-Kriterium nicht. Auftraggeber vermischen beides regelmäßig im selben Absatz, und wer die Liste sauber trennt, führt das Briefinggespräch.
 
-Schritt 5, A/A-Assessment. Die Bewertung folgt Aarons proprietärer Methodik mit Knock-out-Kriterien angeführt von mangelnder Integrität, sieben positiven Fitness-Signalen und gewichtetem Scoring null bis hundert. Diese Kriterien liegen im separaten A/A-Assessment-SKILL.md. Sie nicht erfinden. Liegt es nicht vor, Block 7 mit dem Hinweis ausgeben, dass die Methodik nachgereicht wird.
+Schritt 5, A/A-Assessment. Die Bewertung folgt Aarons proprietärer Methodik mit Knock-out-Kriterien angeführt von mangelnder Integrität, sieben positiven Fitness-Signalen und gewichtetem Scoring null bis hundert. Diese Kriterien liegen im separaten A/A-Assessment-SKILL.md. Sie nicht erfinden. Liegt es nicht vor, Block 10 mit dem Hinweis ausgeben, dass die Methodik nachgereicht wird.
 
 Schritt 6, Compliance-Prüfung. Die Liste unter "Was nicht hinein darf" vor jeder Ausgabe durchgehen. Findet sich ein unzulässiges Merkmal, entfernen und benennen, was entfernt wurde.
 
@@ -47,25 +47,33 @@ Schritt 7, Ausgeben. Kopierfreundlich in nummerierten Blöcken, normale Absätze
 
 ## Aufbau des Steckbriefs
 
+Dreizehn Blöcke. Ein Steckbrief muss zwei Dinge gleichzeitig leisten: in fünfzehn Sekunden scannbar sein, und einer kritischen Prüfung standhalten. Die ersten drei Blöcke bedienen das Scannen, der Rest die Prüfung.
+
 Block 1, Kopf: Mandat und Position, Auftraggeber, Profil-ID, Datum, Berater, Modus, Vertraulichkeitsvermerk.
 
 Block 2, Executive Summary: genau fünf Sätze. Satz 1 die berufliche Identität mit Rolle, Branche und Jahren Führungserfahrung. Satz 2 der stärkste Beleg zum Mandat, mit Zahl. Satz 3 die zweite tragende Kompetenz, ebenfalls belegt. Satz 4 der Wechselgrund. Satz 5 der größte Vorbehalt, offen benannt. Wer Satz 5 weglässt, verkauft. Wer ihn schreibt, berät. Diese fünf Sätze werden zuletzt geschrieben und zuerst gelesen.
 
-Block 3, Eckdaten: Jahrgang nur mit Einwilligung, Wohnregion, Mobilität, Sprachen mit Niveau, Führungsspanne direkt und gesamt, Budget- oder Ergebnisverantwortung, Verfügbarkeit, Kündigungsfrist. Jede Zeile erscheint immer, fehlende Werte als offenes Feld.
+Block 3, Fachliche Schwerpunkte: eine Stichwortliste von zwölf bis achtzehn Begriffen in Branchensprache, zum Beispiel Turnaround-Management, Mehrmarkenführung, Aftersales-Steuerung. Macht das Profil in fünf Sekunden scannbar. Jeder Begriff muss durch eine Station in Block 5 oder eine Achse in Block 6 gedeckt sein, sonst ist er eine Behauptung ohne Beleg und gehört nicht hinein.
 
-Block 4, Werdegang: rückwärts chronologisch. Pro Station Zeitraum, Unternehmen mit Größenprofil, Rolle, Verantwortungsumfang, zwei bis drei messbare Erfolge. Lücken über drei Monate ausgewiesen und, wo bekannt, erklärt.
+Block 4, Eckdaten: Jahrgang nur mit Einwilligung, Wohnregion, Mobilität, Sprachen mit Niveau, Führungsspanne direkt und gesamt, Budget- oder Ergebnisverantwortung, Verfügbarkeit, Kündigungsfrist, Gehaltsvorstellung. Jede Zeile erscheint immer, fehlende Werte als offenes Feld. Niemals Geburtsdatum, siehe unten.
 
-Block 5, Kompetenzprofil: Fachkompetenz, Führungskompetenz, Branchenkompetenz, je Achse mit Verweis auf die Station, an der sie erworben wurde.
+Block 5, Werdegang: rückwärts chronologisch. Pro Station ein einleitender Satz zur Aufgabe, danach Zeitraum, Unternehmen mit Größenprofil, Rolle, zwei bis drei messbare Erfolge als Belege. Lücken über drei Monate ausgewiesen und, wo bekannt, erklärt.
 
-Block 6, Passung zum Mandat: Anforderung für Anforderung mit Kennzeichnung Muss oder Kann, Status erfüllt, teilweise erfüllt oder nicht erfüllt, und je einer Zeile Beleg. Abschließend eine Abgleichszeile, die zählt, wie viele Anforderungen erfüllt sind, und die nicht erfüllten Muss-Kriterien einzeln benennt.
+Block 6, Kompetenzprofil: Fachkompetenz, Führungskompetenz, Branchenkompetenz, je Achse mit Verweis auf die Station, an der sie erworben wurde.
 
-Block 7, A/A-Assessment: nur wenn die Methodik vorliegt, sonst der Hinweis auf die Nachreichung.
+Block 7, Managementprofil: ein Absatz, der den Führungsstil als Muster über die gesamte Karriere zusammenfasst, nicht stationsbezogen wie Block 6. Ein Führungsstil-Attribut ohne wiederkehrendes Beispiel aus mindestens zwei Stationen ist eine Behauptung, keine Beobachtung, und gehört nicht hinein.
 
-Block 8, Motivation und Wechselgrund: aus dem Interview, klar als Selbstauskunft gekennzeichnet.
+Block 8, Auszeichnungen: Herstellerauszeichnungen, Branchenpreise, Zertifizierungen mit Jahr, nur wenn tatsächlich belegt. Ohne Beleg wird dieser Block komplett weggelassen, nicht mit einem offenen Feld aufgefüllt. Nicht jede starke Karriere hat Trophäen.
 
-Block 9, Risiken und offene Punkte: ehrlich. Lücken, fehlende Nachweise, Gehaltsdelta, Standortfrage, kurze Verweildauern, ungeklärtes Wettbewerbsverbot. Dazu die Fragen für das nächste Gespräch.
+Block 9, Passung zum Mandat: Anforderung für Anforderung im Wortlaut des Auftraggebers, mit Kennzeichnung Muss oder Kann, Status erfüllt, teilweise erfüllt oder nicht erfüllt, und je einer Zeile Beleg. Abschließend eine Abgleichszeile, die zählt, wie viele Anforderungen erfüllt sind, und die nicht erfüllten Muss-Kriterien einzeln benennt. Dieser Block ist der eigentliche Hebel des Dokuments.
 
-Block 10, Empfehlung: Votum und Begründung getrennt. Vorstellen, mit Vorbehalt vorstellen oder nicht vorstellen. Kein Sowohl-als-auch.
+Block 10, A/A-Assessment: nur wenn die Methodik vorliegt, sonst der Hinweis auf die Nachreichung.
+
+Block 11, Motivation und Wechselgrund: aus dem Interview, klar als Selbstauskunft gekennzeichnet.
+
+Block 12, Risiken und offene Punkte: ehrlich. Lücken, fehlende Nachweise, Gehaltsdelta, Standortfrage, kurze Verweildauern, ungeklärtes Wettbewerbsverbot. Dazu die Fragen für das nächste Gespräch. Dieser Block darf nicht leer sein; ist er es doch, wurde nicht kritisch genug gelesen.
+
+Block 13, Empfehlung: Votum und Begründung getrennt. Vorstellen, mit Vorbehalt vorstellen oder nicht vorstellen. Kein Sowohl-als-auch.
 
 ## Offene Felder statt Fehlstellen
 
@@ -92,6 +100,8 @@ Schwachstellen benennen statt kaschieren. Aus drei Stationen in vier Jahren wird
 Bezug AGG Paragraf 1 und DSGVO Artikel 9: kein Bewerbungsfoto, kein Geburtsdatum, kein Geburtsort, kein Familienstand, keine Kinderzahl, keine Staatsangehörigkeit, keine Religionszugehörigkeit, keine Schwerbehinderung oder Gleichstellung, kein Gesundheitszustand, keine Gewerkschafts- oder Parteizugehörigkeit, keine Angaben zu Schwangerschaft oder Elternzeit als solche.
 
 Zulässige Alternativen: statt Geburtsdatum der Jahrgang, und nur mit dokumentierter Einwilligung. Statt Staatsangehörigkeit die Arbeitserlaubnis für den Einsatzort, sofern erforderlich. Statt Sprachherkunft das Sprachniveau nach GER. Statt Elternzeit die neutrale Auszeit mit Zeitraum, sofern der Kandidat sie erklärt haben will.
+
+Geburtsdatum ist der häufigste Fehler in der Praxis, weil es wie eine harmlose Eckdatenzeile aussieht. Es steht in keinem Steckbrief, auch nicht als "geb. am" oder unter der Überschrift Persönliche Daten. Statt dessen der Jahrgang, und der nur mit Einwilligung.
 
 Vor jeder Übermittlung an den Auftraggeber ist die Einwilligung des Kandidaten für genau diesen Auftraggeber und diese Position einzuholen und zu dokumentieren. Das ist eine Arbeitshilfe nach gängiger Praxis, keine Rechtsberatung.
 

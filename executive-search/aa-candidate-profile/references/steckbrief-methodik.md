@@ -44,13 +44,25 @@ Lücken über drei Monate immer ausweisen. Ungeklärte Lücken sind kein Ausschl
 
 Kurze Verweildauern nennen, nicht kaschieren. Drei Stationen in vier Jahren stehen so im Profil, mit dem Hinweis, dass die Wechselgründe im Gespräch zu klären sind. Zwei davon können Übernahmen oder Insolvenzen gewesen sein, das entlastet, aber nur wenn es dasteht.
 
-Gehaltsdelta offen ausweisen. Liegt die Erwartung über dem Mandatsrahmen, gehört das in Block 9, nicht in die Verhandlung im vierten Gespräch.
+Gehaltsdelta offen ausweisen. Liegt die Erwartung über dem Mandatsrahmen, gehört das in Block 12, nicht in die Verhandlung im vierten Gespräch.
 
 Fehlende Anforderungen benennen und einordnen. "Keine Erfahrung mit Mehrmarkenstrukturen. Einschätzung A/A: in zwölf Monaten aufholbar, da vergleichbare Komplexität im Standortverbund bereits geführt." Das ist Beratung. Weglassen wäre Verkauf.
 
 ## Qualitätskriterien vor Freigabe
 
-Erstens, würde Aaron dieses Profil im Kundengespräch mündlich genauso vertreten. Zweitens, hält jede Zahl einem Nachweis stand. Drittens, steht mindestens ein echter Vorbehalt drin. Viertens, ist die Empfehlung eindeutig. Fünftens, ist das Profil auf eine Seite lesbar, ohne dass Wesentliches fehlt. Sechstens, im Blindmodus, ist der Kandidat wirklich nicht identifizierbar.
+Erstens, würde Aaron dieses Profil im Kundengespräch mündlich genauso vertreten. Zweitens, hält jede Zahl einem Nachweis stand. Drittens, steht mindestens ein echter Vorbehalt drin. Viertens, ist die Empfehlung eindeutig. Fünftens, ist das Profil auf ein bis zwei Seiten lesbar, ohne dass Wesentliches fehlt. Sechstens, im Blindmodus, ist der Kandidat wirklich nicht identifizierbar.
+
+## Die drei neuen Blöcke: Schwerpunkte, Managementprofil, Auszeichnungen
+
+Drei Blöcke wurden bewusst nach dem Vorbild verbreiteter Branchenpraxis ergänzt, weil sie einen echten Zweck erfüllen, den die übrigen zehn Blöcke nicht abdecken: schnelle Scanbarkeit und Referenzierbarkeit. Sie unterliegen denselben Belegregeln wie jeder andere Block. Der Unterschied zwischen einem guten und einem generischen Steckbrief liegt nicht darin, ob diese Blöcke existieren, sondern ob sie belegt sind.
+
+Fachliche Schwerpunkte sind Schlagworte, keine Behauptungen. Jeder Begriff muss sich in Werdegang oder Kompetenzprofil wiederfinden. Eine Liste mit "strategisches Denken", "Verhandlungsstärke" und "Leadership" ohne Rückbindung an eine konkrete Station ist Lebenslauf-Bingo, kein Beleg.
+
+Managementprofil ist eine Synthese, kein zusätzlicher Lobgesang. Es beschreibt ein Muster, das sich an mindestens zwei Stationen zeigt, zum Beispiel "führt konsequent über Zielvereinbarung statt Kontrolle, belegt durch die Einführung neuer Provisionssysteme an drei aufeinanderfolgenden Stationen". Ein Satz wie "verbindet strategisches Denken mit operativer Umsetzungskompetenz" ohne dieses Belegmuster gehört in keinen A/A-Steckbrief.
+
+Auszeichnungen sind Fakten mit Jahr und Institution, keine Nebelkerzen. "Zahlreiche Hersteller- und Branchenauszeichnungen" ohne eine einzige benannt zu bekommen ist unglaubwürdiger als gar kein Auszeichnungsblock. Entweder die Liste steht mit Jahr und Bezeichnung da, oder der Block entfällt komplett.
+
+Der Grund, warum diese Disziplin hier wichtiger ist als anderswo: alle drei Blöcke sind aus der Branche importiert, in der sie meist unbelegt und superlativgetrieben verwendet werden. Genau das ist der Unterschied, für den A/A bezahlt wird.
 
 ## Anti-Muster
 
@@ -64,6 +76,6 @@ Der versteckte Bruch. Lücke oder kurze Verweildauer ausgelassen und darauf geho
 
 Das identifizierbare Blindprofil. Anonymisiert im Kopf, aber mit Angaben, die im DACH-Premiumhandel auf genau ein Haus und eine Person zeigen. Vertraulichkeitsbruch mit Ansage.
 
-## Einseitigkeit als Disziplin
+## Kürze als Disziplin
 
-Ein Steckbrief ist eine Seite plus optional eine Seite Anlage. Wenn das Profil länger wird, ist meist nicht der Kandidat komplex, sondern die Auswahl der Fakten unentschieden. Kürzen heißt entscheiden, was für dieses Mandat zählt. Genau dafür wird der Berater bezahlt.
+Ein Steckbrief mit dreizehn Blöcken füllt in der Regel ein bis zwei Seiten, bei umfangreichem Werdegang mit Anlage etwas mehr. Das ist kein Freibrief für Länge. Wenn das Profil deutlich länger wird, ist meist nicht der Kandidat komplex, sondern die Auswahl der Fakten unentschieden. Jeder Satz muss eine der drei Fragen beantworten, die der Auftraggeber hat: kann er es, will er es, passt er hierher. Ein Satz, der keine davon beantwortet, gehört gestrichen, unabhängig davon, wie gut er klingt. Kürzen heißt entscheiden, was für dieses Mandat zählt. Genau dafür wird der Berater bezahlt.

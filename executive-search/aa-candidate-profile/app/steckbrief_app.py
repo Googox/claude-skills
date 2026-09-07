@@ -69,7 +69,21 @@ Harte Regeln:
    "erfuellt", "teilweise erfuellt" oder "nicht erfuellt" und begruende ihn in
    "beleg" mit einer Zeile aus dem Lebenslauf. Laesst sich der Status aus dem
    Lebenslauf nicht bestimmen, lass status und beleg leer.
-8. Antworte ausschliesslich mit dem JSON-Objekt, ohne Vor- und Nachtext.
+8. "schwerpunkte" ist eine Stichwortliste von zwoelf bis achtzehn Begriffen in
+   Branchensprache. Jeder Begriff muss durch eine Station in "werdegang" oder eine
+   Achse in "kompetenzen" gedeckt sein. Kein Begriff ohne Beleg an anderer Stelle
+   im Dokument.
+9. "managementprofil" ist ein Absatz, der den Fuehrungsstil als wiederkehrendes
+   Muster ueber mindestens zwei Stationen hinweg beschreibt, nicht stationsbezogen.
+   Ohne ein Muster, das sich an zwei Stationen zeigt, das Feld leer lassen statt
+   ein einmaliges Ereignis zu verallgemeinern.
+10. "auszeichnungen" nur befuellen, wenn der Lebenslauf tatsaechlich Auszeichnungen,
+   Zertifizierungen oder Herstellerpreise mit Jahr nennt. Ohne Beleg eine leere
+   Liste lassen, nicht das Feld mit Vermutungen fuellen. Dieser Block erscheint im
+   fertigen Steckbrief nur, wenn die Liste nicht leer ist.
+11. Vermeide Superlative ohne Beleg (aussergewoehnlich, herausragend, Top-Manager).
+   Jede Qualitaetsaussage braucht eine Zahl oder ein konkretes Beispiel dahinter.
+12. Antworte ausschliesslich mit dem JSON-Objekt, ohne Vor- und Nachtext.
 
 JSON-Schema:
 {SCHEMA}
@@ -92,9 +106,12 @@ SCHEMA_KURZ = """{
   "freigabe": {"einwilligung_dokumentiert": true, "einwilligung_datum": ""},
   "kandidat": {"name": "", "wohnregion": "", "mobilitaet": "", "sprachen": [], "fuehrungsspanne": "", "ergebnisverantwortung": "", "verfuegbarkeit": "", "kuendigungsfrist": ""},
   "summary": ["", "", "", "", ""],
+  "schwerpunkte": ["Zwoelf bis achtzehn Schlagworte, jedes durch werdegang oder kompetenzen gedeckt"],
   "werdegang": [{"von": "MM.JJJJ", "bis": "MM.JJJJ", "unternehmen": "", "unternehmenstyp": "", "groesse": "", "rolle": "", "verantwortung": "", "ergebnisse": []}],
   "luecken": [],
   "kompetenzen": {"fachlich": [], "fuehrung": [], "branche": []},
+  "managementprofil": "Ein Absatz, Fuehrungsstil als Muster ueber mindestens zwei Stationen, nicht stationsbezogen",
+  "auszeichnungen": [{"jahr": 0, "bezeichnung": ""}],
   "passung": [{"anforderung": "", "gewichtung": "muss | kann", "status": "erfuellt | teilweise erfuellt | nicht erfuellt", "beleg": ""}],
   "assessment": null,
   "motivation": "",
@@ -460,7 +477,7 @@ footer{padding:14px 22px;font-size:12px;color:#5c5a55;text-align:center}
 </section>
 
 <section><h2>3 Anforderungsprofil des Auftraggebers</h2>
-<p class="hint">Optional, aber der groesste Qualitaetssprung. Liegt ein schriftliches Profil vor, wird Block 6 Punkt fuer Punkt dagegen abgeglichen statt frei formuliert.</p>
+<p class="hint">Optional, aber der groesste Qualitaetssprung. Liegt ein schriftliches Profil vor, wird Block 9 Punkt fuer Punkt dagegen abgeglichen statt frei formuliert.</p>
 <label>Datei (.docx oder .txt)</label><input type="file" id="jddatei" accept=".docx,.txt,.md">
 <label>oder Text einfuegen</label><textarea id="jdtext" style="min-height:90px" placeholder="Stellenbeschreibung oder Anforderungsprofil"></textarea>
 <button class="sek" onclick="anforderungenLesen()">Anforderungen herauslesen</button>
@@ -499,7 +516,7 @@ footer{padding:14px 22px;font-size:12px;color:#5c5a55;text-align:center}
 
 <section><h2>7 Finalisieren, freigeben, PDF</h2>
 <div id="gate" class="status warn" style="display:block">Noch kein Profil erzeugt.</div>
-<p class="hint">Das PDF ist das Freigabedokument. Es entsteht erst, wenn kein gruenes Feld mehr offen ist, kein Compliance-Fehler vorliegt, die Einwilligung des Kandidaten dokumentiert ist und ein Votum im Block 10 steht.</p>
+<p class="hint">Das PDF ist das Freigabedokument. Es entsteht erst, wenn kein gruenes Feld mehr offen ist, kein Compliance-Fehler vorliegt, die Einwilligung des Kandidaten dokumentiert ist und ein Votum im Block 13 steht.</p>
 <label style="font-weight:400"><input type="checkbox" id="freigabe_ok"> Ich habe das Profil final geprueft und gebe es zur Weitergabe an den Auftraggeber frei.</label>
 <button id="b_pdf" disabled onclick="pdfBauen(false)">Freigabe-PDF erzeugen</button>
 <button class="sek" id="b_pdf_e" disabled onclick="pdfBauen(true)">Entwurfs-PDF, mit Vermerk</button>

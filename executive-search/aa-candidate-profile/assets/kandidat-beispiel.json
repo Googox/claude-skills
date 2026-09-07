@@ -120,5 +120,24 @@
   "empfehlung": {
     "votum": "mit vorbehalt vorstellen",
     "begruendung": "Ertragssteuerung und Strukturaufbau treffen den Kern des Mandats, die gefuehrte Standortzahl liegt ueber der des Auftraggebers. Der Vorbehalt betrifft ausschliesslich die Mehrmarkenerfahrung und den Besetzungstermin."
-  }
+  },
+  "schwerpunkte": [
+    "Turnaround-Management",
+    "Ergebnisverantwortung",
+    "Mehrstandort-Führung",
+    "Gebrauchtwagenmanagement",
+    "Führungskräfteentwicklung",
+    "Provisionssystem-Design",
+    "Prozessoptimierung",
+    "Großkundenmanagement",
+    "Budgetplanung und Controlling",
+    "Premiumvertrieb"
+  ],
+  "managementprofil": "Herr Berger führt konsequent über Zielvereinbarungen statt über Kontrolle: an allen drei dokumentierten Stationen hat er neue Provisions- oder Anreizsysteme eingeführt, bevor er operative Kennzahlen verbesserte. Sein Muster ist der Aufbau einer zweiten Führungsebene vor der Ergebnissteigerung, belegt bei Weser Motors und wiederholt bei Nordstern Automobile.",
+  "auszeichnungen": [
+    {
+      "jahr": 2023,
+      "bezeichnung": "Bester Standort Region Nord, Nordstern Automobile GmbH"
+    }
+  ]
 }

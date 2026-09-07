@@ -13,7 +13,7 @@ Pflicht: der Lebenslauf als Datei (PDF, DOCX, Bilddatei mit lesbarem Text) oder 
 
 Qualitätsentscheidend, wenn vorhanden: das schriftliche Anforderungsprofil oder die Stellenbeschreibung des Auftraggebers als Datei oder Text. Weiter optional: Aarons Interviewnotizen, Gehaltsrahmen und Kündigungsfrist, Wechselmotiv, Zeugnisse, Referenzstand.
 
-Fehlt das Anforderungsprofil, den Steckbrief trotzdem erstellen, aber Block 6 als offenes Feld ausweisen und Aaron einmal fragen, ob er das Profil nachreichen kann. Nicht raten, welche Position gemeint ist und keine Anforderungen erfinden.
+Fehlt das Anforderungsprofil, den Steckbrief trotzdem erstellen, aber Block 9 als offenes Feld ausweisen und Aaron einmal fragen, ob er das Profil nachreichen kann. Nicht raten, welche Position gemeint ist und keine Anforderungen erfinden.
 
 Vertraulichkeit des Auftraggebers: der Name des suchenden Hauses ist selbst schutzwürdig. Dass dieses Unternehmen eine Position besetzt, ist vertrauliche Marktinformation. In der lokalen Anwendung wird er deshalb mit pseudonymisiert und erst lokal wieder eingesetzt.
 
@@ -31,11 +31,11 @@ Schritt 1, Lebenslauf extrahieren. Datei mit dem passenden Skill lesen (pdf für
 
 Schritt 2, Fakten von Behauptungen trennen. Was steht belegt im Lebenslauf, was ist Selbstbeschreibung des Kandidaten, was stammt aus Aarons Interview, was ist Aarons eigene Einschätzung. Diese vier Quellen im Steckbrief unterscheidbar halten. Der Kunde muss erkennen können, worauf eine Aussage beruht.
 
-Schritt 3, Erfolge quantifizieren. Für jede relevante Station zwei bis drei messbare Ergebnisse suchen: Umsatz, Ertrag, Stückzahlen, Führungsspanne, Standortzahl, Turnaround, Aufbauleistung. Stehen keine Zahlen im Lebenslauf, keine erfinden. Stattdessen als offene Frage in Block 9 aufnehmen, das ist Interviewstoff.
+Schritt 3, Erfolge quantifizieren. Für jede relevante Station zwei bis drei messbare Ergebnisse suchen: Umsatz, Ertrag, Stückzahlen, Führungsspanne, Standortzahl, Turnaround, Aufbauleistung. Stehen keine Zahlen im Lebenslauf, keine erfinden. Stattdessen als offene Frage in Block 12 aufnehmen, das ist Interviewstoff.
 
 Schritt 4, Gegen das Anforderungsprofil spiegeln. Liegt ein schriftliches Anforderungsprofil des Auftraggebers vor, wird es zerlegt und Punkt für Punkt gegen den Werdegang gelegt. Jede Anforderung wird im Wortlaut des Auftraggebers übernommen, nicht umformuliert, und in Muss- und Kann-Kriterien getrennt. Diese Trennung ist der eigentliche Hebel: ein gerissenes Kann-Kriterium hält den Kandidaten im Rennen, ein gerissenes Muss-Kriterium nicht. Auftraggeber vermischen beides regelmäßig im selben Absatz, und wer die Liste sauber trennt, führt das Briefinggespräch.
 
-Status je Anforderung: erfüllt, teilweise erfüllt, nicht erfüllt, jeweils mit einer Zeile Beleg aus dem Lebenslauf. Nicht erfüllte Punkte gehören in den Steckbrief, nicht in die Schublade. Ein Profil ohne Schwachstellen ist unglaubwürdig und beschädigt Aarons Ruf beim ersten Interview. Block 6 schließt mit einer Abgleichszeile, die zählt, wie viele Anforderungen erfüllt sind, und die nicht erfüllten Muss-Kriterien einzeln benennt.
+Status je Anforderung: erfüllt, teilweise erfüllt, nicht erfüllt, jeweils mit einer Zeile Beleg aus dem Lebenslauf. Nicht erfüllte Punkte gehören in den Steckbrief, nicht in die Schublade. Ein Profil ohne Schwachstellen ist unglaubwürdig und beschädigt Aarons Ruf beim ersten Interview. Block 9 schließt mit einer Abgleichszeile, die zählt, wie viele Anforderungen erfüllt sind, und die nicht erfüllten Muss-Kriterien einzeln benennt.
 
 Liegt kein schriftliches Profil vor, danach fragen. Ein Mandat ohne schriftliches Anforderungsprofil ist ein Mandat mit beweglichen Zielen, und die Beweglichkeit geht immer zulasten des Beraters.
 
@@ -55,31 +55,39 @@ Die Prüfung zählt die offenen Felder und meldet sie als Hinweis. Ein leerer Pf
 
 ## Aufbau des Steckbriefs
 
+Dreizehn Blöcke. Das ist mehr als ein Mindestgerüst, weil ein Steckbrief zwei Funktionen gleichzeitig erfüllen muss: er muss in fünfzehn Sekunden scannbar sein (Kopf, Summary, Schwerpunkte-Tags) und er muss einer kritischen Prüfung standhalten (Passung, Assessment, Risiken, Votum). Blöcke, für die keine Angabe vorliegt, entweder als offenes Feld ausweisen oder, wo sachlich richtig, ganz weglassen. Welche Regel für welchen Block gilt, steht jeweils dabei.
+
 Block 1, Kopf: Mandat und Position, Auftraggeber, Profil-ID, Datum, Berater, Vertraulichkeitsvermerk, Modus (Vollprofil oder Blindprofil).
 
-Block 2, Executive Summary: drei bis fünf Sätze. Wer ist der Mensch beruflich, was ist seine stärkste Passung zu diesem Mandat, wo liegt der größte Vorbehalt. Diese fünf Sätze entscheiden, ob der Kunde weiterliest. Sie werden zuletzt geschrieben und zuerst gelesen.
+Block 2, Executive Summary: genau fünf Sätze nach der Fünf-Sätze-Regel aus references/steckbrief-methodik.md. Diese Sätze entscheiden, ob der Kunde weiterliest, und werden zuletzt geschrieben, zuerst gelesen.
 
-Block 3, Eckdaten: Jahrgang nur mit Einwilligung, Wohnregion, Mobilität und Umzugsbereitschaft, Sprachen mit Niveau, Führungsspanne, Budget- oder Ergebnisverantwortung, Verfügbarkeit, Kündigungsfrist.
+Block 3, Fachliche Schwerpunkte: eine Stichwortliste von zwölf bis achtzehn Begriffen, die die Kompetenzen des Kandidaten in der Sprache der Branche benennt, zum Beispiel Turnaround-Management, Mehrmarkenführung, Aftersales-Steuerung, Gebrauchtwagenmanagement, Ergebnisverantwortung. Dieser Block ist bewusst redundant zu Block 6, weil er eine andere Aufgabe hat: er macht das Profil in fünf Sekunden scannbar und funktioniert wie Schlagworte für die schnelle Vorauswahl. Jeder Begriff muss durch mindestens eine Station in Block 5 oder eine Achse in Block 6 gedeckt sein, sonst ist er eine Behauptung ohne Beleg und gehört nicht hinein.
 
-Block 4, Werdegang: rückwärts chronologisch. Pro Station Zeitraum, Unternehmen mit Größenprofil, Rolle, Verantwortungsumfang, zwei bis drei messbare Erfolge. Lücken über drei Monate ausgewiesen und, wo bekannt, erklärt.
+Block 4, Eckdaten: Jahrgang nur mit Einwilligung, Wohnregion, Mobilität und Umzugsbereitschaft, Sprachen mit Niveau, Führungsspanne, Budget- oder Ergebnisverantwortung, Verfügbarkeit, Kündigungsfrist, Gehaltsvorstellung. Niemals Geburtsdatum, siehe die Leitplanken.
 
-Block 5, Kompetenzprofil: Fachkompetenz, Führungskompetenz, Branchenkompetenz. Je Achse belegt statt behauptet, also mit Verweis auf die Station, an der sie erworben wurde.
+Block 5, Werdegang: rückwärts chronologisch. Pro Station ein einleitender Satz zur Aufgabe, danach Zeitraum, Unternehmen mit Größenprofil, Rolle, zwei bis drei messbare Erfolge als Belege. Lücken über drei Monate ausgewiesen und, wo bekannt, erklärt.
 
-Block 6, Passung zum Mandat: Anforderung für Anforderung im Wortlaut des Auftraggebers, mit Kennzeichnung Muss oder Kann, Status erfüllt, teilweise, nicht erfüllt und jeweils einer Zeile Beleg. Abschließend die Abgleichszeile mit der Zählung und den nicht erfüllten Muss-Kriterien.
+Block 6, Kompetenzprofil: Fachkompetenz, Führungskompetenz, Branchenkompetenz. Je Achse belegt statt behauptet, also mit Verweis auf die Station, an der sie erworben wurde.
 
-Block 7, A/A-Assessment: Knock-out-Check, Fitness-Signale, gewichteter Score. Nur wenn die Methodik vorliegt.
+Block 7, Managementprofil: ein Absatz, der den Führungsstil über die gesamte Karriere hinweg zusammenfasst, nicht stationsbezogen wie Block 6, sondern als Muster über alle Stationen. Wie führt dieser Mensch, woran erkennt man das wiederkehrend. Auch hier gilt die Belegpflicht: ein Führungsstil-Attribut ohne wiederkehrendes Beispiel aus mindestens zwei Stationen ist eine Behauptung, keine Beobachtung.
 
-Block 8, Motivation und Wechselgrund: was den Kandidaten treibt, was er sucht, warum er jetzt wechselt. Aus dem Interview, klar als Selbstauskunft gekennzeichnet.
+Block 8, Auszeichnungen: Herstellerauszeichnungen, Branchenpreise, Zertifizierungen mit Jahr, falls vorhanden. Dieser Block erscheint nur, wenn tatsächlich Auszeichnungen belegt sind. Ohne Beleg wird er komplett weggelassen, nicht mit einem offenen Feld aufgefüllt: nicht jede starke Karriere hat Trophäen, und ein erzwungenes leeres Feld suggeriert einen Mangel, wo keiner ist.
 
-Block 9, Risiken und offene Punkte: ehrlich. Lücken, fehlende Nachweise, Gehaltsdelta, Standortfrage, kurze Verweildauern, ungeklärtes Wettbewerbsverbot. Dazu die Fragen, die im nächsten Gespräch zu klären sind.
+Block 9, Passung zum Mandat: Anforderung für Anforderung im Wortlaut des Auftraggebers, mit Kennzeichnung Muss oder Kann, Status erfüllt, teilweise, nicht erfüllt und jeweils einer Zeile Beleg. Abschließend die Abgleichszeile mit der Zählung und den nicht erfüllten Muss-Kriterien. Dieser Block ist der eigentliche Hebel des ganzen Dokuments, siehe Schritt 4 im Ablauf.
 
-Block 10, Empfehlung des Beraters: klare Position mit Begründung. Vorstellen, mit Vorbehalt vorstellen, oder nicht vorstellen. Kein Sowohl-als-auch.
+Block 10, A/A-Assessment: Knock-out-Check, Fitness-Signale, gewichteter Score. Nur wenn die Methodik vorliegt.
+
+Block 11, Motivation und Wechselgrund: was den Kandidaten treibt, was er sucht, warum er jetzt wechselt. Aus dem Interview, klar als Selbstauskunft gekennzeichnet.
+
+Block 12, Risiken und offene Punkte: ehrlich. Lücken, fehlende Nachweise, Gehaltsdelta, Standortfrage, kurze Verweildauern, ungeklärtes Wettbewerbsverbot. Dazu die Fragen, die im nächsten Gespräch zu klären sind. Dieser Block darf nicht leer sein, wenn er es doch ist, wurde nicht kritisch genug gelesen, siehe Ehrlichkeit unten.
+
+Block 13, Empfehlung des Beraters: klare Position mit Begründung. Vorstellen, mit Vorbehalt vorstellen, oder nicht vorstellen. Kein Sowohl-als-auch.
 
 ## Finalisierung und Freigabe
 
 Der Steckbrief hat zwei Zustaende. Arbeitsstand ist die Word-Datei mit gruenen Feldern, damit wird im Interview gearbeitet. Freigabedokument ist das PDF, das beim Auftraggeber landet. Das PDF entsteht nur, wenn das Freigabe-Gate haelt.
 
-Das Gate prueft vier Punkte: kein offenes gruenes Feld mehr, kein Compliance-Fehler aus der AGG- und DSGVO-Pruefung, dokumentierte Einwilligung des Kandidaten fuer diesen Auftraggeber, und ein eindeutiges Votum in Block 10. Faellt einer dieser Punkte durch, wird kein Freigabe-PDF erzeugt, sondern die Liste der offenen Punkte ausgegeben.
+Das Gate prueft vier Punkte: kein offenes gruenes Feld mehr, kein Compliance-Fehler aus der AGG- und DSGVO-Pruefung, dokumentierte Einwilligung des Kandidaten fuer diesen Auftraggeber, und ein eindeutiges Votum in Block 13. Faellt einer dieser Punkte durch, wird kein Freigabe-PDF erzeugt, sondern die Liste der offenen Punkte ausgegeben.
 
 Ein Entwurfs-PDF ist trotzdem moeglich, etwa zur Abstimmung mit dem Kandidaten. Es traegt in der Fusszeile jeder Seite den Vermerk "ENTWURF, nicht freigegeben" und im Dateinamen das Kuerzel ENTWURF. Ein Entwurf geht nie an den Auftraggeber.
 
