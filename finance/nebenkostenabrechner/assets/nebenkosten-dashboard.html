@@ -279,6 +279,17 @@ svg{display:block;max-width:100%;height:auto}
           <td colspan="2"></td><td class="n" id="uSumMiete"></td><td class="n" id="uSumVzN"></td><td class="n" id="uSumVzH"></td><td colspan="2"></td></tr></tfoot>
       </table></div></div>
     </div>
+    <div class="panel">
+      <header><h2>Verbilligte Vermietung an Angehörige</h2><p>§ 21 Abs. 2 EStG: Liegt die Miete unter 66 % der ortsüblichen Warmmiete, wird der Werbungskostenabzug gekürzt oder eine Totalüberschussprognose fällig. Maßstab ist die Warmmiete, also Kaltmiete plus umlagefähige Betriebskosten.</p></header>
+      <div class="body">
+        <div class="twrap"><table id="angehTable">
+          <thead><tr><th style="min-width:180px">Einheit</th><th>an Angehörige vermietet</th>
+            <th class="r">ortsübliche Kaltmiete €/m²</th><th class="r">Ist-Warmmiete €/M</th>
+            <th class="r">ortsübliche Warmmiete €/M</th><th class="r">Quote</th><th>Status</th></tr></thead>
+          <tbody></tbody></table></div>
+        <div id="angehBox" style="margin-top:14px"></div>
+      </div>
+    </div>
     <div id="mietSpiegel"></div>
   </section>
 
@@ -307,6 +318,35 @@ svg{display:block;max-width:100%;height:auto}
 
   <!-- ============ HEIZUNG ============ -->
   <section id="tab-heizung" class="stack" hidden>
+    <div class="panel" id="oelPanel">
+      <header>
+        <div><h2>Ölbestand und Verbrauch</h2><p>Bei Öl ist nicht die Tankrechnung umlagefähig, sondern der im Abrechnungszeitraum tatsächlich verbrauchte Ölbestand. Anfangsbestand plus Zukäufe minus Endbestand, bewertet nach einer stetig angewandten Methode.</p></div>
+        <label style="display:flex;gap:8px;align-items:center;font-size:13.5px;cursor:pointer;white-space:nowrap">
+          <input type="checkbox" id="oelAktiv" style="width:auto"> Bestandsrechnung nutzen</label>
+      </header>
+      <div class="body">
+        <div class="grid3">
+          <div class="field"><label for="oelAnfL">Anfangsbestand Liter</label><input type="text" class="qty" id="oelAnfL"></div>
+          <div class="field"><label for="oelAnfE">Wert Anfangsbestand €</label><input type="text" class="money" id="oelAnfE"></div>
+          <div class="field"><label for="oelEndL">Endbestand Liter (Peilung)</label><input type="text" class="qty" id="oelEndL"></div>
+          <div class="field"><label for="oelMeth">Bewertungsmethode</label>
+            <select id="oelMeth"><option value="schnitt">gewogener Durchschnitt</option><option value="fifo">FIFO (First in, first out)</option></select></div>
+          <div class="field"><label for="oelFaktor">CO₂-Faktor kg je Liter</label><input type="text" class="qty" id="oelFaktor"></div>
+          <div class="field"><label>errechneter Verbrauch Liter</label><input type="text" class="qty" id="oelVerbr" readonly></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:18px;gap:10px">
+          <span class="eyebrow">Öllieferungen im Abrechnungszeitraum</span>
+          <button class="btn sm" id="addLief">+ Lieferung</button>
+        </div>
+        <div class="twrap" style="margin-top:6px"><table id="liefTable">
+          <thead><tr><th style="min-width:130px">Datum</th><th class="r">Liter</th><th class="r">Betrag €</th><th class="r">€ je Liter</th><th style="min-width:110px">Beleg</th><th></th></tr></thead>
+          <tbody></tbody>
+          <tfoot><tr><td>Summe Zukäufe</td><td class="n" id="liefL"></td><td class="n" id="liefE"></td><td class="n" id="liefP"></td><td colspan="2"></td></tr></tfoot>
+        </table></div>
+        <div id="oelBox" style="margin-top:14px"></div>
+      </div>
+    </div>
+
     <div class="panel">
       <header><h2>Warme Betriebskosten</h2><p>Heiz- und Warmwasserkosten werden nach HeizkostenV getrennt abgerechnet: 50 bis 70 % verbrauchsabhängig, der Rest nach Wohnfläche.</p></header>
       <div class="body">
@@ -324,6 +364,7 @@ svg{display:block;max-width:100%;height:auto}
           <div class="field"><label>Verbrauchsanteil %</label><input type="text" class="qty" id="hVerbrAnz" readonly></div>
         </div>
         <div id="hkvoBox" style="margin-top:14px"></div>
+        <div id="messBox" style="margin-top:10px"></div>
       </div>
     </div>
 
@@ -419,8 +460,8 @@ function katalog(){
   function k(nr,pos,schl,betrag,notiz){ return {id:uid(),nr:nr,pos:pos,schluessel:schl,betrag:betrag,beleg:'',notiz:notiz||'',direkt:{}}; }
   return [
     k('1', 'Grundsteuer','flaeche',980),
-    k('2', 'Wasserversorgung','personen',720),
-    k('3', 'Entwässerung / Niederschlagswasser','personen',640),
+    k('2', 'Wasserversorgung','direkt',0,'Zwischenzähler vorhanden — je Einheit erfassen'),
+    k('3', 'Entwässerung / Niederschlagswasser','direkt',0,'folgt dem Frischwasserverbrauch'),
     k('4', 'Heizung (Wärmeversorgung)','heizung',0,'wird im Heizkostenmodul erfasst'),
     k('5', 'Warmwasserversorgung','heizung',0,'wird im Heizkostenmodul erfasst'),
     k('6', 'Verbundene Heiz- und Warmwasseranlagen','heizung',0,'wird im Heizkostenmodul erfasst'),
@@ -451,16 +492,18 @@ function defaultState(jahr){
     jahr: jahr,
     demo: true,
     objekt:{ name:'Zweifamilienhaus', strasse:'', ort:'',
-      von: jahr+'-01-01', bis: jahr+'-12-31', heizart:'Gas-Zentralheizung', selbst:false },
+      von: jahr+'-01-01', bis: jahr+'-12-31', heizart:'Öl-Zentralheizung', selbst:false },
     einheiten:[
       {id:'og',name:'Wohnung Obergeschoss',mieter:'',flaeche:101,personen:2,von:'',bis:'',
-       kaltmiete:1100,vzNK:120,vzHeiz:110,vHeiz:4200,vWW:38},
+       kaltmiete:1100,vzNK:120,vzHeiz:110,vHeiz:4200,vWW:38,angehoerig:false,ortsQm:0},
       {id:'eg',name:'Wohnung Erdgeschoss',mieter:'',flaeche:149,personen:3,von:'',bis:'',
-       kaltmiete:1100,vzNK:170,vzHeiz:160,vHeiz:5800,vWW:54}
+       kaltmiete:1100,vzNK:170,vzHeiz:160,vHeiz:5800,vWW:54,angehoerig:true,ortsQm:0}
     ],
     kosten: katalog.fix(katalog()),
     heizung:{ brenn:3800, strom:140, wartung:190, mess:210, schorn:95, tank:0,
-              grund:30, ww:18, co2Kosten:0, co2Menge:0, co2Proz:0 }
+              grund:30, ww:18, co2Kosten:0, co2Menge:0, co2Proz:0 },
+    oel:{ aktiv:true, methode:'schnitt', anfangL:1800, anfangEur:1710, endeL:1200, faktor:2.66,
+          lieferungen:[{id:'l1',datum:jahr+'-03-14',liter:2500,eur:2375,beleg:''}] }
   };
 }
 
@@ -499,8 +542,40 @@ function kostBetrag(k){
   return parseNum(k.betrag);
 }
 
+function computeOel(){
+  var o=state.oel||{};
+  var lief=(o.lieferungen||[]).slice().sort(function(a,b){ return (a.datum||'')<(b.datum||'')?-1:1; });
+  var zuL=lief.reduce(function(a,l){return a+parseNum(l.liter);},0);
+  var zuE=lief.reduce(function(a,l){return a+parseNum(l.eur);},0);
+  var anfL=parseNum(o.anfangL), anfE=parseNum(o.anfangEur), endL=parseNum(o.endeL);
+  var vorrat=anfL+zuL;
+  var verbrauch=vorrat-endL;
+  var gedeckelt=false;
+  if(verbrauch<0){ verbrauch=0; gedeckelt=true; }
+  if(verbrauch>vorrat){ verbrauch=vorrat; gedeckelt=true; }
+  var wert=anfE+zuE, kosten=0;
+  if(vorrat>0 && verbrauch>0){
+    if(o.methode==='fifo'){
+      var lagen=[{l:anfL,p:anfL>0?anfE/anfL:0}].concat(lief.map(function(x){
+        var li=parseNum(x.liter); return {l:li,p:li>0?parseNum(x.eur)/li:0}; }));
+      var rest=verbrauch;
+      for(var i=0;i<lagen.length && rest>0;i++){
+        var nimm=Math.min(rest,lagen[i].l);
+        kosten+=nimm*lagen[i].p; rest-=nimm;
+      }
+    } else {
+      kosten = verbrauch * (wert/vorrat);
+    }
+  }
+  return {aktiv:!!o.aktiv, zuL:zuL, zuE:zuE, vorrat:vorrat, verbrauch:verbrauch,
+    kosten:kosten, preis:vorrat>0?wert/vorrat:0, endWert:Math.max(0,wert-kosten),
+    co2Menge:verbrauch*parseNum(o.faktor), gedeckelt:gedeckelt, lief:lief};
+}
+
 function computeHeiz(){
   var h=state.heizung;
+  var oel=computeOel();
+  if(oel.aktiv) h.brenn = oel.kosten;
   var brutto = parseNum(h.brenn)+parseNum(h.strom)+parseNum(h.wartung)+parseNum(h.mess)+parseNum(h.schorn)+parseNum(h.tank);
   var co2Vermieter = parseNum(h.co2Kosten)*parseNum(h.co2Proz)/100;
   var umlage = Math.max(0, brutto - co2Vermieter);
@@ -522,7 +597,7 @@ function computeHeiz(){
   state.einheiten.forEach(function(u){ ges[u.id]=aHZ[u.id]+aWW[u.id]; });
   var kennwert = flaecheGesamt()>0 ? parseNum(h.co2Menge)/flaecheGesamt() : 0;
   return {brutto:brutto, co2Vermieter:co2Vermieter, umlage:umlage, potHZ:potHZ, potWW:potWW,
-          aHZ:aHZ, aWW:aWW, ges:ges, kennwert:kennwert, grundQ:grundQ};
+          aHZ:aHZ, aWW:aWW, ges:ges, kennwert:kennwert, grundQ:grundQ, oel:oel};
 }
 
 function compute(){
@@ -666,6 +741,58 @@ function renderHeizInputs(){
     el(p[0]).value = n2(h[p[1]]);
   });
 }
+function renderOelInputs(){
+  var o=state.oel;
+  el('oelAktiv').checked=!!o.aktiv;
+  el('oelAnfL').value=n2(o.anfangL); el('oelAnfE').value=n2(o.anfangEur);
+  el('oelEndL').value=n2(o.endeL); el('oelFaktor').value=n2(o.faktor);
+  el('oelMeth').value=o.methode||'schnitt';
+}
+function renderLiefTable(){
+  var tb=el('liefTable').querySelector('tbody');
+  tb.innerHTML=(state.oel.lieferungen||[]).map(function(l){
+    var pl=parseNum(l.liter)>0?parseNum(l.eur)/parseNum(l.liter):0;
+    return '<tr data-l="'+l.id+'">'+
+      '<td><input type="date" data-f="datum" value="'+esc(l.datum)+'"></td>'+
+      '<td><input type="text" class="qty" data-f="liter" value="'+n2(l.liter)+'"></td>'+
+      '<td><input type="text" class="money" data-f="eur" value="'+n2(l.eur)+'"></td>'+
+      '<td class="n">'+n2(pl)+'</td>'+
+      '<td><input type="text" data-f="beleg" value="'+esc(l.beleg||'')+'" placeholder="—"></td>'+
+      '<td class="r"><button class="btn sm ghost danger" data-del="'+l.id+'">×</button></td></tr>';
+  }).join('') || '<tr><td colspan="6" style="color:var(--ink-3);font-size:13px">Noch keine Lieferung erfasst.</td></tr>';
+}
+function renderOelBox(c){
+  var o=c.heiz.oel, st=state.oel;
+  el('oelPanel').querySelectorAll('.body input,.body select').forEach(function(x){
+    if(x.id!=='oelAktiv') x.disabled=!st.aktiv;
+  });
+  el('oelVerbr').value=n2(o.verbrauch);
+  el('liefL').textContent=n2(o.zuL); el('liefE').textContent=n2(o.zuE);
+  el('liefP').textContent=o.zuL>0?n2(o.zuE/o.zuL):'—';
+  if(!st.aktiv){
+    el('oelBox').innerHTML='<div class="note">Bestandsrechnung aus. Die Brennstoffkosten werden direkt aus dem Feld unten übernommen. Bei Öl ist das nur korrekt, wenn Tankfüllung und Verbrauch im Zeitraum zufällig übereinstimmen — in aller Regel sind sie das nicht.</div>';
+    return;
+  }
+  var out='<div class="note"><strong>'+n2(o.verbrauch)+' Liter verbraucht</strong> zu '+
+    money(o.kosten)+' ('+(st.methode==='fifo'?'FIFO':'Durchschnitt '+n2(o.preis)+' € je Liter')+'). '+
+    'Der Endbestand von '+n2(st.endeL)+' Litern bleibt mit '+money(o.endWert)+' als Vorrat stehen und geht in die nächste Abrechnung ein. '+
+    'Dieser Betrag ist automatisch als Brennstoffkosten unten gesetzt.</div>';
+  if(o.gedeckelt) out+='<div class="note crit"><strong>Bestand unplausibel.</strong> Endbestand größer als Anfangsbestand plus Zukäufe, oder negativer Verbrauch. Peilung und Lieferscheine prüfen.</div>';
+  if(o.co2Menge>0) out+='<div class="note warn">Rechnerische CO₂-Menge: '+n2(o.co2Menge)+' kg bei '+n2(st.faktor)+' kg je Liter. '+
+    'Der Faktor ist ein Näherungswert. <strong>Maßgeblich ist die Angabe deines Öllieferanten</strong>, der CO₂-Menge und CO₂-Kosten in der Rechnung ausweisen muss. '+
+    '<button class="btn sm" id="co2FromOel" style="margin-left:6px">Menge übernehmen</button></div>';
+  el('oelBox').innerHTML=out;
+  var b=el('co2FromOel');
+  if(b) b.onclick=function(){ state.heizung.co2Menge=o.co2Menge; el('cMenge').value=n2(o.co2Menge); touch(); };
+}
+
+function renderMessBox(){
+  el('messBox').innerHTML=
+    '<div class="note"><strong>Messdienst und Funkablesung.</strong> Umlagefähig sind Miete oder Leasing der Erfassungsgeräte, Ablesung und Abrechnung (§ 7 Abs. 2 HeizkostenV). '+
+    '<strong>Kaufst</strong> du die Geräte, sind die Anschaffungskosten <strong>nicht</strong> umlagefähig — nur die laufenden Ablese- und Abrechnungsgebühren. Kläre das im Angebot, bevor du unterschreibst.</div>'+
+    '<div class="note warn"><strong>Unterjährige Verbrauchsinformation.</strong> Bei fernablesbaren Zählern schuldest du dem Mieter seit 2022 eine monatliche Verbrauchsinformation. Bleibt sie aus, darf der Mieter die Heizkostenabrechnung um <strong>3 Prozent</strong> kürzen (§ 12 Abs. 1 HeizkostenV). Kläre bei der Montage, ob der Messdienst diese Information selbst versendet oder ob du sie weiterleiten musst.</div>';
+}
+
 function renderVerbTable(){
   var tb=el('verbTable').querySelector('tbody');
   tb.innerHTML=state.einheiten.map(function(u){
@@ -794,14 +921,19 @@ function refresh(){
   el('vW').textContent=n2(state.einheiten.reduce(function(a,u){return a+parseNum(u.vWW);},0));
   el('vAH').textContent=n2(c.heiz.potHZ); el('vAW').textContent=n2(c.heiz.potWW); el('vAS').textContent=n2(c.heiz.umlage);
 
+  renderOelBox(c);
+  renderMessBox();
   renderHkvoHinweis(c);
   renderCo2Box(c);
+  el('hBrenn').readOnly = !!(state.oel && state.oel.aktiv);
+  if(state.oel && state.oel.aktiv && document.activeElement!==el('hBrenn')) el('hBrenn').value=n2(state.heizung.brenn);
   renderHeizVOBox();
   renderKpis(c);
   renderFrist();
   renderCharts(c);
   renderResults(c);
   renderDocs(c);
+  renderAngeh(c);
   renderMietspiegel();
   el('demoBanner').hidden = !state.demo;
 }
@@ -823,7 +955,7 @@ function renderHkvoHinweis(c){
 function renderHeizVOBox(){
   el('heizVOBox').innerHTML = state.objekt.selbst
     ? '<div class="note">Selbstnutzung aktiv: Die HeizkostenV-Pflicht entfällt nach § 2 HeizkostenV. Prüfe zusätzlich, ob und wie du Kosten der selbst genutzten Wohnung aus der Umlage herausrechnest — im Zweifel bleibt deine Einheit als eigene Zeile mit Fläche in der Verteilung stehen, trägt ihren Anteil aber selbst.</div>'
-    : '<div class="note">Beide Wohnungen vermietet: Die HeizkostenV gilt vollständig, die Heizkosten sind zwingend verbrauchsabhängig abzurechnen. Fehlt die Verbrauchserfassung, darf der Mieter nach § 12 HeizkostenV den auf ihn entfallenden Anteil um 15 % kürzen.</div>';
+    : '<div class="note">Beide Wohnungen fremd vermietet: Die HeizkostenV gilt vollständig, die Heizkosten sind zwingend verbrauchsabhängig abzurechnen. Fehlt die Verbrauchserfassung, darf der Mieter nach § 12 HeizkostenV den auf ihn entfallenden Anteil um 15 % kürzen. Eine Vermietung an Angehörige ändert daran nichts — mietrechtlich ist die Tochter eine Mieterin wie jede andere.</div>';
 }
 function renderCo2Box(c){
   var h=state.heizung, kw=c.heiz.kennwert;
@@ -950,6 +1082,65 @@ function renderDocs(c){
   }).join('');
 }
 
+function renderAngeh(c){
+  var tb=el('angehTable').querySelector('tbody');
+  tb.innerHTML=state.einheiten.map(function(u){
+    var e=c.units.filter(function(x){return x.u.id===u.id;})[0];
+    var bkM = e && e.monate>0 ? e.gesamt/e.monate : 0;
+    var istWarm = parseNum(u.kaltmiete)+bkM;
+    var ortsKalt = parseNum(u.ortsQm)*parseNum(u.flaeche);
+    var hat = ortsKalt>0;
+    var ortsWarm = hat ? ortsKalt+bkM : 0;
+    var q = hat ? istWarm/ortsWarm*100 : 0;
+    var pill = !u.angehoerig ? '<span class="pill neutral">nicht betroffen</span>'
+      : !hat ? '<span class="pill warn">Vergleichsmiete fehlt</span>'
+      : q>=66 ? '<span class="pill ok">voller Abzug</span>'
+      : q>=50 ? '<span class="pill warn">Prognose nötig</span>'
+      : '<span class="pill crit">Abzug gekürzt</span>';
+    return '<tr data-u="'+u.id+'">'+
+      '<td>'+esc(u.name)+'</td>'+
+      '<td><label style="display:flex;gap:7px;align-items:center;font-size:13.5px;cursor:pointer">'+
+        '<input type="checkbox" data-f="angehoerig" style="width:auto"'+(u.angehoerig?' checked':'')+'> ja</label></td>'+
+      '<td><input type="text" class="money" data-f="ortsQm" value="'+n2(u.ortsQm)+'"></td>'+
+      '<td class="n">'+n2(istWarm)+'</td><td class="n">'+(hat?n2(ortsWarm):'—')+'</td>'+
+      '<td class="n">'+(hat?n2(q)+' %':'—')+'</td><td>'+pill+'</td></tr>';
+  }).join('');
+
+  var betroffen=state.einheiten.filter(function(u){return u.angehoerig;});
+  if(!betroffen.length){ el('angehBox').innerHTML='<div class="note">Keine Einheit als Angehörigenvermietung markiert. Setze den Haken, sobald an Kinder, Eltern oder Geschwister vermietet wird — die Prüfung ist jährlich neu zu führen.</div>'; return; }
+  var out='';
+  betroffen.forEach(function(u){
+    var e=c.units.filter(function(x){return x.u.id===u.id;})[0];
+    var bkM = e && e.monate>0 ? e.gesamt/e.monate : 0;
+    var ortsKalt=parseNum(u.ortsQm)*parseNum(u.flaeche);
+    if(ortsKalt<=0){
+      out+='<div class="note warn"><strong>'+esc(u.name)+': Vergleichsmiete fehlt.</strong> Trage die ortsübliche Kaltmiete je m² aus dem örtlichen Mietspiegel ein. Ohne diesen Wert lässt sich die 66-Prozent-Grenze des § 21 Abs. 2 EStG nicht prüfen — und genau daran scheitern Angehörigenvermietungen in der Betriebsprüfung.</div>';
+      return;
+    }
+    var ortsWarm=ortsKalt+bkM;
+    var mitBK=(parseNum(u.kaltmiete)+bkM)/ortsWarm*100;
+    var ohneBK=parseNum(u.kaltmiete)/ortsWarm*100;
+    var mindest=0.66*ortsWarm-bkM;
+    var cls = mitBK>=66?'':(mitBK>=50?'warn':'crit');
+    out+='<div class="note '+cls+'"><strong>'+esc(u.name)+': '+n2(mitBK)+' % der ortsüblichen Warmmiete.</strong> '+
+      (mitBK>=66
+        ? 'Über der 66-Prozent-Grenze, der Werbungskostenabzug bleibt vollständig erhalten. Puffer: '+money(parseNum(u.kaltmiete)-mindest)+' Kaltmiete pro Monat.'
+        : mitBK>=50
+          ? 'Zwischen 50 und 66 Prozent. Der volle Abzug hängt an einer positiven Totalüberschussprognose über 30 Jahre. Um ohne Prognose auszukommen, wäre eine Kaltmiete ab '+money(mindest)+' nötig, also '+money(mindest-parseNum(u.kaltmiete))+' mehr pro Monat.'
+          : 'Unter 50 Prozent. Die Vermietung wird in einen entgeltlichen und einen unentgeltlichen Teil aufgeteilt, Werbungskosten sind nur anteilig abziehbar. Für den vollen Abzug wären '+money(mindest)+' Kaltmiete nötig.')+
+      '</div>';
+    out+='<div class="note"><strong>Warum deine Nebenkostenabrechnung hier steuerlich zählt.</strong> '+
+      'Rechnest du die umlagefähigen Betriebskosten von '+money(bkM)+' im Monat ab, liegst du bei '+n2(mitBK)+' %. '+
+      'Erlässt du sie, sinkt die Quote auf '+n2(ohneBK)+' %. '+
+      (ohneBK<66 && mitBK>=66
+        ? 'Damit fällst du ohne Abrechnung unter die 66-Prozent-Grenze. Die Nebenkostenabrechnung ist in diesem Fall kein Formalakt, sondern der Puffer, der deinen Werbungskostenabzug trägt.'
+        : 'Die Differenz von '+n2(mitBK-ohneBK)+' Prozentpunkten ist der Beitrag der Nebenkostenumlage zur Quote.')+
+      '</div>';
+  });
+  out+='<div class="note warn">Diese Prüfung ist eine Rechenhilfe, keine steuerliche Beratung. Die ortsübliche Miete ist im Streitfall nachzuweisen — Mietspiegel, Vergleichswohnungen oder Gutachten. Lass die Bewertung von deinem Steuerberater bestätigen, bevor du dich darauf verlässt.</div>';
+  el('angehBox').innerHTML=out;
+}
+
 function renderMietspiegel(){
   var us=state.einheiten.filter(function(u){return parseNum(u.flaeche)>0 && parseNum(u.kaltmiete)>0;});
   if(us.length<2){ el('mietSpiegel').innerHTML=''; return; }
@@ -958,11 +1149,16 @@ function renderMietspiegel(){
   var hi=qm[0], lo=qm[qm.length-1];
   var spread = lo.q>0 ? (hi.q-lo.q)/lo.q*100 : 0;
   if(spread<12){ el('mietSpiegel').innerHTML=''; return; }
+  var loU=state.einheiten.filter(function(u){ return u.name===lo.n; })[0];
+  var angeh=loU && loU.angehoerig;
   var potenzial=(hi.q-lo.q)*lo.f*12;
-  el('mietSpiegel').innerHTML='<div class="note warn"><strong>Spreizung von '+n2(spread)+' % bei der Quadratmetermiete.</strong> '+
+  el('mietSpiegel').innerHTML='<div class="note '+(angeh?'':'warn')+'"><strong>Spreizung von '+n2(spread)+' % bei der Quadratmetermiete.</strong> '+
     esc(hi.n)+' liegt bei '+n2(hi.q)+' €/m², '+esc(lo.n)+' bei '+n2(lo.q)+' €/m². '+
-    'Auf das Niveau der teureren Einheit gehoben, entspricht das rechnerisch '+money(potenzial)+' zusätzlicher Jahreskaltmiete. '+
-    'Ob das durchsetzbar ist, hängt vom örtlichen Mietspiegel, dem Ausstattungsunterschied und der Kappungsgrenze des § 558 Abs. 3 BGB ab — die Zahl ist ein Rechenwert, keine Prognose.</div>';
+    (angeh
+      ? esc(lo.n)+' ist als Angehörigenvermietung markiert, die Spreizung ist damit gewollt. Steuerlich zählt hier nicht der entgangene Ertrag, sondern die 66-Prozent-Grenze des § 21 Abs. 2 EStG — siehe Prüfung oben. '+
+        'Achtung: Hebst du '+esc(hi.n)+' an, steigt die ortsübliche Vergleichsmiete für das ganze Haus, und die Quote der Angehörigenwohnung sinkt, ohne dass du dort etwas geändert hast.'
+      : 'Auf das Niveau der teureren Einheit gehoben, entspricht das rechnerisch '+money(potenzial)+' zusätzlicher Jahreskaltmiete. '+
+        'Ob das durchsetzbar ist, hängt vom örtlichen Mietspiegel, dem Ausstattungsunterschied und der Kappungsgrenze des § 558 Abs. 3 BGB ab — die Zahl ist ein Rechenwert, keine Prognose.')+'</div>';
 }
 
 /* ================= Recht & Fristen ================= */
@@ -978,6 +1174,10 @@ var LEGAL=[
  ['Kabel-TV nicht mehr umlagefähig','Das Nebenkostenprivileg für Kabelfernsehen ist zum 30.06.2024 entfallen. Kosten eines Sammelinkasso-Kabelvertrags dürfen seither nicht mehr über <code>§ 2 Nr. 15 BetrKV</code> abgerechnet werden. Prüfe deine Altverträge.'],
  ['Anpassung der Vorauszahlung','Nach einer ordnungsgemäßen Abrechnung darfst du die monatliche Vorauszahlung auf ein Zwölftel der tatsächlichen Jahreskosten anheben (<code>§ 560 Abs. 4 BGB</code>). Das Dashboard weist dir den Wert je Einheit aus, sobald die Nachzahlung über 25 % liegt.'],
  ['Wirtschaftlichkeitsgebot','<code>§ 556 Abs. 3 S. 1 BGB</code> verpflichtet dich, nur wirtschaftlich angemessene Kosten umzulegen. Überteuerte Dienstleistungsverträge sind angreifbar — die Beweislast für die Angemessenheit liegt bei dir.'],
+ ['Ölheizung: nur der Verbrauch zählt','Bei Öl ist nicht die Tankrechnung umlagefähig, sondern der im Abrechnungszeitraum tatsächlich verbrauchte Bestand: Anfangsbestand plus Zukäufe minus Endbestand. Die Bewertung erfolgt nach einer stetig angewandten Methode (gewogener Durchschnitt oder FIFO). Wer die Tankfüllung eins zu eins umlegt, rechnet in Jahren mit großer Befüllung zu viel und in Jahren ohne Befüllung zu wenig ab — beides ist angreifbar.'],
+ ['Messgeräte: Miete umlagefähig, Kauf nicht','Miete oder Leasing der Erfassungsgeräte sowie Ablesung und Abrechnung sind nach <code>§ 7 Abs. 2 HeizkostenV</code> umlagefähig. Die Anschaffungskosten gekaufter Geräte sind es nicht. Vor Vertragsabschluss mit dem Messdienst klären, welches Modell angeboten wird.'],
+ ['Unterjährige Verbrauchsinformation','Bei fernablesbaren Zählern schuldet der Vermieter dem Mieter seit 2022 eine monatliche Verbrauchsinformation. Bleibt sie aus, darf der Mieter die Heizkostenabrechnung um drei Prozent kürzen (<code>§ 12 Abs. 1 HeizkostenV</code>). In der Regel übernimmt der Messdienst den Versand — das gehört ausdrücklich in den Vertrag.'],
+ ['Vermietung an Angehörige','Liegt die Miete unter 66 Prozent der ortsüblichen Warmmiete, greift <code>§ 21 Abs. 2 EStG</code>: zwischen 50 und 66 Prozent ist eine positive Totalüberschussprognose erforderlich, unter 50 Prozent wird in einen entgeltlichen und einen unentgeltlichen Teil aufgeteilt und der Werbungskostenabzug entsprechend gekürzt. Maßstab ist die Warmmiete, also Kaltmiete plus umlagefähige Betriebskosten. Wer die Nebenkosten gegenüber Angehörigen nicht abrechnet, senkt damit seine eigene Quote.'],
  ['Belegeinsicht','Der Mieter hat Anspruch auf Einsicht in die Originalbelege. Halte Rechnungen, Zählerprotokolle und Verträge des Abrechnungszeitraums geordnet vor; die Beleg-Nummer im Kostenkatalog ist genau dafür da.']
 ];
 function renderLegal(){
@@ -1109,13 +1309,67 @@ function bindHeiz(){
   });
 }
 
+function bindOel(){
+  el('oelAktiv').addEventListener('change',function(){
+    state.oel.aktiv=this.checked; state.demo=false; refresh(); queueSave();
+  });
+  [['oelAnfL','anfangL'],['oelAnfE','anfangEur'],['oelEndL','endeL'],['oelFaktor','faktor']].forEach(function(p){
+    var e=el(p[0]);
+    e.addEventListener('input',function(){ state.oel[p[1]]=parseNum(this.value); touch(); });
+    e.addEventListener('change',function(){ this.value=n2(parseNum(this.value)); });
+  });
+  el('oelMeth').addEventListener('change',function(){ state.oel.methode=this.value; touch(); });
+  var t=el('liefTable');
+  t.addEventListener('input',function(e){
+    var inp=e.target.closest('input'); if(!inp) return;
+    var tr=inp.closest('tr'); if(!tr||!tr.dataset.l) return;
+    var l=state.oel.lieferungen.filter(function(x){return x.id===tr.dataset.l;})[0]; if(!l) return;
+    var f=inp.dataset.f;
+    l[f] = (f==='liter'||f==='eur') ? parseNum(inp.value) : inp.value;
+    if(f==='liter'||f==='eur'){
+      var td=tr.children[3];
+      td.textContent = parseNum(l.liter)>0 ? n2(parseNum(l.eur)/parseNum(l.liter)) : '0,00';
+    }
+    touch();
+  });
+  t.addEventListener('change',function(e){
+    var inp=e.target.closest('input.money,input.qty'); if(inp) inp.value=n2(parseNum(inp.value));
+  });
+  t.addEventListener('click',function(e){
+    var b=e.target.closest('[data-del]'); if(!b) return;
+    state.oel.lieferungen=state.oel.lieferungen.filter(function(x){return x.id!==b.dataset.del;});
+    renderLiefTable(); state.demo=false; refresh(); queueSave();
+  });
+  el('addLief').addEventListener('click',function(){
+    state.oel.lieferungen.push({id:uid(),datum:state.objekt.von,liter:0,eur:0,beleg:''});
+    renderLiefTable(); state.demo=false; refresh(); queueSave();
+  });
+}
+
+function bindAngeh(){
+  el('angehTable').addEventListener('input',function(e){
+    var inp=e.target.closest('input'); if(!inp||inp.type==='checkbox') return;
+    var tr=inp.closest('tr'); var u=state.einheiten.filter(function(x){return x.id===tr.dataset.u;})[0]; if(!u) return;
+    u.ortsQm=parseNum(inp.value); state.demo=false; queueSave();
+    var c=compute(); renderAngeh(c); renderMietspiegel();
+  });
+  el('angehTable').addEventListener('change',function(e){
+    var inp=e.target.closest('input[type="checkbox"]');
+    if(inp){
+      var tr=inp.closest('tr'); var u=state.einheiten.filter(function(x){return x.id===tr.dataset.u;})[0];
+      if(u){ u.angehoerig=inp.checked; touch(); }
+    }
+  });
+}
+
 function bindMisc(){
   el('clearAmounts').addEventListener('click',function(){
     state.kosten.forEach(function(k){ k.betrag=0; k.direkt={}; });
     var h=state.heizung; ['brenn','strom','wartung','mess','schorn','tank','co2Kosten','co2Menge'].forEach(function(f){ h[f]=0; });
     state.einheiten.forEach(function(u){ u.vHeiz=0; u.vWW=0; });
+    state.oel.anfangL=0; state.oel.anfangEur=0; state.oel.endeL=0; state.oel.lieferungen=[];
     state.demo=false;
-    renderKostTable(); renderVerbTable(); renderHeizInputs(); refresh(); queueSave();
+    renderKostTable(); renderVerbTable(); renderHeizInputs(); renderOelInputs(); renderLiefTable(); refresh(); queueSave();
   });
   el('printBtn').addEventListener('click',function(){ window.print(); });
   el('csvBtn').addEventListener('click',function(){
@@ -1153,6 +1407,10 @@ function bindMisc(){
     vorlage.kosten.forEach(function(k){ k.betrag=0; k.direkt={}; k.beleg=''; });
     ['brenn','strom','wartung','mess','schorn','tank','co2Kosten','co2Menge'].forEach(function(f){ vorlage.heizung[f]=0; });
     vorlage.einheiten.forEach(function(u){ u.vHeiz=0; u.vWW=0; });
+    var vo=computeOel();
+    vorlage.oel.anfangL=parseNum(state.oel.endeL);
+    vorlage.oel.anfangEur=vo.endWert;
+    vorlage.oel.endeL=0; vorlage.oel.lieferungen=[];
     jahre.push(nj); jahre.sort(function(a,b){return a-b;});
     state=vorlage;
     renderJahrSel(); rebuildAll(); queueSave();
@@ -1179,6 +1437,13 @@ function migrate(s){
   var d=defaultState(s.jahr||new Date().getFullYear()-1);
   s.objekt=Object.assign({},d.objekt,s.objekt||{});
   s.heizung=Object.assign({},d.heizung,s.heizung||{});
+  s.oel=Object.assign({},d.oel,s.oel||{});
+  if(!Array.isArray(s.oel.lieferungen)) s.oel.lieferungen=[];
+  s.oel.lieferungen.forEach(function(l){ if(!l.id) l.id=uid(); });
+  (s.einheiten||[]).forEach(function(u){
+    if(u.angehoerig===undefined) u.angehoerig=false;
+    if(u.ortsQm===undefined) u.ortsQm=0;
+  });
   (s.einheiten||[]).forEach(function(u){ if(!u.direkt) u.direkt={}; });
   (s.kosten||[]).forEach(function(k){ if(!k.direkt) k.direkt={}; });
   if(!s.einheiten||!s.einheiten.length) s.einheiten=d.einheiten;
@@ -1188,7 +1453,8 @@ function migrate(s){
 }
 
 function rebuildAll(){
-  renderObjekt(); renderUnitTable(); renderKostTable(); renderHeizInputs(); renderVerbTable(); refresh();
+  renderObjekt(); renderUnitTable(); renderKostTable(); renderHeizInputs();
+  renderOelInputs(); renderLiefTable(); renderVerbTable(); refresh();
 }
 
 /* ================= Start ================= */
@@ -1202,7 +1468,7 @@ else { var l0=loadLocal(state.jahr); if(l0) state=migrate(l0); }
 if(jahre.indexOf(state.jahr)<0){ jahre.push(state.jahr); jahre.sort(function(a,b){return a-b;}); }
 
 renderJahrSel();
-bindTabs(); bindObjekt(); bindUnitTable(); bindKostTable(); bindHeiz(); bindMisc();
+bindTabs(); bindObjekt(); bindUnitTable(); bindKostTable(); bindHeiz(); bindOel(); bindAngeh(); bindMisc();
 renderLegal();
 rebuildAll();
 setSave('','lokal');

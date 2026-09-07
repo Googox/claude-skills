@@ -100,9 +100,49 @@ class Abrechnung:
         s = sum(gew.values())
         return {k: (v / s if s > 0 else 0.0) for k, v in gew.items()}
 
+    # ---------- Oelbestand ----------
+    def oel(self):
+        o = self.a.get("oel") or {}
+        lief = sorted(o.get("lieferungen") or [], key=lambda x: x.get("datum") or "")
+        zu_l = sum(float(l.get("liter", 0)) for l in lief)
+        zu_e = sum(float(l.get("eur", 0)) for l in lief)
+        anf_l, anf_e = float(o.get("anfangL", 0)), float(o.get("anfangEur", 0))
+        end_l = float(o.get("endeL", 0))
+        vorrat = anf_l + zu_l
+        verbrauch = vorrat - end_l
+        gedeckelt = False
+        if verbrauch < 0 or verbrauch > vorrat:
+            verbrauch = min(max(verbrauch, 0.0), vorrat)
+            gedeckelt = True
+        wert = anf_e + zu_e
+        kosten = 0.0
+        if vorrat > 0 and verbrauch > 0:
+            if o.get("methode") == "fifo":
+                lagen = [(anf_l, anf_e / anf_l if anf_l > 0 else 0.0)]
+                for l in lief:
+                    li = float(l.get("liter", 0))
+                    lagen.append((li, float(l.get("eur", 0)) / li if li > 0 else 0.0))
+                rest = verbrauch
+                for menge, preis in lagen:
+                    if rest <= 0:
+                        break
+                    nimm = min(rest, menge)
+                    kosten += nimm * preis
+                    rest -= nimm
+            else:
+                kosten = verbrauch * (wert / vorrat)
+        return {"aktiv": bool(o.get("aktiv")), "zu_liter": zu_l, "zu_eur": zu_e,
+                "vorrat": vorrat, "verbrauch": verbrauch, "kosten": kosten,
+                "preis": wert / vorrat if vorrat > 0 else 0.0,
+                "endwert": max(0.0, wert - kosten), "gedeckelt": gedeckelt,
+                "co2_menge": verbrauch * float(o.get("faktor", 0))}
+
     # ---------- Heizung ----------
     def heizung(self):
         h = self.h
+        oel = self.oel()
+        if oel["aktiv"]:
+            h["brenn"] = oel["kosten"]
         brutto = sum(float(h.get(f, 0)) for f in
                      ("brenn", "strom", "wartung", "mess", "schorn", "tank"))
         co2_v = float(h.get("co2Kosten", 0)) * float(h.get("co2Proz", 0)) / 100.0
@@ -127,7 +167,7 @@ class Abrechnung:
         return {"brutto": brutto, "co2_vermieter": co2_v, "umlage": umlage,
                 "pot_hz": pot_hz, "pot_ww": pot_ww, "a_hz": a_hz, "a_ww": a_ww,
                 "ges": {u["id"]: a_hz[u["id"]] + a_ww[u["id"]] for u in self.units},
-                "kennwert": kennwert, "grund_q": grund_q}
+                "kennwert": kennwert, "grund_q": grund_q, "oel": oel}
 
     # ---------- Gesamtrechnung ----------
     def rechne(self):
@@ -215,6 +255,43 @@ class Abrechnung:
             if k.get("schluessel") not in ("nicht", "heizung") and float(k.get("betrag", 0)) > 0 \
                     and not k.get("beleg"):
                 p.append(("HINWEIS", "Position '{}' ohne Beleg-Nummer.".format(k.get("pos"))))
+        oel = r["heizung"]["oel"]
+        if oel["aktiv"]:
+            if oel["gedeckelt"]:
+                p.append(("FEHLER", "Oelbestand unplausibel: Endbestand groesser als Anfangsbestand "
+                                    "plus Zukaeufe, oder negativer Verbrauch. Peilung pruefen."))
+            else:
+                p.append(("HINWEIS", "Oelverbrauch {:.0f} Liter, bewertet mit {} EUR. Endbestand "
+                                     "{} EUR wird ins Folgejahr vorgetragen."
+                          .format(oel["verbrauch"], euro(oel["kosten"]), euro(oel["endwert"]))))
+        for u in self.units:
+            if not u.get("angehoerig"):
+                continue
+            e = [x for x in r["einheiten"] if x["id"] == u["id"]][0]
+            bk_m = e["gesamt"] / e["monate"] if e["monate"] else 0.0
+            orts_kalt = float(u.get("ortsQm", 0)) * float(u.get("flaeche", 0))
+            if orts_kalt <= 0:
+                p.append(("WARNUNG", "{}: an Angehoerige vermietet, aber keine ortsuebliche "
+                                     "Vergleichsmiete hinterlegt. Die 66-Prozent-Grenze des "
+                                     "Paragrafen 21 Abs. 2 EStG ist nicht pruefbar."
+                          .format(u.get("name"))))
+                continue
+            orts_warm = orts_kalt + bk_m
+            quote = (float(u.get("kaltmiete", 0)) + bk_m) / orts_warm * 100
+            ohne = float(u.get("kaltmiete", 0)) / orts_warm * 100
+            mindest = 0.66 * orts_warm - bk_m
+            if quote < 50:
+                p.append(("FEHLER", "{}: {:.1f} % der ortsueblichen Warmmiete. Unter 50 Prozent, "
+                                    "Werbungskosten nur anteilig abziehbar. Voller Abzug ab {} Kaltmiete."
+                          .format(u.get("name"), quote, euro(mindest))))
+            elif quote < 66:
+                p.append(("WARNUNG", "{}: {:.1f} % der ortsueblichen Warmmiete. Totalueberschussprognose "
+                                     "erforderlich. Ohne Prognose waeren {} Kaltmiete noetig."
+                          .format(u.get("name"), quote, euro(mindest))))
+            else:
+                p.append(("HINWEIS", "{}: {:.1f} % der ortsueblichen Warmmiete, voller Werbungskosten"
+                                     "abzug. Ohne Nebenkostenumlage laege die Quote bei {:.1f} %."
+                          .format(u.get("name"), quote, ohne)))
         for e in r["einheiten"]:
             if e["vorauszahlung"] > 0 and e["saldo"] / e["vorauszahlung"] > 0.25:
                 p.append(("HINWEIS", "{}: Nachzahlung uebersteigt 25 % der Vorauszahlung. "

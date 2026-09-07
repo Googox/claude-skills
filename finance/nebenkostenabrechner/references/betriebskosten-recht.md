@@ -121,3 +121,75 @@ Kosten umzulegen. Deutlich überteuerte Dienstleistungsverträge sind angreifbar
 Rügt der Mieter substantiiert, trägt der Vermieter die Darlegungslast für die
 Angemessenheit. Praktische Konsequenz: bei größeren Positionen alle zwei bis
 drei Jahre Vergleichsangebote einholen und dokumentieren.
+
+## 8. Ölheizung: Bestandsrechnung statt Tankrechnung
+
+Umlagefähig ist nicht der Rechnungsbetrag der Tankfüllung, sondern der im
+Abrechnungszeitraum tatsächlich verbrauchte Ölbestand:
+
+    Anfangsbestand + Zukäufe − Endbestand = Verbrauch
+
+Der Verbrauch wird nach einem stetig anzuwendenden Verfahren bewertet, üblich
+sind der gewogene Durchschnittspreis oder FIFO. Der Restbestand geht mit seinem
+Wert als Anfangsbestand in die Folgeabrechnung ein.
+
+Wer stattdessen die Tankfüllung umlegt, rechnet in Befüllungsjahren zu viel und
+in Jahren ohne Befüllung zu wenig ab. Der Fehler fällt spätestens auf, wenn der
+Mieter zwei Abrechnungen nebeneinanderlegt.
+
+**Praktische Konsequenz:** Peilung oder Ablesung des Tankinhalts zum Stichtag
+dokumentieren, mit Datum und möglichst mit Foto. Ohne Endbestand ist die
+Abrechnung nicht prüfbar.
+
+Für die CO2-Aufteilung muss der Lieferant CO2-Menge und CO2-Kosten in der
+Rechnung ausweisen. Ein rechnerischer Umrechnungsfaktor von Litern auf Kilogramm
+CO2 ist nur eine Näherung und ersetzt diese Angabe nicht.
+
+## 9. Fernablesbare Zähler und unterjährige Verbrauchsinformation
+
+Seit der Novelle der HeizkostenV sind bei Neuinstallation fernablesbare
+Erfassungsgeräte vorgeschrieben. Daran hängt eine Folgepflicht:
+
+- Bei fernablesbaren Zählern schuldet der Vermieter dem Mieter eine **monatliche
+  Verbrauchsinformation**.
+- Bleibt sie aus, darf der Mieter die Heizkostenabrechnung um **drei Prozent**
+  kürzen (§ 12 Abs. 1 HeizkostenV).
+- In der Praxis übernimmt der Messdienst den Versand. Das gehört ausdrücklich in
+  den Vertrag, sonst bleibt die Pflicht beim Vermieter.
+
+**Kauf oder Miete der Geräte:** Umlagefähig sind nach § 7 Abs. 2 HeizkostenV die
+Kosten der Verwendung (Miete oder Leasing), der Ablesung und der Abrechnung.
+Die Anschaffungskosten gekaufter Geräte sind **nicht** umlagefähig. Vor der
+Unterschrift beim Messdienst klären, welches Modell angeboten wird — der
+Unterschied läuft über die Nutzungsdauer auf einen vierstelligen Betrag hinaus.
+
+## 10. Vermietung an Angehörige (§ 21 Abs. 2 EStG)
+
+Wird verbilligt an Kinder, Eltern oder Geschwister vermietet, entscheidet das
+Verhältnis der vereinbarten Miete zur ortsüblichen Miete über den
+Werbungskostenabzug:
+
+| Quote | Folge |
+|-------|-------|
+| ab 66 % | vollständig entgeltlich, voller Werbungskostenabzug |
+| 50 bis unter 66 % | Totalüberschussprognose erforderlich; positiv = voller Abzug, negativ = Aufteilung |
+| unter 50 % | Aufteilung in entgeltlichen und unentgeltlichen Teil, Abzug nur anteilig |
+
+**Maßstab ist die ortsübliche Warmmiete**, also die ortsübliche Kaltmiete
+zuzüglich der nach BetrKV umlagefähigen Betriebskosten. Verglichen wird sie mit
+der tatsächlich vereinbarten Miete einschließlich der umgelegten Betriebskosten.
+
+Daraus folgt ein Punkt, der in der Praxis regelmäßig übersehen wird: **Wer die
+Nebenkosten gegenüber Angehörigen nicht abrechnet, senkt seine eigene Quote.**
+Bei umlagefähigen Kosten von rund 2,50 Euro je Quadratmeter und Monat macht das
+über zehn Prozentpunkte aus — genug, um von der sicheren Seite der
+66-Prozent-Grenze auf die unsichere zu rutschen.
+
+Zweiter Punkt: Die Quote ist **jährlich neu** zu prüfen. Steigt die ortsübliche
+Miete, sinkt die Quote, ohne dass am Mietvertrag etwas geändert wurde. Wer im
+selben Haus eine zweite Wohnung zu Marktkonditionen vermietet, liefert dem
+Finanzamt damit gleich den Vergleichsmaßstab.
+
+Die ortsübliche Miete ist im Streitfall nachzuweisen: örtlicher Mietspiegel,
+Vergleichswohnungen oder Sachverständigengutachten. Die Beurteilung gehört zum
+Steuerberater, nicht in eine Rechenhilfe.

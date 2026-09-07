@@ -19,13 +19,24 @@
 - [ ] Hauswartkosten um Reparatur- und Verwaltungsanteil bereinigt
 - [ ] Umlageschlüssel identisch zum Vorjahr, sonst Begründung dokumentiert
 
-## Heizung
+## Heizung (Öl)
+
+- [ ] Tankpeilung zum Stichtag dokumentiert, mit Datum und Foto
+- [ ] Anfangsbestand aus der Vorjahresabrechnung übernommen
+- [ ] Alle Lieferscheine des Zeitraums erfasst, Liter und Betrag
+- [ ] Verbrauch nach derselben Methode bewertet wie im Vorjahr
+- [ ] Endbestandswert für die Folgeabrechnung notiert
+
+## Heizung (allgemein)
 
 - [ ] Verbrauchsanteil zwischen 50 und 70 Prozent
 - [ ] Ablesewerte des Messdienstes vollständig und dem Zeitraum zugeordnet
 - [ ] Warmwasseranteil ermittelt (Zähler oder Berechnung nach § 9 HeizkostenV)
 - [ ] CO2-Menge und CO2-Kosten aus der Lieferantenrechnung übernommen
 - [ ] Vermieteranteil nach Stufenmodell abgezogen, Stufe gegen amtliche Quelle geprüft
+- [ ] Bei fernablesbaren Zählern: monatliche Verbrauchsinformation nachweislich zugestellt
+      (sonst darf der Mieter um drei Prozent kürzen)
+- [ ] Messdienstkosten geprüft: Miete umlagefähig, Kaufpreis nicht
 
 ## Frist und Zustellung
 
@@ -34,6 +45,13 @@
       Zeugen bei Einwurf)
 - [ ] Kopie der versandten Abrechnung archiviert
 - [ ] Belegordner für Einsichtnahme bereitgelegt
+
+## Steuer
+
+- [ ] Bei Vermietung an Angehörige: Quote gegen die ortsübliche Warmmiete geprüft
+- [ ] Ortsübliche Vergleichsmiete für das laufende Jahr belegt (Mietspiegel, Vergleichswohnungen)
+- [ ] Umlagefähige Kosten tatsächlich in Rechnung gestellt — sie zählen in die Quote
+- [ ] Bei Quote unter 66 Prozent: Rücksprache mit dem Steuerberater vor Abgabe der Anlage V
 
 ## Nachlauf
 

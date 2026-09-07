@@ -6,35 +6,186 @@
     "ort": "",
     "von": "2025-01-01",
     "bis": "2025-12-31",
-    "heizart": "Gas-Zentralheizung",
+    "heizart": "Öl-Zentralheizung",
     "selbst": false
   },
   "einheiten": [
-    {"id":"og","name":"Wohnung Obergeschoss","mieter":"","flaeche":101,"personen":2,
-     "von":"","bis":"","kaltmiete":1100,"vzNK":0,"vzHeiz":0,"vHeiz":0,"vWW":0},
-    {"id":"eg","name":"Wohnung Erdgeschoss","mieter":"","flaeche":149,"personen":3,
-     "von":"","bis":"","kaltmiete":1100,"vzNK":0,"vzHeiz":0,"vHeiz":0,"vWW":0}
+    {
+      "id": "og",
+      "name": "Wohnung Obergeschoss",
+      "mieter": "",
+      "flaeche": 101,
+      "personen": 2,
+      "von": "",
+      "bis": "",
+      "kaltmiete": 1100,
+      "vzNK": 0,
+      "vzHeiz": 0,
+      "vHeiz": 0,
+      "vWW": 0,
+      "angehoerig": false,
+      "ortsQm": 0
+    },
+    {
+      "id": "eg",
+      "name": "Wohnung Erdgeschoss",
+      "mieter": "",
+      "flaeche": 149,
+      "personen": 3,
+      "von": "",
+      "bis": "",
+      "kaltmiete": 1100,
+      "vzNK": 0,
+      "vzHeiz": 0,
+      "vHeiz": 0,
+      "vWW": 0,
+      "angehoerig": true,
+      "ortsQm": 0
+    }
   ],
   "kosten": [
-    {"nr":"1","pos":"Grundsteuer","schluessel":"flaeche","betrag":0,"beleg":""},
-    {"nr":"2","pos":"Wasserversorgung","schluessel":"personen","betrag":0,"beleg":""},
-    {"nr":"3","pos":"Entwässerung / Niederschlagswasser","schluessel":"personen","betrag":0,"beleg":""},
-    {"nr":"7","pos":"Aufzug","schluessel":"einheiten","betrag":0,"beleg":""},
-    {"nr":"8","pos":"Straßenreinigung und Müllbeseitigung","schluessel":"personen","betrag":0,"beleg":""},
-    {"nr":"9","pos":"Gebäudereinigung und Ungezieferbekämpfung","schluessel":"flaeche","betrag":0,"beleg":""},
-    {"nr":"10","pos":"Gartenpflege","schluessel":"flaeche","betrag":0,"beleg":""},
-    {"nr":"11","pos":"Beleuchtung (Allgemeinstrom)","schluessel":"flaeche","betrag":0,"beleg":""},
-    {"nr":"13","pos":"Sach- und Haftpflichtversicherung","schluessel":"flaeche","betrag":0,"beleg":""},
-    {"nr":"14","pos":"Hauswart","schluessel":"flaeche","betrag":0,"beleg":""},
-    {"nr":"15","pos":"Gemeinschaftsantenne / Breitband","schluessel":"einheiten","betrag":0,"beleg":""},
-    {"nr":"16","pos":"Wascheinrichtungen","schluessel":"einheiten","betrag":0,"beleg":""},
-    {"nr":"17","pos":"Sonstige Betriebskosten","schluessel":"flaeche","betrag":0,"beleg":""},
-    {"nr":"—","pos":"Instandhaltung und Reparaturen","schluessel":"nicht","betrag":0,"beleg":""},
-    {"nr":"—","pos":"Verwaltungskosten","schluessel":"nicht","betrag":0,"beleg":""}
+    {
+      "nr": "1",
+      "pos": "Grundsteuer",
+      "schluessel": "flaeche",
+      "betrag": 0,
+      "beleg": ""
+    },
+    {
+      "nr": "2",
+      "pos": "Wasserversorgung",
+      "schluessel": "direkt",
+      "betrag": 0,
+      "beleg": "",
+      "direkt": {
+        "og": 0,
+        "eg": 0
+      }
+    },
+    {
+      "nr": "3",
+      "pos": "Entwässerung / Niederschlagswasser",
+      "schluessel": "direkt",
+      "betrag": 0,
+      "beleg": "",
+      "direkt": {
+        "og": 0,
+        "eg": 0
+      }
+    },
+    {
+      "nr": "7",
+      "pos": "Aufzug",
+      "schluessel": "einheiten",
+      "betrag": 0,
+      "beleg": ""
+    },
+    {
+      "nr": "8",
+      "pos": "Straßenreinigung und Müllbeseitigung",
+      "schluessel": "personen",
+      "betrag": 0,
+      "beleg": ""
+    },
+    {
+      "nr": "9",
+      "pos": "Gebäudereinigung und Ungezieferbekämpfung",
+      "schluessel": "flaeche",
+      "betrag": 0,
+      "beleg": ""
+    },
+    {
+      "nr": "10",
+      "pos": "Gartenpflege",
+      "schluessel": "flaeche",
+      "betrag": 0,
+      "beleg": ""
+    },
+    {
+      "nr": "11",
+      "pos": "Beleuchtung (Allgemeinstrom)",
+      "schluessel": "flaeche",
+      "betrag": 0,
+      "beleg": ""
+    },
+    {
+      "nr": "13",
+      "pos": "Sach- und Haftpflichtversicherung",
+      "schluessel": "flaeche",
+      "betrag": 0,
+      "beleg": ""
+    },
+    {
+      "nr": "14",
+      "pos": "Hauswart",
+      "schluessel": "flaeche",
+      "betrag": 0,
+      "beleg": ""
+    },
+    {
+      "nr": "15",
+      "pos": "Gemeinschaftsantenne / Breitband",
+      "schluessel": "einheiten",
+      "betrag": 0,
+      "beleg": ""
+    },
+    {
+      "nr": "16",
+      "pos": "Wascheinrichtungen",
+      "schluessel": "einheiten",
+      "betrag": 0,
+      "beleg": ""
+    },
+    {
+      "nr": "17",
+      "pos": "Sonstige Betriebskosten",
+      "schluessel": "flaeche",
+      "betrag": 0,
+      "beleg": ""
+    },
+    {
+      "nr": "—",
+      "pos": "Instandhaltung und Reparaturen",
+      "schluessel": "nicht",
+      "betrag": 0,
+      "beleg": ""
+    },
+    {
+      "nr": "—",
+      "pos": "Verwaltungskosten",
+      "schluessel": "nicht",
+      "betrag": 0,
+      "beleg": ""
+    }
   ],
   "heizung": {
-    "brenn": 0, "strom": 0, "wartung": 0, "mess": 0, "schorn": 0, "tank": 0,
-    "grund": 30, "ww": 18,
-    "co2Kosten": 0, "co2Menge": 0, "co2Proz": 0
+    "brenn": 0,
+    "strom": 0,
+    "wartung": 0,
+    "mess": 0,
+    "schorn": 0,
+    "tank": 0,
+    "grund": 30,
+    "ww": 18,
+    "co2Kosten": 0,
+    "co2Menge": 0,
+    "co2Proz": 0
+  },
+  "oel": {
+    "aktiv": true,
+    "methode": "schnitt",
+    "anfangL": 0,
+    "anfangEur": 0,
+    "endeL": 0,
+    "faktor": 2.66,
+    "lieferungen": [
+      {
+        "id": "l1",
+        "datum": "2025-01-01",
+        "liter": 0,
+        "eur": 0,
+        "beleg": ""
+      }
+    ]
   }
 }
