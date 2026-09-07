@@ -1,0 +1,1240 @@
+<title>Nebenkostenabrechner Zweifamilienhaus</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Sans+3:wght@400;500;600&display=swap">
+<style>
+:root{
+  --paper:#F2F4F3; --surface:#FFFFFF; --surface-2:#FAFBFA;
+  --ink:#16211F; --ink-2:#42524E; --ink-3:#6E807B;
+  --line:#D7DEDB; --line-2:#E7ECEA;
+  --accent:#0F5C56; --accent-2:#0B4741; --accent-soft:#DEEBE8; --accent-ink:#0A3F3A;
+  --good:#2E6B34; --good-soft:#E1EEE1;
+  --warn:#8F5410; --warn-soft:#F4E9D8;
+  --crit:#98302E; --crit-soft:#F6E2E1;
+  --shadow:0 1px 2px rgba(22,33,31,.06),0 8px 24px -16px rgba(22,33,31,.28);
+  --r:6px;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --sans:"Source Sans 3",system-ui,-apple-system,Segoe UI,sans-serif;
+  --disp:"Archivo","Source Sans 3",system-ui,sans-serif;
+}
+:root:not([data-theme="light"]){}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --paper:#0E1413; --surface:#151F1D; --surface-2:#1A2523;
+    --ink:#E6EDEA; --ink-2:#AFBFBA; --ink-3:#879994;
+    --line:#27332F; --line-2:#1F2B28;
+    --accent:#5CBCAD; --accent-2:#7ACFC1; --accent-soft:#16302C; --accent-ink:#9FDDD1;
+    --good:#7FC186; --good-soft:#1A2A1C;
+    --warn:#D7A050; --warn-soft:#2C2317;
+    --crit:#E08582; --crit-soft:#2E1B1B;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px -16px rgba(0,0,0,.8);
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0E1413; --surface:#151F1D; --surface-2:#1A2523;
+  --ink:#E6EDEA; --ink-2:#AFBFBA; --ink-3:#879994;
+  --line:#27332F; --line-2:#1F2B28;
+  --accent:#5CBCAD; --accent-2:#7ACFC1; --accent-soft:#16302C; --accent-ink:#9FDDD1;
+  --good:#7FC186; --good-soft:#1A2A1C;
+  --warn:#D7A050; --warn-soft:#2C2317;
+  --crit:#E08582; --crit-soft:#2E1B1B;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px -16px rgba(0,0,0,.8);
+}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{font-family:var(--disp);font-weight:600;letter-spacing:-.012em;margin:0;text-wrap:balance}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums;font-feature-settings:"tnum"}
+.eyebrow{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);font-weight:600}
+
+/* ---------- Kopf ---------- */
+.topbar{position:sticky;top:0;z-index:40;background:var(--surface);border-bottom:1px solid var(--line);
+  display:flex;flex-wrap:wrap;gap:14px;align-items:center;padding:12px 22px}
+.brand{display:flex;flex-direction:column;gap:1px;margin-right:auto;min-width:210px}
+.brand h1{font-size:17px;letter-spacing:-.02em}
+.brand span{font-size:12px;color:var(--ink-3)}
+.topctl{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.savestate{font-size:12px;color:var(--ink-3);display:flex;align-items:center;gap:6px;font-family:var(--mono)}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--ink-3);flex:none}
+.dot.ok{background:var(--good)} .dot.busy{background:var(--warn)} .dot.off{background:var(--crit)}
+
+button,select,input,textarea{font:inherit;color:inherit}
+.btn{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:7px 13px;
+  font-size:13.5px;font-weight:600;cursor:pointer;color:var(--ink-2);transition:border-color .12s,color .12s,background .12s}
+.btn:hover{border-color:var(--accent);color:var(--accent)}
+.btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+:root[data-theme="dark"] .btn.primary,html:not([data-theme="light"]) .btn.primary{color:var(--paper)}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]) .btn.primary{color:#fff}}
+.btn.primary:hover{background:var(--accent-2);border-color:var(--accent-2)}
+.btn.ghost{border-color:transparent;background:transparent}
+.btn.ghost:hover{background:var(--accent-soft)}
+.btn.sm{padding:4px 9px;font-size:12.5px}
+.btn.danger:hover{border-color:var(--crit);color:var(--crit)}
+
+.field{display:flex;flex-direction:column;gap:4px}
+.field label{font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);font-weight:600}
+input[type=text],input[type=date],input[type=number],select,textarea{
+  background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:6px 9px;width:100%;
+  transition:border-color .12s,box-shadow .12s}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+input.money,input.qty{font-family:var(--mono);font-variant-numeric:tabular-nums;text-align:right}
+input[readonly]{background:var(--surface-2);color:var(--ink-3)}
+
+/* ---------- Register ---------- */
+nav.tabs{position:sticky;top:57px;z-index:35;display:flex;gap:2px;overflow-x:auto;background:var(--paper);
+  border-bottom:1px solid var(--line);padding:0 14px;scrollbar-width:thin}
+nav.tabs button{background:none;border:0;border-bottom:2px solid transparent;padding:11px 13px;cursor:pointer;
+  font-family:var(--disp);font-weight:600;font-size:14px;color:var(--ink-3);white-space:nowrap}
+nav.tabs button:hover{color:var(--ink)}
+nav.tabs button[aria-selected="true"]{color:var(--accent);border-bottom-color:var(--accent)}
+nav.tabs button:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+
+main{max-width:1240px;margin:0 auto;padding:22px 22px 90px}
+section[hidden]{display:none!important}
+.stack{display:flex;flex-direction:column;gap:26px}
+
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.panel>header{display:flex;flex-wrap:wrap;gap:10px;align-items:baseline;justify-content:space-between;
+  padding:14px 18px;border-bottom:1px solid var(--line-2)}
+.panel>header h2{font-size:15.5px}
+.panel>header p{margin:0;font-size:13px;color:var(--ink-3);max-width:62ch}
+.panel .body{padding:16px 18px}
+.panel .body.flush{padding:0}
+
+/* ---------- KPI ---------- */
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(178px,1fr));gap:1px;background:var(--line-2);
+  border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.kpi{background:var(--surface);padding:14px 16px;display:flex;flex-direction:column;gap:3px}
+.kpi .v{font-family:var(--mono);font-size:24px;font-weight:500;letter-spacing:-.02em;line-height:1.15}
+.kpi .s{font-size:12px;color:var(--ink-3)}
+.kpi.pos .v{color:var(--good)} .kpi.neg .v{color:var(--crit)} .kpi.acc .v{color:var(--accent)}
+
+/* ---------- Tabellen ---------- */
+.twrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;min-width:640px}
+th,td{padding:7px 10px;text-align:left;border-bottom:1px solid var(--line-2);vertical-align:middle}
+thead th{font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-3);font-weight:600;
+  background:var(--surface-2);position:sticky;top:0;z-index:1;border-bottom:1px solid var(--line)}
+td.r,th.r{text-align:right}
+td.n{font-family:var(--mono);font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
+tbody tr:hover{background:var(--surface-2)}
+tfoot td{font-weight:600;border-top:2px solid var(--line);border-bottom:none;background:var(--surface-2)}
+tr.grp td{background:var(--accent-soft);color:var(--accent-ink);font-family:var(--disp);font-weight:600;
+  font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;border-bottom:1px solid var(--line)}
+tr.off td:not(.keep){opacity:.5}
+.pos-nr{font-family:var(--mono);font-size:11.5px;color:var(--ink-3);display:inline-block;min-width:26px}
+
+.pill{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:600;padding:2px 8px;
+  border-radius:999px;letter-spacing:.02em;white-space:nowrap}
+.pill.ok{background:var(--good-soft);color:var(--good)}
+.pill.warn{background:var(--warn-soft);color:var(--warn)}
+.pill.crit{background:var(--crit-soft);color:var(--crit)}
+.pill.neutral{background:var(--accent-soft);color:var(--accent-ink)}
+
+.note{border-left:3px solid var(--accent);background:var(--accent-soft);color:var(--accent-ink);
+  padding:11px 14px;border-radius:0 var(--r) var(--r) 0;font-size:13.5px}
+.note.warn{border-left-color:var(--warn);background:var(--warn-soft);color:var(--warn)}
+.note.crit{border-left-color:var(--crit);background:var(--crit-soft);color:var(--crit)}
+.note strong{font-weight:600}
+.note+.note{margin-top:10px}
+
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px}
+.grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(185px,1fr));gap:14px}
+.rowline{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end}
+
+/* ---------- Ergebniskarten ---------- */
+.results{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:16px}
+.rescard{border:1px solid var(--line);border-radius:8px;background:var(--surface);overflow:hidden;
+  box-shadow:var(--shadow)}
+.rescard .head{padding:13px 16px;border-bottom:1px solid var(--line-2);display:flex;justify-content:space-between;
+  align-items:baseline;gap:10px}
+.rescard .head h3{font-size:15px} .rescard .head span{font-size:12px;color:var(--ink-3);font-family:var(--mono)}
+.rescard dl{margin:0;padding:12px 16px;display:grid;grid-template-columns:1fr auto;gap:6px 14px;font-size:13.5px}
+.rescard dt{color:var(--ink-2)} .rescard dd{margin:0;font-family:var(--mono);text-align:right;font-variant-numeric:tabular-nums}
+.rescard .final{border-top:2px solid var(--line);padding:12px 16px;display:flex;justify-content:space-between;
+  align-items:center;gap:12px}
+.rescard .final b{font-family:var(--mono);font-size:19px;font-weight:500}
+.rescard.pay{border-left:4px solid var(--good)} .rescard.pay .final b{color:var(--good)}
+.rescard.ref{border-left:4px solid var(--crit)} .rescard.ref .final b{color:var(--crit)}
+
+/* ---------- Charts ---------- */
+.charts{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px}
+.chartbox{border:1px solid var(--line);border-radius:8px;background:var(--surface);padding:14px 16px}
+.chartbox h3{font-size:13.5px;margin-bottom:2px}
+.chartbox p{margin:0 0 10px;font-size:12px;color:var(--ink-3)}
+svg{display:block;max-width:100%;height:auto}
+.legend{display:flex;flex-wrap:wrap;gap:12px;margin-top:10px;font-size:12px;color:var(--ink-2)}
+.legend i{width:10px;height:10px;border-radius:2px;display:inline-block;margin-right:5px;vertical-align:-1px}
+
+/* ---------- Abrechnungs-Druck ---------- */
+.doc{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:28px 30px;box-shadow:var(--shadow)}
+.doc h2{font-size:19px;margin-bottom:2px}
+.doc .meta{font-size:13px;color:var(--ink-3);margin-bottom:18px}
+.doc table{min-width:0}
+.doc+.doc{margin-top:20px}
+.sig{margin-top:26px;display:grid;grid-template-columns:1fr 1fr;gap:26px;font-size:12.5px;color:var(--ink-3)}
+.sig div{border-top:1px solid var(--line);padding-top:6px}
+
+.demo-banner{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;
+  background:var(--warn-soft);color:var(--warn);border:1px solid color-mix(in srgb,var(--warn) 30%,transparent);
+  border-radius:8px;padding:11px 15px;font-size:13.5px}
+.legal dt{font-family:var(--disp);font-weight:600;font-size:14px;margin-top:14px}
+.legal dd{margin:3px 0 0;color:var(--ink-2);font-size:14px;max-width:74ch}
+.legal dd code{font-family:var(--mono);font-size:12.5px;background:var(--surface-2);padding:1px 5px;border-radius:4px}
+.foot{margin-top:34px;padding-top:16px;border-top:1px solid var(--line);font-size:12px;color:var(--ink-3);max-width:80ch}
+
+@media (max-width:640px){
+  main{padding:16px 13px 80px}
+  .topbar{padding:10px 13px}
+  .doc{padding:18px 16px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+@media print{
+  .topbar,nav.tabs,.noprint,.demo-banner{display:none!important}
+  body{background:#fff;color:#000;font-size:11pt}
+  main{padding:0;max-width:none}
+  .doc{border:none;box-shadow:none;padding:0;page-break-after:always}
+  .doc:last-child{page-break-after:auto}
+  th,td{border-color:#bbb}
+}
+</style>
+
+<div class="topbar">
+  <div class="brand">
+    <h1>Nebenkostenabrechner</h1>
+    <span id="brandsub">Zweifamilienhaus &middot; 2 Einheiten &middot; 250,00 m&sup2;</span>
+  </div>
+  <div class="topctl">
+    <div class="field" style="min-width:118px">
+      <label for="jahrSel">Jahresakte</label>
+      <select id="jahrSel"></select>
+    </div>
+    <button class="btn sm" id="jahrNeu" title="Neue Abrechnungsperiode anlegen">+ Jahr</button>
+    <span class="savestate"><span class="dot" id="saveDot"></span><span id="saveTxt">lokal</span></span>
+    <button class="btn sm ghost" id="themeBtn" title="Hell / Dunkel umschalten" aria-label="Farbschema umschalten">◐</button>
+  </div>
+</div>
+
+<nav class="tabs" role="tablist">
+  <button role="tab" data-tab="uebersicht" aria-selected="true">Übersicht</button>
+  <button role="tab" data-tab="objekt" aria-selected="false">Objekt &amp; Einheiten</button>
+  <button role="tab" data-tab="kosten" aria-selected="false">Kalte Betriebskosten</button>
+  <button role="tab" data-tab="heizung" aria-selected="false">Heizung &amp; Warmwasser</button>
+  <button role="tab" data-tab="abrechnung" aria-selected="false">Abrechnung</button>
+  <button role="tab" data-tab="recht" aria-selected="false">Recht &amp; Fristen</button>
+</nav>
+
+<main>
+  <div id="demoBanner" class="demo-banner noprint" style="margin-bottom:18px">
+    <span><strong>Beispielbeträge geladen.</strong> Flächen, Mieten und Einheiten sind deine echten Werte — alle Kostenbeträge sind Platzhalter, bis du sie mit deinen Belegen überschreibst.</span>
+    <button class="btn sm" id="clearAmounts">Alle Beträge auf 0 setzen</button>
+  </div>
+
+  <!-- ============ ÜBERSICHT ============ -->
+  <section id="tab-uebersicht" class="stack">
+    <div class="kpis" id="kpiRow"></div>
+    <div id="fristBox"></div>
+    <div class="charts" id="chartRow"></div>
+    <div class="panel">
+      <header><h2>Ergebnis je Einheit</h2><p>Umlagefähige Kosten abzüglich geleisteter Vorauszahlungen für den gewählten Abrechnungszeitraum.</p></header>
+      <div class="body"><div class="results" id="resultRow"></div></div>
+    </div>
+  </section>
+
+  <!-- ============ OBJEKT ============ -->
+  <section id="tab-objekt" class="stack" hidden>
+    <div class="panel">
+      <header><h2>Objektdaten</h2><p>Abrechnungszeitraum und Stammdaten. Der Zeitraum steuert die Zeitanteile bei Mieterwechsel und die 12-Monats-Frist.</p></header>
+      <div class="body">
+        <div class="grid3">
+          <div class="field"><label for="oName">Objektbezeichnung</label><input type="text" id="oName"></div>
+          <div class="field"><label for="oStrasse">Straße, Hausnummer</label><input type="text" id="oStrasse"></div>
+          <div class="field"><label for="oOrt">PLZ, Ort</label><input type="text" id="oOrt"></div>
+          <div class="field"><label for="oVon">Zeitraum von</label><input type="date" id="oVon"></div>
+          <div class="field"><label for="oBis">Zeitraum bis</label><input type="date" id="oBis"></div>
+          <div class="field"><label for="oHeizart">Heizungsart</label>
+            <select id="oHeizart"><option>Gas-Zentralheizung</option><option>Öl-Zentralheizung</option><option>Wärmepumpe</option><option>Fernwärme</option><option>Pellets / Holz</option><option>Etagenheizungen (dezentral)</option></select></div>
+        </div>
+        <div class="rowline" style="margin-top:16px">
+          <label style="display:flex;gap:8px;align-items:center;font-size:14px;cursor:pointer">
+            <input type="checkbox" id="oSelbst" style="width:auto"> Ich bewohne selbst eine der beiden Wohnungen
+          </label>
+        </div>
+        <div id="heizVOBox" style="margin-top:14px"></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <header>
+        <div><h2>Mieteinheiten</h2><p>Nutzungszeitraum nur ausfüllen, wenn eine Einheit unterjährig gewechselt oder leer stand — sonst gilt der volle Abrechnungszeitraum.</p></div>
+        <button class="btn sm" id="addUnit">+ Einheit</button>
+      </header>
+      <div class="body flush"><div class="twrap"><table id="unitTable">
+        <thead><tr>
+          <th style="min-width:150px">Einheit</th><th style="min-width:150px">Mieter</th>
+          <th class="r">Wohnfläche m²</th><th class="r">Personen</th>
+          <th>Nutzung von</th><th>Nutzung bis</th>
+          <th class="r">Kaltmiete €/M</th><th class="r">VZ kalte NK €/M</th><th class="r">VZ Heizung €/M</th>
+          <th class="r">€/m²</th><th></th>
+        </tr></thead><tbody></tbody>
+        <tfoot><tr><td colspan="2">Summe</td><td class="n" id="uSumFl"></td><td class="n" id="uSumPe"></td>
+          <td colspan="2"></td><td class="n" id="uSumMiete"></td><td class="n" id="uSumVzN"></td><td class="n" id="uSumVzH"></td><td colspan="2"></td></tr></tfoot>
+      </table></div></div>
+    </div>
+    <div id="mietSpiegel"></div>
+  </section>
+
+  <!-- ============ KOSTEN ============ -->
+  <section id="tab-kosten" class="stack" hidden>
+    <div class="panel">
+      <header>
+        <div><h2>Kostenkatalog nach § 2 BetrKV</h2><p>Die 17 Positionen der Betriebskostenverordnung plus frei erfassbare Zeilen. Umlagefähig ist nur, was im Mietvertrag vereinbart ist — Position 17 („sonstige“) nur bei konkreter Benennung im Vertrag.</p></div>
+        <button class="btn sm" id="addKost">+ Position</button>
+      </header>
+      <div class="body flush"><div class="twrap"><table id="kostTable">
+        <thead><tr>
+          <th style="min-width:230px">Position</th><th style="min-width:170px">Umlageschlüssel</th>
+          <th class="r" style="min-width:110px">Betrag €</th>
+          <th style="min-width:110px">Beleg-Nr.</th>
+          <th class="r" id="thAnteil1">Anteil A</th><th class="r" id="thAnteil2">Anteil B</th><th></th>
+        </tr></thead><tbody></tbody>
+        <tfoot>
+          <tr><td colspan="2">Umlagefähig gesamt (kalt)</td><td class="n" id="kSumUml"></td><td></td><td class="n" id="kSumA"></td><td class="n" id="kSumB"></td><td></td></tr>
+          <tr><td colspan="2">Nicht umlagefähig (Vermieteranteil)</td><td class="n" id="kSumNicht"></td><td colspan="4"></td></tr>
+        </tfoot>
+      </table></div></div>
+    </div>
+    <div class="note"><strong>Direktzuordnung:</strong> Beim Schlüssel „direkt / verbrauchsgenau“ trägst du den Betrag je Einheit selbst ein (z. B. Wasser nach Zwischenzähler). Die Spalte „Betrag“ wird dann automatisch aus den Einzelwerten gebildet.</div>
+  </section>
+
+  <!-- ============ HEIZUNG ============ -->
+  <section id="tab-heizung" class="stack" hidden>
+    <div class="panel">
+      <header><h2>Warme Betriebskosten</h2><p>Heiz- und Warmwasserkosten werden nach HeizkostenV getrennt abgerechnet: 50 bis 70 % verbrauchsabhängig, der Rest nach Wohnfläche.</p></header>
+      <div class="body">
+        <div class="grid3">
+          <div class="field"><label for="hBrenn">Brennstoff / Fernwärme €</label><input type="text" class="money" id="hBrenn"></div>
+          <div class="field"><label for="hStrom">Betriebsstrom Heizung €</label><input type="text" class="money" id="hStrom"></div>
+          <div class="field"><label for="hWartung">Wartung Heizanlage €</label><input type="text" class="money" id="hWartung"></div>
+          <div class="field"><label for="hMess">Messdienst / Ablesung €</label><input type="text" class="money" id="hMess"></div>
+          <div class="field"><label for="hSchorn">Schornsteinfeger €</label><input type="text" class="money" id="hSchorn"></div>
+          <div class="field"><label for="hTank">Tankreinigung / Sonstiges €</label><input type="text" class="money" id="hTank"></div>
+        </div>
+        <div class="grid3" style="margin-top:18px">
+          <div class="field"><label for="hGrund">Grundkosten-Anteil % (Fläche)</label><input type="text" class="qty" id="hGrund"></div>
+          <div class="field"><label for="hWW">Warmwasser-Anteil an Brennstoff %</label><input type="text" class="qty" id="hWW"></div>
+          <div class="field"><label>Verbrauchsanteil %</label><input type="text" class="qty" id="hVerbrAnz" readonly></div>
+        </div>
+        <div id="hkvoBox" style="margin-top:14px"></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <header><h2>Verbrauchswerte je Einheit</h2><p>Heizung in Einheiten des Messdienstes (HKV-Striche, kWh oder m³), Warmwasser in m³ oder kWh.</p></header>
+      <div class="body flush"><div class="twrap"><table id="verbTable">
+        <thead><tr><th style="min-width:170px">Einheit</th><th class="r">Wohnfläche m²</th>
+          <th class="r">Verbrauch Heizung</th><th class="r">Verbrauch Warmwasser</th>
+          <th class="r">Anteil Heizung €</th><th class="r">Anteil Warmwasser €</th><th class="r">Summe warm €</th></tr></thead>
+        <tbody></tbody>
+        <tfoot><tr><td>Summe</td><td class="n" id="vFl"></td><td class="n" id="vH"></td><td class="n" id="vW"></td>
+          <td class="n" id="vAH"></td><td class="n" id="vAW"></td><td class="n" id="vAS"></td></tr></tfoot>
+      </table></div></div>
+    </div>
+
+    <div class="panel">
+      <header><h2>CO₂-Kostenaufteilung</h2><p>Seit 01.01.2023 trägt der Vermieter bei Wohngebäuden je nach energetischem Zustand einen Teil des CO₂-Preises. Der Vermieteranteil ist von den umlagefähigen Heizkosten abzuziehen.</p></header>
+      <div class="body">
+        <div class="grid3">
+          <div class="field"><label for="cKosten">CO₂-Kosten laut Rechnung €</label><input type="text" class="money" id="cKosten"></div>
+          <div class="field"><label for="cMenge">CO₂-Menge laut Rechnung kg</label><input type="text" class="qty" id="cMenge"></div>
+          <div class="field"><label for="cProz">Vermieteranteil %</label><input type="text" class="qty" id="cProz"></div>
+        </div>
+        <div id="co2Box" style="margin-top:14px"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ ABRECHNUNG ============ -->
+  <section id="tab-abrechnung" class="stack" hidden>
+    <div class="rowline noprint" style="justify-content:space-between">
+      <div class="note" style="flex:1;min-width:260px">Prüfe vor dem Versand: Abrechnungszeitraum, Vorauszahlungen und Belege. Die Abrechnung muss dem Mieter <strong>innerhalb von 12 Monaten</strong> nach Ende des Zeitraums zugehen.</div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <button class="btn" id="csvBtn">CSV exportieren</button>
+        <button class="btn primary" id="printBtn">Abrechnungen drucken</button>
+      </div>
+    </div>
+    <div id="docs"></div>
+  </section>
+
+  <!-- ============ RECHT ============ -->
+  <section id="tab-recht" class="stack" hidden>
+    <div class="panel"><header><h2>Fristen, Schlüssel und Fallstricke</h2><p>Kurzreferenz für die eigene Abrechnung. Ersetzt keine Rechtsberatung.</p></header>
+      <div class="body"><dl class="legal" id="legalList"></dl></div>
+    </div>
+  </section>
+
+  <p class="foot noprint">Alle Angaben ohne Gewähr. Dieses Werkzeug rechnet, es berät nicht — die rechtliche Prüfung der Umlagefähigkeit im Einzelfall (insbesondere Mietvertragsklauseln, Wirtschaftlichkeitsgebot und Abrechnungsformalien) bleibt bei dir bzw. deinem Steuerberater oder Mietrechtsanwalt.</p>
+</main>
+
+<script>
+(function(){
+"use strict";
+
+/* ================= Formate ================= */
+var eur = new Intl.NumberFormat('de-DE',{style:'currency',currency:'EUR'});
+var num2 = new Intl.NumberFormat('de-DE',{minimumFractionDigits:2,maximumFractionDigits:2});
+var num0 = new Intl.NumberFormat('de-DE',{maximumFractionDigits:0});
+var dfmt = new Intl.DateTimeFormat('de-DE',{day:'2-digit',month:'2-digit',year:'numeric'});
+function money(n){ return eur.format(isFinite(n)?n:0); }
+function n2(n){ return num2.format(isFinite(n)?n:0); }
+function parseNum(s){
+  if(typeof s==='number') return s;
+  if(!s) return 0;
+  s=(''+s).replace(/[€\s ]/g,'');
+  if(s.indexOf(',')>-1) s=s.replace(/\./g,'').replace(',','.');
+  var v=parseFloat(s); return isFinite(v)?v:0;
+}
+function esc(s){ return (''+(s==null?'':s)).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+function el(id){ return document.getElementById(id); }
+function cap(name){
+  try{ if(window.claude && typeof window.claude.use==='function') return window.claude.use(name); }catch(e){}
+  return Promise.resolve(null);
+}
+
+function dparse(s){ if(!s) return null; var d=new Date(s+'T00:00:00'); return isNaN(d)?null:d; }
+function dspan(a,b){ var A=dparse(a),B=dparse(b); if(!A||!B||B<A) return 0; return Math.round((B-A)/86400000)+1; }
+function dfmtStr(s){ var d=dparse(s); return d?dfmt.format(d):'—'; }
+function uid(){ return 'x'+Math.random().toString(36).slice(2,9); }
+
+/* ================= Umlageschlüssel ================= */
+var KEYS = {
+  flaeche:   {label:'Wohnfläche (m²)',        basis:function(u){return u.flaeche;}},
+  einheiten: {label:'Wohneinheiten (je 1/n)', basis:function(){return 1;}},
+  personen:  {label:'Personen',               basis:function(u){return u.personen;}},
+  direkt:    {label:'direkt / verbrauchsgenau', basis:null},
+  heizung:   {label:'→ Heizkostenmodul',      basis:null},
+  nicht:     {label:'nicht umlagefähig',      basis:null}
+};
+
+/* ================= BetrKV-Katalog ================= */
+function katalog(){
+  function k(nr,pos,schl,betrag,notiz){ return {id:uid(),nr:nr,pos:pos,schluessel:schl,betrag:betrag,beleg:'',notiz:notiz||'',direkt:{}}; }
+  return [
+    k('1', 'Grundsteuer','flaeche',980),
+    k('2', 'Wasserversorgung','personen',720),
+    k('3', 'Entwässerung / Niederschlagswasser','personen',640),
+    k('4', 'Heizung (Wärmeversorgung)','heizung',0,'wird im Heizkostenmodul erfasst'),
+    k('5', 'Warmwasserversorgung','heizung',0,'wird im Heizkostenmodul erfasst'),
+    k('6', 'Verbundene Heiz- und Warmwasseranlagen','heizung',0,'wird im Heizkostenmodul erfasst'),
+    k('7', 'Aufzug','einheiten',0,'nicht vorhanden'),
+    k('8', 'Straßenreinigung und Müllbeseitigung','personen',500),
+    k('9', 'Gebäudereinigung und Ungezieferbekämpfung','flaeche',0),
+    k('10','Gartenpflege','flaeche',480),
+    k('11','Beleuchtung (Allgemeinstrom)','flaeche',180),
+    k('12','Schornsteinreinigung','heizung',0,'in warmen Kosten enthalten'),
+    k('13','Sach- und Haftpflichtversicherung','flaeche',620),
+    k('14','Hauswart','flaeche',0,'nur Betriebsanteil, keine Reparaturen'),
+    k('15','Gemeinschaftsantenne / Breitband','einheiten',0,'TKG-Nebenkostenprivileg für Kabel-TV am 30.06.2024 entfallen'),
+    k('16','Wascheinrichtungen','einheiten',0),
+    k('17','Sonstige Betriebskasten','flaeche',0,'nur bei konkreter Benennung im Mietvertrag'),
+    k('—','Instandhaltung und Reparaturen','nicht',1200,'§ 1 Abs. 2 BetrKV — Vermietersache'),
+    k('—','Verwaltungskosten','nicht',0,'§ 1 Abs. 2 BetrKV — Vermietersache'),
+    k('—','Kontoführung, Zinsen, Rechtsschutz','nicht',60,'nicht umlagefähig')
+  ];
+}
+katalog.fix = function(list){ // Tippfehlerkorrektur im Katalogtext
+  list.forEach(function(k){ if(k.pos==='Sonstige Betriebskasten') k.pos='Sonstige Betriebskosten'; });
+  return list;
+};
+
+/* ================= Standardzustand ================= */
+function defaultState(jahr){
+  return {
+    jahr: jahr,
+    demo: true,
+    objekt:{ name:'Zweifamilienhaus', strasse:'', ort:'',
+      von: jahr+'-01-01', bis: jahr+'-12-31', heizart:'Gas-Zentralheizung', selbst:false },
+    einheiten:[
+      {id:'og',name:'Wohnung Obergeschoss',mieter:'',flaeche:101,personen:2,von:'',bis:'',
+       kaltmiete:1100,vzNK:120,vzHeiz:110,vHeiz:4200,vWW:38},
+      {id:'eg',name:'Wohnung Erdgeschoss',mieter:'',flaeche:149,personen:3,von:'',bis:'',
+       kaltmiete:1100,vzNK:170,vzHeiz:160,vHeiz:5800,vWW:54}
+    ],
+    kosten: katalog.fix(katalog()),
+    heizung:{ brenn:3800, strom:140, wartung:190, mess:210, schorn:95, tank:0,
+              grund:30, ww:18, co2Kosten:0, co2Menge:0, co2Proz:0 }
+  };
+}
+
+var state = defaultState(new Date().getFullYear()-1);
+var jahre = [state.jahr];
+
+/* ================= Berechnung ================= */
+function gesamtTage(){ var t=dspan(state.objekt.von,state.objekt.bis); return t||365; }
+function unitTage(u){
+  var von=u.von||state.objekt.von, bis=u.bis||state.objekt.bis;
+  var oV=dparse(state.objekt.von), oB=dparse(state.objekt.bis);
+  var uV=dparse(von), uB=dparse(bis);
+  if(!oV||!oB||!uV||!uB) return gesamtTage();
+  var s=uV>oV?uV:oV, e=uB<oB?uB:oB;
+  if(e<s) return 0;
+  return Math.round((e-s)/86400000)+1;
+}
+function unitMonate(u){ return unitTage(u)/gesamtTage()*12; }
+function flaecheGesamt(){ return state.einheiten.reduce(function(a,u){return a+parseNum(u.flaeche);},0); }
+
+function shares(schluessel){
+  var f = KEYS[schluessel] && KEYS[schluessel].basis;
+  var out = {}, w = [], sum = 0;
+  state.einheiten.forEach(function(u){
+    var v = f ? parseNum(f(u))*unitTage(u) : 0;
+    w.push(v); sum += v;
+  });
+  state.einheiten.forEach(function(u,i){ out[u.id] = sum>0 ? w[i]/sum : 0; });
+  return out;
+}
+
+function kostBetrag(k){
+  if(k.schluessel==='direkt'){
+    return state.einheiten.reduce(function(a,u){ return a+parseNum(k.direkt[u.id]); },0);
+  }
+  return parseNum(k.betrag);
+}
+
+function computeHeiz(){
+  var h=state.heizung;
+  var brutto = parseNum(h.brenn)+parseNum(h.strom)+parseNum(h.wartung)+parseNum(h.mess)+parseNum(h.schorn)+parseNum(h.tank);
+  var co2Vermieter = parseNum(h.co2Kosten)*parseNum(h.co2Proz)/100;
+  var umlage = Math.max(0, brutto - co2Vermieter);
+  var wwQuote = Math.min(100,Math.max(0,parseNum(h.ww)))/100;
+  var potWW = umlage*wwQuote, potHZ = umlage-potWW;
+  var grundQ = Math.min(100,Math.max(0,parseNum(h.grund)))/100;
+  var flShare = shares('flaeche');
+
+  function split(pot, feld){
+    var sum = state.einheiten.reduce(function(a,u){return a+parseNum(u[feld]);},0);
+    var grund = pot*grundQ, verbr = pot-grund, res={};
+    state.einheiten.forEach(function(u){
+      var vq = sum>0 ? parseNum(u[feld])/sum : (1/state.einheiten.length);
+      res[u.id] = grund*flShare[u.id] + verbr*vq;
+    });
+    return res;
+  }
+  var aHZ = split(potHZ,'vHeiz'), aWW = split(potWW,'vWW'), ges={};
+  state.einheiten.forEach(function(u){ ges[u.id]=aHZ[u.id]+aWW[u.id]; });
+  var kennwert = flaecheGesamt()>0 ? parseNum(h.co2Menge)/flaecheGesamt() : 0;
+  return {brutto:brutto, co2Vermieter:co2Vermieter, umlage:umlage, potHZ:potHZ, potWW:potWW,
+          aHZ:aHZ, aWW:aWW, ges:ges, kennwert:kennwert, grundQ:grundQ};
+}
+
+function compute(){
+  var heiz = computeHeiz();
+  var rows=[], sumKalt=0, sumNicht=0, perUnitKalt={};
+  state.einheiten.forEach(function(u){ perUnitKalt[u.id]=0; });
+
+  state.kosten.forEach(function(k){
+    var b = kostBetrag(k);
+    if(k.schluessel==='nicht'){ sumNicht+=b; return; }
+    if(k.schluessel==='heizung') return;
+    var a={};
+    if(k.schluessel==='direkt'){
+      state.einheiten.forEach(function(u){ a[u.id]=parseNum(k.direkt[u.id]); });
+    } else {
+      var s=shares(k.schluessel);
+      state.einheiten.forEach(function(u){ a[u.id]=b*s[u.id]; });
+    }
+    state.einheiten.forEach(function(u){ perUnitKalt[u.id]+=a[u.id]; });
+    sumKalt+=b;
+    rows.push({k:k,betrag:b,anteile:a});
+  });
+
+  var units = state.einheiten.map(function(u){
+    var kalt=perUnitKalt[u.id]||0, warm=heiz.ges[u.id]||0;
+    var mon=unitMonate(u);
+    var vz=(parseNum(u.vzNK)+parseNum(u.vzHeiz))*mon;
+    var ges=kalt+warm;
+    return {u:u,kalt:kalt,warm:warm,gesamt:ges,vz:vz,saldo:ges-vz,monate:mon,
+      proQm: parseNum(u.flaeche)>0 && mon>0 ? ges/parseNum(u.flaeche)/mon : 0};
+  });
+
+  return {heiz:heiz, rows:rows, sumKalt:sumKalt, sumNicht:sumNicht,
+    sumWarm:state.einheiten.reduce(function(a,u){return a+(heiz.ges[u.id]||0);},0),
+    units:units,
+    sumVz:units.reduce(function(a,x){return a+x.vz;},0),
+    sumGes:units.reduce(function(a,x){return a+x.gesamt;},0),
+    sumSaldo:units.reduce(function(a,x){return a+x.saldo;},0)};
+}
+
+/* ================= Persistenz ================= */
+var db=null, saving=false, saveTimer=null;
+function setSave(cls,txt){ el('saveDot').className='dot '+cls; el('saveTxt').textContent=txt; }
+function lsKey(j){ return 'nka.'+j; }
+function lsJahre(){ try{ return JSON.parse(localStorage.getItem('nka.jahre')||'[]'); }catch(e){ return []; } }
+function persistLocal(){
+  try{
+    localStorage.setItem(lsKey(state.jahr), JSON.stringify(state));
+    localStorage.setItem('nka.jahre', JSON.stringify(jahre));
+    localStorage.setItem('nka.last', String(state.jahr));
+  }catch(e){}
+}
+function queueSave(){
+  persistLocal();
+  if(!db) { setSave('ok','lokal gespeichert'); return; }
+  setSave('busy','speichert…');
+  clearTimeout(saveTimer);
+  saveTimer=setTimeout(function(){
+    db.doc('abrechnungen/'+state.jahr).set(JSON.parse(JSON.stringify(state))).then(function(){
+      setSave('ok','gesichert · '+state.jahr);
+    }).catch(function(e){
+      setSave('off', e && e.code==='revoked' ? 'nur lokal' : 'nur lokal');
+    });
+  },700);
+}
+function loadLocal(j){
+  try{ var raw=localStorage.getItem(lsKey(j)); if(raw) return JSON.parse(raw); }catch(e){}
+  return null;
+}
+
+/* ================= Rendering: Objekt ================= */
+function renderObjekt(){
+  el('oName').value=state.objekt.name||'';
+  el('oStrasse').value=state.objekt.strasse||'';
+  el('oOrt').value=state.objekt.ort||'';
+  el('oVon').value=state.objekt.von||'';
+  el('oBis').value=state.objekt.bis||'';
+  el('oHeizart').value=state.objekt.heizart||'Gas-Zentralheizung';
+  el('oSelbst').checked=!!state.objekt.selbst;
+}
+function renderUnitTable(){
+  var tb=el('unitTable').querySelector('tbody');
+  tb.innerHTML = state.einheiten.map(function(u){
+    return '<tr data-u="'+u.id+'">'+
+      '<td><input type="text" data-f="name" value="'+esc(u.name)+'"></td>'+
+      '<td><input type="text" data-f="mieter" value="'+esc(u.mieter)+'" placeholder="Name des Mieters"></td>'+
+      '<td><input type="text" class="qty" data-f="flaeche" value="'+n2(u.flaeche)+'"></td>'+
+      '<td><input type="text" class="qty" data-f="personen" value="'+num0.format(parseNum(u.personen))+'"></td>'+
+      '<td><input type="date" data-f="von" value="'+esc(u.von)+'"></td>'+
+      '<td><input type="date" data-f="bis" value="'+esc(u.bis)+'"></td>'+
+      '<td><input type="text" class="money" data-f="kaltmiete" value="'+n2(u.kaltmiete)+'"></td>'+
+      '<td><input type="text" class="money" data-f="vzNK" value="'+n2(u.vzNK)+'"></td>'+
+      '<td><input type="text" class="money" data-f="vzHeiz" value="'+n2(u.vzHeiz)+'"></td>'+
+      '<td class="n" data-calc="qm"></td>'+
+      '<td class="r">'+(state.einheiten.length>1?'<button class="btn sm ghost danger" data-del="'+u.id+'" title="Einheit entfernen">×</button>':'')+'</td>'+
+    '</tr>';
+  }).join('');
+}
+
+/* ================= Rendering: Kosten ================= */
+function renderKostTable(){
+  var head=el('kostTable').querySelector('thead');
+  head.innerHTML='<tr><th style="min-width:240px">Position</th><th style="min-width:180px">Umlageschlüssel</th>'+
+    '<th class="r" style="min-width:112px">Betrag €</th><th style="min-width:100px">Beleg-Nr.</th>'+
+    state.einheiten.map(function(u){ return '<th class="r" style="min-width:104px">'+esc(u.name)+'</th>'; }).join('')+
+    '<th></th></tr>';
+  var opts=Object.keys(KEYS).map(function(k){ return {k:k,l:KEYS[k].label}; });
+  var tb=el('kostTable').querySelector('tbody');
+  var html='', grp='';
+  state.kosten.forEach(function(k){
+    var g = k.schluessel==='nicht' ? 'Nicht umlagefähige Kosten (nur zur eigenen Übersicht)' : 'Umlagefähige Betriebskosten § 2 BetrKV';
+    if(g!==grp){ grp=g; html+='<tr class="grp"><td colspan="'+(5+state.einheiten.length)+'">'+g+'</td></tr>'; }
+    var isDirekt = k.schluessel==='direkt', isHeiz = k.schluessel==='heizung';
+    html+='<tr data-k="'+k.id+'" class="'+((isHeiz||k.schluessel==='nicht')?'off':'')+'">'+
+      '<td class="keep"><span class="pos-nr">'+esc(k.nr)+'</span><input type="text" data-f="pos" value="'+esc(k.pos)+'" style="width:calc(100% - 32px);display:inline-block">'+
+        (k.notiz?'<div style="font-size:11.5px;color:var(--ink-3);margin-left:26px;margin-top:2px">'+esc(k.notiz)+'</div>':'')+'</td>'+
+      '<td class="keep"><select data-f="schluessel">'+opts.map(function(o){
+          return '<option value="'+o.k+'"'+(o.k===k.schluessel?' selected':'')+'>'+esc(o.l)+'</option>'; }).join('')+'</select></td>'+
+      '<td class="keep"><input type="text" class="money" data-f="betrag" value="'+n2(kostBetrag(k))+'"'+((isDirekt||isHeiz)?' readonly':'')+'></td>'+
+      '<td><input type="text" data-f="beleg" value="'+esc(k.beleg)+'" placeholder="—"></td>'+
+      state.einheiten.map(function(u){
+        return isDirekt
+          ? '<td class="keep"><input type="text" class="money" data-d="'+u.id+'" value="'+n2(k.direkt[u.id])+'"></td>'
+          : '<td class="n" data-calc="a" data-uid="'+u.id+'"></td>';
+      }).join('')+
+      '<td class="r"><button class="btn sm ghost danger" data-del="'+k.id+'" title="Position entfernen">×</button></td>'+
+    '</tr>';
+  });
+  tb.innerHTML=html;
+  el('kostTable').querySelector('tfoot').innerHTML =
+    '<tr><td colspan="2">Umlagefähig gesamt (kalte Betriebskosten)</td><td class="n" id="kSumUml"></td><td></td>'+
+      state.einheiten.map(function(u){return '<td class="n" data-sum="'+u.id+'"></td>';}).join('')+'<td></td></tr>'+
+    '<tr><td colspan="2">Nicht umlagefähig — trägt der Vermieter</td><td class="n" id="kSumNicht"></td><td colspan="'+(2+state.einheiten.length)+'"></td></tr>';
+}
+
+/* ================= Rendering: Heizung ================= */
+function renderHeizInputs(){
+  var h=state.heizung;
+  [['hBrenn','brenn'],['hStrom','strom'],['hWartung','wartung'],['hMess','mess'],['hSchorn','schorn'],['hTank','tank'],
+   ['hGrund','grund'],['hWW','ww'],['cKosten','co2Kosten'],['cMenge','co2Menge'],['cProz','co2Proz']].forEach(function(p){
+    el(p[0]).value = n2(h[p[1]]);
+  });
+}
+function renderVerbTable(){
+  var tb=el('verbTable').querySelector('tbody');
+  tb.innerHTML=state.einheiten.map(function(u){
+    return '<tr data-u="'+u.id+'">'+
+      '<td>'+esc(u.name)+'</td>'+
+      '<td class="n" data-calc="fl"></td>'+
+      '<td><input type="text" class="qty" data-f="vHeiz" value="'+n2(u.vHeiz)+'"></td>'+
+      '<td><input type="text" class="qty" data-f="vWW" value="'+n2(u.vWW)+'"></td>'+
+      '<td class="n" data-calc="ah"></td><td class="n" data-calc="aw"></td><td class="n" data-calc="as"></td></tr>';
+  }).join('');
+}
+
+/* ================= CO2-Stufenmodell ================= */
+var CO2_STUFEN=[
+  [12,0],[17,10],[22,20],[27,30],[32,40],[37,50],[42,60],[47,70],[52,80],[Infinity,95]
+];
+function co2Vermieterprozent(kennwert){
+  for(var i=0;i<CO2_STUFEN.length;i++){ if(kennwert<CO2_STUFEN[i][0]) return CO2_STUFEN[i][1]; }
+  return 95;
+}
+
+/* ================= Charts ================= */
+function barsH(items,total){
+  if(!items.length||total<=0) return '<p style="font-size:13px;color:var(--ink-3);margin:0">Noch keine Beträge erfasst.</p>';
+  var rowH=26, padL=0, W=460, labelW=178, valW=86, barW=W-labelW-valW-14;
+  var H=items.length*rowH+6;
+  var max=Math.max.apply(null,items.map(function(i){return i.v;}))||1;
+  var s='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Kostenstruktur">';
+  items.forEach(function(it,i){
+    var y=i*rowH+4, w=Math.max(1.5,it.v/max*barW);
+    s+='<text x="0" y="'+(y+13)+'" font-size="11.5" font-family="Source Sans 3,sans-serif" fill="var(--ink-2)">'+esc(it.l.length>26?it.l.slice(0,25)+'…':it.l)+'</text>';
+    s+='<rect x="'+labelW+'" y="'+(y+3)+'" width="'+w+'" height="12" rx="2" fill="'+(it.c||'var(--accent)')+'"></rect>';
+    s+='<text x="'+W+'" y="'+(y+13)+'" text-anchor="end" font-size="11.5" font-family="IBM Plex Mono,monospace" fill="var(--ink-3)">'+n2(it.v)+' €</text>';
+  });
+  return s+'</svg>';
+}
+function barsGrouped(units){
+  var W=460, H=190, padL=44, padB=42, padT=12, padR=6;
+  var all=[]; units.forEach(function(x){ all.push(x.gesamt); all.push(x.vz); });
+  var max=Math.max.apply(null,all.concat([1]));
+  var step=Math.pow(10,Math.floor(Math.log10(max)));
+  var tick=Math.ceil(max/step/4)*step; var top=Math.ceil(max/tick)*tick||1;
+  var plotW=W-padL-padR, plotH=H-padT-padB;
+  var gw=plotW/units.length, bw=Math.min(38,gw/2.9);
+  var s='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Kosten gegen Vorauszahlungen je Einheit">';
+  for(var v=0; v<=top+0.001; v+=tick){
+    var y=padT+plotH-(v/top*plotH);
+    s+='<line x1="'+padL+'" y1="'+y+'" x2="'+(W-padR)+'" y2="'+y+'" stroke="var(--line-2)" stroke-width="1"></line>';
+    s+='<text x="'+(padL-6)+'" y="'+(y+3.5)+'" text-anchor="end" font-size="10" font-family="IBM Plex Mono,monospace" fill="var(--ink-3)">'+num0.format(v)+'</text>';
+  }
+  units.forEach(function(x,i){
+    var cx=padL+gw*i+gw/2;
+    var h1=x.gesamt/top*plotH, h2=x.vz/top*plotH;
+    s+='<rect x="'+(cx-bw-3)+'" y="'+(padT+plotH-h1)+'" width="'+bw+'" height="'+Math.max(1,h1)+'" rx="2" fill="var(--accent)"></rect>';
+    s+='<rect x="'+(cx+3)+'" y="'+(padT+plotH-h2)+'" width="'+bw+'" height="'+Math.max(1,h2)+'" rx="2" fill="var(--ink-3)" opacity="0.42"></rect>';
+    var nm=x.u.name.length>18?x.u.name.slice(0,17)+'…':x.u.name;
+    s+='<text x="'+cx+'" y="'+(H-24)+'" text-anchor="middle" font-size="11" font-family="Source Sans 3,sans-serif" fill="var(--ink-2)">'+esc(nm)+'</text>';
+    var lbl=(x.saldo>=0?'+':'')+n2(x.saldo)+' €';
+    s+='<text x="'+cx+'" y="'+(H-9)+'" text-anchor="middle" font-size="11" font-family="IBM Plex Mono,monospace" fill="'+(x.saldo>=0?'var(--good)':'var(--crit)')+'">'+lbl+'</text>';
+  });
+  return s+'</svg>';
+}
+function barsQm(units){
+  var flG=units.reduce(function(a,x){return a+parseNum(x.u.flaeche);},0);
+  var gesM=units.reduce(function(a,x){return a+x.gesamt;},0);
+  var schnitt=flG>0?gesM/flG/12:0;
+  units=units.concat([{u:{name:'Objekt gesamt',flaeche:flG},proQm:schnitt,ref:true}]);
+  var W=460, rowH=30, H=units.length*rowH+10, labelW=150, valW=96;
+  var max=Math.max.apply(null,units.map(function(x){return x.proQm;}).concat([0.01]));
+  var barW=W-labelW-valW-10;
+  var s='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Betriebskosten je Quadratmeter und Monat">';
+  units.forEach(function(x,i){
+    var y=i*rowH+6, w=Math.max(1.5,x.proQm/max*barW);
+    s+='<text x="0" y="'+(y+11)+'" font-size="11.5" font-family="Source Sans 3,sans-serif" fill="var(--ink-2)">'+esc(x.u.name.length>22?x.u.name.slice(0,21)+'…':x.u.name)+'</text>';
+    s+='<text x="0" y="'+(y+24)+'" font-size="10.5" font-family="IBM Plex Mono,monospace" fill="var(--ink-3)">'+n2(x.u.flaeche)+' m²</text>';
+    s+='<rect x="'+labelW+'" y="'+(y+4)+'" width="'+w+'" height="14" rx="2" fill="'+(x.ref?'var(--ink-3)':'var(--accent)')+'" opacity="'+(x.ref?'0.42':'1')+'"></rect>';
+    s+='<text x="'+W+'" y="'+(y+15)+'" text-anchor="end" font-size="12" font-family="IBM Plex Mono,monospace" fill="var(--ink)">'+n2(x.proQm)+' €/m²·M</text>';
+  });
+  return s+'</svg>';
+}
+
+/* ================= Refresh ================= */
+function refresh(){
+  var c=compute();
+  var flG=flaecheGesamt();
+  el('brandsub').textContent=state.objekt.name+' · '+state.einheiten.length+' Einheiten · '+n2(flG)+' m²';
+
+  /* Einheitentabelle */
+  state.einheiten.forEach(function(u){
+    var tr=el('unitTable').querySelector('tr[data-u="'+u.id+'"]'); if(!tr) return;
+    var q=tr.querySelector('[data-calc="qm"]');
+    if(q) q.textContent = parseNum(u.flaeche)>0 ? n2(parseNum(u.kaltmiete)/parseNum(u.flaeche)) : '—';
+  });
+  el('uSumFl').textContent=n2(flG);
+  el('uSumPe').textContent=num0.format(state.einheiten.reduce(function(a,u){return a+parseNum(u.personen);},0));
+  el('uSumMiete').textContent=n2(state.einheiten.reduce(function(a,u){return a+parseNum(u.kaltmiete);},0));
+  el('uSumVzN').textContent=n2(state.einheiten.reduce(function(a,u){return a+parseNum(u.vzNK);},0));
+  el('uSumVzH').textContent=n2(state.einheiten.reduce(function(a,u){return a+parseNum(u.vzHeiz);},0));
+
+  /* Kostentabelle */
+  c.rows.forEach(function(r){
+    var tr=el('kostTable').querySelector('tr[data-k="'+r.k.id+'"]'); if(!tr) return;
+    state.einheiten.forEach(function(u){
+      var td=tr.querySelector('[data-calc="a"][data-uid="'+u.id+'"]');
+      if(td) td.textContent=n2(r.anteile[u.id]);
+    });
+  });
+  var fu=el('kSumUml'); if(fu) fu.textContent=n2(c.sumKalt);
+  var fn=el('kSumNicht'); if(fn) fn.textContent=n2(c.sumNicht);
+  state.einheiten.forEach(function(u){
+    var td=el('kostTable').querySelector('[data-sum="'+u.id+'"]');
+    if(td){ var s=0; c.rows.forEach(function(r){ s+=r.anteile[u.id]; }); td.textContent=n2(s); }
+  });
+
+  /* Heizung */
+  el('hVerbrAnz').value=n2(100-Math.min(100,Math.max(0,parseNum(state.heizung.grund))));
+  state.einheiten.forEach(function(u){
+    var tr=el('verbTable').querySelector('tr[data-u="'+u.id+'"]'); if(!tr) return;
+    tr.querySelector('[data-calc="fl"]').textContent=n2(u.flaeche);
+    tr.querySelector('[data-calc="ah"]').textContent=n2(c.heiz.aHZ[u.id]);
+    tr.querySelector('[data-calc="aw"]').textContent=n2(c.heiz.aWW[u.id]);
+    tr.querySelector('[data-calc="as"]').textContent=n2(c.heiz.ges[u.id]);
+  });
+  el('vFl').textContent=n2(flG);
+  el('vH').textContent=n2(state.einheiten.reduce(function(a,u){return a+parseNum(u.vHeiz);},0));
+  el('vW').textContent=n2(state.einheiten.reduce(function(a,u){return a+parseNum(u.vWW);},0));
+  el('vAH').textContent=n2(c.heiz.potHZ); el('vAW').textContent=n2(c.heiz.potWW); el('vAS').textContent=n2(c.heiz.umlage);
+
+  renderHkvoHinweis(c);
+  renderCo2Box(c);
+  renderHeizVOBox();
+  renderKpis(c);
+  renderFrist();
+  renderCharts(c);
+  renderResults(c);
+  renderDocs(c);
+  renderMietspiegel();
+  el('demoBanner').hidden = !state.demo;
+}
+
+function renderHkvoHinweis(c){
+  var g=parseNum(state.heizung.grund), out='';
+  if(state.objekt.selbst && state.einheiten.length<=2){
+    out+='<div class="note">Bei einem Zweifamilienhaus, in dem du selbst eine Wohnung bewohnst, gilt die Ausnahme des § 2 HeizkostenV: Die verbrauchsabhängige Abrechnung ist dann nicht zwingend. Die 50/50-Aufteilung unten kannst du trotzdem nutzen — sie ist meist die fairere und streitärmere Lösung.</div>';
+  } else if(g<30||g>50){
+    out+='<div class="note crit"><strong>Außerhalb des zulässigen Korridors.</strong> § 7 HeizkostenV verlangt einen Verbrauchsanteil von 50 bis 70 % — der Grundkostenanteil muss also zwischen 30 und 50 % liegen. Aktuell: '+n2(g)+' %.</div>';
+  } else {
+    out+='<div class="note"><strong>Zulässig.</strong> Grundkosten '+n2(g)+' % nach Wohnfläche, Verbrauchskosten '+n2(100-g)+' % nach Zählerwerten (§ 7 HeizkostenV: 50 bis 70 % verbrauchsabhängig).</div>';
+  }
+  if(parseNum(state.heizung.ww)>0){
+    out+='<div class="note">Warmwasser wird mit '+n2(state.heizung.ww)+' % der Gesamtkosten separat abgerechnet ('+money(c.heiz.potWW)+'). Ist kein Wärmemengenzähler vorhanden, ist der Anteil nach § 9 HeizkostenV rechnerisch zu ermitteln.</div>';
+  }
+  el('hkvoBox').innerHTML=out;
+}
+function renderHeizVOBox(){
+  el('heizVOBox').innerHTML = state.objekt.selbst
+    ? '<div class="note">Selbstnutzung aktiv: Die HeizkostenV-Pflicht entfällt nach § 2 HeizkostenV. Prüfe zusätzlich, ob und wie du Kosten der selbst genutzten Wohnung aus der Umlage herausrechnest — im Zweifel bleibt deine Einheit als eigene Zeile mit Fläche in der Verteilung stehen, trägt ihren Anteil aber selbst.</div>'
+    : '<div class="note">Beide Wohnungen vermietet: Die HeizkostenV gilt vollständig, die Heizkosten sind zwingend verbrauchsabhängig abzurechnen. Fehlt die Verbrauchserfassung, darf der Mieter nach § 12 HeizkostenV den auf ihn entfallenden Anteil um 15 % kürzen.</div>';
+}
+function renderCo2Box(c){
+  var h=state.heizung, kw=c.heiz.kennwert;
+  if(parseNum(h.co2Kosten)<=0 && parseNum(h.co2Menge)<=0){
+    el('co2Box').innerHTML='<div class="note">Trage CO₂-Kosten und CO₂-Menge aus der Jahresrechnung deines Gas- oder Öllieferanten ein. Bei Wärmepumpe, Fernwärme mit eigener Abrechnung oder Pellets kann dieser Block entfallen.';
+    return;
+  }
+  var vor=co2Vermieterprozent(kw);
+  el('co2Box').innerHTML=
+    '<div class="note"><strong>Gebäudekennwert '+n2(kw)+' kg CO₂ / m² · Jahr.</strong> '+
+    'Nach dem 10-Stufen-Modell des CO₂KostAufG entfallen darauf rechnerisch <strong>'+vor+' % Vermieteranteil</strong>. '+
+    'Aktuell angesetzt: '+n2(h.co2Proz)+' % = '+money(c.heiz.co2Vermieter)+', die von den umlagefähigen Heizkosten abgezogen werden. '+
+    '<button class="btn sm" id="co2Take" style="margin-left:6px">'+vor+' % übernehmen</button></div>'+
+    '<div class="note warn">Die Stufenwerte sind hier fest hinterlegt. Rechne sie vor dem Versand gegen das amtliche Formular bzw. den offiziellen Aufteilungsrechner gegen — ich kann die aktuelle Fassung von hier aus nicht verifizieren.</div>';
+  var b=el('co2Take'); if(b) b.onclick=function(){ state.heizung.co2Proz=vor; el('cProz').value=n2(vor); state.demo=false; refresh(); queueSave(); };
+}
+
+function renderKpis(c){
+  var flG=flaecheGesamt(), mieteJ=state.einheiten.reduce(function(a,u){return a+parseNum(u.kaltmiete)*unitMonate(u);},0);
+  var quote = mieteJ>0 ? c.sumGes/mieteJ*100 : 0;
+  var proQm = flG>0 ? c.sumGes/flG/12 : 0;
+  var saldoCls = c.sumSaldo>=0?'pos':'neg';
+  el('kpiRow').innerHTML=[
+    {v:money(c.sumGes), l:'Umlagefähige Kosten gesamt', s:n2(c.sumKalt)+' € kalt + '+n2(c.sumWarm)+' € warm', cls:'acc'},
+    {v:money(c.sumVz), l:'Vorauszahlungen erhalten', s:'Deckungsgrad '+(c.sumGes>0?n2(c.sumVz/c.sumGes*100):'0,00')+' %'},
+    {v:(c.sumSaldo>=0?'+':'')+money(c.sumSaldo), l:c.sumSaldo>=0?'Nachforderung gesamt':'Rückzahlung gesamt', s:'über '+state.einheiten.length+' Einheiten', cls:saldoCls},
+    {v:n2(proQm)+' €', l:'Betriebskosten je m² · Monat', s:'über '+n2(flG)+' m² Wohnfläche'},
+    {v:n2(quote)+' %', l:'Nebenkostenquote', s:'bezogen auf '+money(mieteJ)+' Jahreskaltmiete'},
+    {v:money(c.sumNicht), l:'Nicht umlagefähig', s:'trägst du als Eigentümer', cls:'neg'}
+  ].map(function(k){
+    return '<div class="kpi '+(k.cls||'')+'"><span class="eyebrow">'+esc(k.l)+'</span><span class="v">'+esc(k.v)+'</span><span class="s">'+esc(k.s)+'</span></div>';
+  }).join('');
+}
+
+function renderFrist(){
+  var bis=dparse(state.objekt.bis); if(!bis){ el('fristBox').innerHTML=''; return; }
+  var frist=new Date(bis.getTime()); frist.setFullYear(frist.getFullYear()+1);
+  var heute=new Date(); heute.setHours(0,0,0,0);
+  var tage=Math.round((frist-heute)/86400000);
+  var cls = tage<0?'crit' : tage<60?'warn' : '';
+  var txt;
+  if(tage<0) txt='<strong>Frist abgelaufen.</strong> Die Abrechnung war bis zum '+dfmt.format(frist)+' zuzustellen (§ 556 Abs. 3 BGB). Nachforderungen sind jetzt in aller Regel ausgeschlossen — ein Guthaben musst du dem Mieter trotzdem auszahlen.';
+  else if(tage<60) txt='<strong>Noch '+tage+' Tage.</strong> Die Abrechnung muss dem Mieter bis zum '+dfmt.format(frist)+' <em>zugegangen</em> sein, nicht nur abgeschickt (§ 556 Abs. 3 BGB). Danach entfällt dein Nachforderungsrecht.';
+  else txt='<strong>Zustellfrist bis '+dfmt.format(frist)+'</strong> — noch '+tage+' Tage. Maßgeblich ist der Zugang beim Mieter, nicht das Absendedatum (§ 556 Abs. 3 BGB).';
+  el('fristBox').innerHTML='<div class="note '+cls+'">'+txt+'</div>';
+}
+
+function renderCharts(c){
+  var items=[];
+  c.rows.forEach(function(r){ if(r.betrag>0) items.push({l:r.k.pos, v:r.betrag}); });
+  if(c.heiz.umlage>0) items.push({l:'Heizung und Warmwasser', v:c.heiz.umlage, c:'var(--warn)'});
+  items.sort(function(a,b){return b.v-a.v;});
+  if(items.length>9){ var rest=items.slice(8).reduce(function(a,i){return a+i.v;},0); items=items.slice(0,8); items.push({l:'übrige Positionen',v:rest,c:'var(--ink-3)'}); }
+  el('chartRow').innerHTML=
+    '<div class="chartbox"><h3>Kostenstruktur</h3><p>Umlagefähige Positionen im Abrechnungszeitraum</p>'+barsH(items,c.sumGes)+
+      '<div class="legend"><span><i style="background:var(--accent)"></i>kalte Betriebskosten</span><span><i style="background:var(--warn)"></i>Heizung &amp; Warmwasser</span></div></div>'+
+    '<div class="chartbox"><h3>Kosten gegen Vorauszahlung</h3><p>je Einheit, in Euro für den Zeitraum</p>'+barsGrouped(c.units)+
+      '<div class="legend"><span><i style="background:var(--accent)"></i>umlagefähige Kosten</span><span><i style="background:var(--ink-3);opacity:.42"></i>geleistete Vorauszahlung</span></div></div>'+
+    '<div class="chartbox"><h3>Betriebskosten je m² und Monat</h3><p>die belastbarste Vergleichsgröße zwischen den Wohnungen</p>'+barsQm(c.units)+
+      '<div class="legend"><span><i style="background:var(--accent)"></i>je Einheit</span><span><i style="background:var(--ink-3);opacity:.42"></i>Objektdurchschnitt</span></div></div>';
+}
+
+function renderResults(c){
+  el('resultRow').innerHTML=c.units.map(function(x){
+    var nach=x.saldo>=0;
+    return '<div class="rescard '+(nach?'pay':'ref')+'">'+
+      '<div class="head"><h3>'+esc(x.u.name)+'</h3><span>'+n2(x.u.flaeche)+' m²</span></div>'+
+      '<dl>'+
+        '<dt>Kalte Betriebskosten</dt><dd>'+n2(x.kalt)+' €</dd>'+
+        '<dt>Heizung und Warmwasser</dt><dd>'+n2(x.warm)+' €</dd>'+
+        '<dt>Summe umlagefähig</dt><dd><strong>'+n2(x.gesamt)+' €</strong></dd>'+
+        '<dt>Vorauszahlungen ('+n2(x.monate)+' Monate)</dt><dd>− '+n2(x.vz)+' €</dd>'+
+        '<dt>je m² und Monat</dt><dd>'+n2(x.proQm)+' €</dd>'+
+      '</dl>'+
+      '<div class="final"><span class="pill '+(nach?'ok':'crit')+'">'+(nach?'Nachzahlung':'Guthaben')+'</span>'+
+        '<b>'+money(Math.abs(x.saldo))+'</b></div>'+
+      (nach && x.gesamt>0 && x.vz>0 && x.saldo/x.vz>0.25
+        ? '<div style="padding:0 16px 13px"><span style="font-size:12.5px;color:var(--warn)">Nachzahlung über 25 % der Vorauszahlung — Vorauszahlung anpassen (§ 560 Abs. 4 BGB): empfohlen '+money(x.gesamt/(x.monate||12))+' pro Monat.</span></div>'
+        : '')+
+    '</div>';
+  }).join('');
+}
+
+/* ================= Druckfertige Abrechnung ================= */
+function renderDocs(c){
+  var o=state.objekt, zr=dfmtStr(o.von)+' bis '+dfmtStr(o.bis);
+  el('docs').innerHTML=c.units.map(function(x){
+    var u=x.u;
+    var zeilen=c.rows.filter(function(r){ return r.betrag>0; }).map(function(r){
+      var s=KEYS[r.k.schluessel]?KEYS[r.k.schluessel].label:r.k.schluessel;
+      var quote = r.betrag>0 ? r.anteile[u.id]/r.betrag*100 : 0;
+      return '<tr><td><span class="pos-nr">'+esc(r.k.nr)+'</span>'+esc(r.k.pos)+'</td>'+
+        '<td style="font-size:12.5px;color:var(--ink-2)">'+esc(s)+'</td>'+
+        '<td class="n">'+n2(r.betrag)+'</td><td class="n">'+n2(quote)+' %</td>'+
+        '<td class="n"><strong>'+n2(r.anteile[u.id])+'</strong></td></tr>';
+    }).join('');
+    var warm='';
+    if(c.heiz.umlage>0){
+      warm='<tr><td colspan="5" style="padding-top:12px"><span class="eyebrow">Heizung und Warmwasser nach HeizkostenV</span></td></tr>'+
+      '<tr><td>Heizkosten ('+n2(c.heiz.grundQ*100)+' % Fläche / '+n2(100-c.heiz.grundQ*100)+' % Verbrauch)</td><td style="font-size:12.5px;color:var(--ink-2)">Grund + Verbrauch</td>'+
+        '<td class="n">'+n2(c.heiz.potHZ)+'</td><td class="n">'+(c.heiz.potHZ>0?n2(c.heiz.aHZ[u.id]/c.heiz.potHZ*100):'0,00')+' %</td><td class="n"><strong>'+n2(c.heiz.aHZ[u.id])+'</strong></td></tr>'+
+      (c.heiz.potWW>0?'<tr><td>Warmwasserkosten</td><td style="font-size:12.5px;color:var(--ink-2)">Grund + Verbrauch</td>'+
+        '<td class="n">'+n2(c.heiz.potWW)+'</td><td class="n">'+n2(c.heiz.aWW[u.id]/c.heiz.potWW*100)+' %</td><td class="n"><strong>'+n2(c.heiz.aWW[u.id])+'</strong></td></tr>':'')+
+      (c.heiz.co2Vermieter>0?'<tr><td>abzüglich CO₂-Anteil des Vermieters</td><td style="font-size:12.5px;color:var(--ink-2)">CO₂KostAufG</td>'+
+        '<td class="n">− '+n2(c.heiz.co2Vermieter)+'</td><td class="n">—</td><td class="n">bereits abgezogen</td></tr>':'');
+    }
+    var nach=x.saldo>=0;
+    return '<div class="doc">'+
+      '<span class="eyebrow">Betriebskostenabrechnung</span>'+
+      '<h2>'+esc(u.name)+'</h2>'+
+      '<p class="meta">'+esc(u.mieter||'Mieter/in')+' &middot; '+esc(o.name)+(o.strasse?', '+esc(o.strasse):'')+(o.ort?', '+esc(o.ort):'')+'<br>'+
+        'Abrechnungszeitraum '+zr+' &middot; Wohnfläche '+n2(u.flaeche)+' m² von '+n2(flaecheGesamt())+' m² &middot; Nutzungsdauer '+num0.format(unitTage(u))+' Tage</p>'+
+      '<div class="twrap"><table><thead><tr><th>Kostenart</th><th>Umlageschlüssel</th><th class="r">Gesamtkosten €</th><th class="r">Anteil</th><th class="r">Ihr Anteil €</th></tr></thead>'+
+      '<tbody>'+zeilen+warm+'</tbody>'+
+      '<tfoot>'+
+        '<tr><td colspan="4">Summe umlagefähiger Betriebskosten</td><td class="n">'+n2(x.gesamt)+'</td></tr>'+
+        '<tr><td colspan="4">abzüglich geleisteter Vorauszahlungen ('+n2(x.monate)+' Monate)</td><td class="n">− '+n2(x.vz)+'</td></tr>'+
+        '<tr><td colspan="4"><strong>'+(nach?'Nachzahlung durch den Mieter':'Guthaben zugunsten des Mieters')+'</strong></td>'+
+          '<td class="n" style="font-size:16px;color:'+(nach?'var(--good)':'var(--crit)')+'"><strong>'+n2(Math.abs(x.saldo))+'</strong></td></tr>'+
+      '</tfoot></table></div>'+
+      '<p style="font-size:12.5px;color:var(--ink-3);margin-top:14px;max-width:78ch">Die Belege können nach Terminvereinbarung eingesehen werden. Einwendungen gegen diese Abrechnung sind nach § 556 Abs. 3 Satz 5 BGB innerhalb von zwölf Monaten nach Zugang schriftlich mitzuteilen.</p>'+
+      '<div class="sig"><div>Ort, Datum</div><div>Unterschrift Vermieter</div></div>'+
+    '</div>';
+  }).join('');
+}
+
+function renderMietspiegel(){
+  var us=state.einheiten.filter(function(u){return parseNum(u.flaeche)>0 && parseNum(u.kaltmiete)>0;});
+  if(us.length<2){ el('mietSpiegel').innerHTML=''; return; }
+  var qm=us.map(function(u){ return {n:u.name, q:parseNum(u.kaltmiete)/parseNum(u.flaeche), f:parseNum(u.flaeche), m:parseNum(u.kaltmiete)}; });
+  qm.sort(function(a,b){return b.q-a.q;});
+  var hi=qm[0], lo=qm[qm.length-1];
+  var spread = lo.q>0 ? (hi.q-lo.q)/lo.q*100 : 0;
+  if(spread<12){ el('mietSpiegel').innerHTML=''; return; }
+  var potenzial=(hi.q-lo.q)*lo.f*12;
+  el('mietSpiegel').innerHTML='<div class="note warn"><strong>Spreizung von '+n2(spread)+' % bei der Quadratmetermiete.</strong> '+
+    esc(hi.n)+' liegt bei '+n2(hi.q)+' €/m², '+esc(lo.n)+' bei '+n2(lo.q)+' €/m². '+
+    'Auf das Niveau der teureren Einheit gehoben, entspricht das rechnerisch '+money(potenzial)+' zusätzlicher Jahreskaltmiete. '+
+    'Ob das durchsetzbar ist, hängt vom örtlichen Mietspiegel, dem Ausstattungsunterschied und der Kappungsgrenze des § 558 Abs. 3 BGB ab — die Zahl ist ein Rechenwert, keine Prognose.</div>';
+}
+
+/* ================= Recht & Fristen ================= */
+var LEGAL=[
+ ['Abrechnungsfrist: 12 Monate','Die Abrechnung muss dem Mieter spätestens zwölf Monate nach Ende des Abrechnungszeitraums <em>zugehen</em> (<code>§ 556 Abs. 3 BGB</code>). Danach sind Nachforderungen ausgeschlossen, sofern du die Verspätung zu vertreten hast. Ein Guthaben bleibt in jedem Fall auszahlungspflichtig.'],
+ ['Einwendungsfrist des Mieters','Der Mieter muss Einwendungen binnen zwölf Monaten nach Zugang der Abrechnung geltend machen (<code>§ 556 Abs. 3 S. 5 BGB</code>). Danach sind sie präkludiert — ausgenommen Fälle, die er nicht zu vertreten hat.'],
+ ['Umlagemaßstab ohne Vereinbarung','Fehlt eine Vereinbarung im Mietvertrag, wird nach Wohnfläche umgelegt (<code>§ 556a Abs. 1 BGB</code>). Verbrauchsabhängige Erfassung darf und soll berücksichtigt werden, wo Zähler vorhanden sind.'],
+ ['Was nie umlagefähig ist','Instandhaltung und Instandsetzung, Reparaturen, Verwaltungskosten, Mietausfallwagnis, Rücklagen, Kontoführungs- und Zinskosten, Rechtsschutzversicherung (<code>§ 1 Abs. 2 BetrKV</code>). Diese Positionen erfasst das Dashboard bewusst mit, verteilt sie aber nicht.'],
+ ['Position 17: sonstige Betriebskosten','Nur umlagefähig, wenn die konkrete Kostenart im Mietvertrag ausdrücklich benannt ist. Eine pauschale Klausel „sonstige Betriebskosten“ genügt der Rechtsprechung nicht.'],
+ ['Heizkosten: 50 bis 70 % nach Verbrauch','<code>§ 7 HeizkostenV</code> für Heizung, <code>§ 8</code> für Warmwasser. Der Rest wird nach Wohnfläche verteilt. Wird nicht verbrauchsabhängig abgerechnet, obwohl es Pflicht wäre, darf der Mieter seinen Anteil um 15 % kürzen (<code>§ 12 HeizkostenV</code>).'],
+ ['Ausnahme für das Zweifamilienhaus','Nach <code>§ 2 HeizkostenV</code> ist ein Gebäude mit nicht mehr als zwei Wohnungen, von denen eine der Vermieter selbst bewohnt, von der Verordnung ausgenommen. Vermietest du beide Einheiten, greift die Ausnahme nicht.'],
+ ['CO₂-Kosten seit 2023','Das <code>CO₂KostAufG</code> teilt den CO₂-Preis bei Wohngebäuden nach einem 10-Stufen-Modell zwischen Vermieter und Mieter auf — Maßstab ist der Kennwert in kg CO₂ je m² Wohnfläche und Jahr. Je schlechter der energetische Zustand, desto höher dein Anteil. Der Vermieteranteil ist vor der Umlage abzuziehen.'],
+ ['Kabel-TV nicht mehr umlagefähig','Das Nebenkostenprivileg für Kabelfernsehen ist zum 30.06.2024 entfallen. Kosten eines Sammelinkasso-Kabelvertrags dürfen seither nicht mehr über <code>§ 2 Nr. 15 BetrKV</code> abgerechnet werden. Prüfe deine Altverträge.'],
+ ['Anpassung der Vorauszahlung','Nach einer ordnungsgemäßen Abrechnung darfst du die monatliche Vorauszahlung auf ein Zwölftel der tatsächlichen Jahreskosten anheben (<code>§ 560 Abs. 4 BGB</code>). Das Dashboard weist dir den Wert je Einheit aus, sobald die Nachzahlung über 25 % liegt.'],
+ ['Wirtschaftlichkeitsgebot','<code>§ 556 Abs. 3 S. 1 BGB</code> verpflichtet dich, nur wirtschaftlich angemessene Kosten umzulegen. Überteuerte Dienstleistungsverträge sind angreifbar — die Beweislast für die Angemessenheit liegt bei dir.'],
+ ['Belegeinsicht','Der Mieter hat Anspruch auf Einsicht in die Originalbelege. Halte Rechnungen, Zählerprotokolle und Verträge des Abrechnungszeitraums geordnet vor; die Beleg-Nummer im Kostenkatalog ist genau dafür da.']
+];
+function renderLegal(){
+  el('legalList').innerHTML=LEGAL.map(function(p){
+    return '<dt>'+p[0]+'</dt><dd>'+p[1]+'</dd>';
+  }).join('');
+}
+
+/* ================= CSV ================= */
+function buildCsv(){
+  var c=compute(), L=[];
+  function row(a){ L.push(a.map(function(v){ var s=(''+v); return /[";\n]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s; }).join(';')); }
+  row(['Nebenkostenabrechnung',state.objekt.name,state.jahr]);
+  row(['Zeitraum',dfmtStr(state.objekt.von),dfmtStr(state.objekt.bis)]);
+  row([]);
+  row(['Nr','Position','Umlageschluessel','Beleg','Gesamtkosten'].concat(state.einheiten.map(function(u){return u.name;})));
+  c.rows.forEach(function(r){
+    row([r.k.nr,r.k.pos,KEYS[r.k.schluessel].label,r.k.beleg,n2(r.betrag)]
+      .concat(state.einheiten.map(function(u){return n2(r.anteile[u.id]);})));
+  });
+  row(['','Heizung und Warmwasser','HeizkostenV','',n2(c.heiz.umlage)]
+    .concat(state.einheiten.map(function(u){return n2(c.heiz.ges[u.id]);})));
+  row([]);
+  row(['','Summe umlagefaehig','','',n2(c.sumGes)].concat(c.units.map(function(x){return n2(x.gesamt);})));
+  row(['','Vorauszahlungen','','',n2(c.sumVz)].concat(c.units.map(function(x){return n2(x.vz);})));
+  row(['','Saldo (+ Nachzahlung / - Guthaben)','','',n2(c.sumSaldo)].concat(c.units.map(function(x){return n2(x.saldo);})));
+  row([]);
+  row(['Nicht umlagefaehig (Vermieteranteil)','','','',n2(c.sumNicht)]);
+  return '﻿'+L.join('\r\n');
+}
+
+/* ================= Ereignisse ================= */
+function touch(){ state.demo=false; refresh(); queueSave(); }
+
+function bindTabs(){
+  var btns=[].slice.call(document.querySelectorAll('nav.tabs button'));
+  btns.forEach(function(b){
+    b.addEventListener('click',function(){
+      btns.forEach(function(x){ x.setAttribute('aria-selected', x===b?'true':'false'); });
+      ['uebersicht','objekt','kosten','heizung','abrechnung','recht'].forEach(function(t){
+        el('tab-'+t).hidden = (t!==b.dataset.tab);
+      });
+      window.scrollTo({top:0,behavior:'instant'});
+    });
+  });
+}
+
+function bindObjekt(){
+  [['oName','name'],['oStrasse','strasse'],['oOrt','ort'],['oVon','von'],['oBis','bis'],['oHeizart','heizart']].forEach(function(p){
+    el(p[0]).addEventListener('input',function(){ state.objekt[p[1]]=this.value; touch(); });
+  });
+  el('oSelbst').addEventListener('change',function(){ state.objekt.selbst=this.checked; touch(); });
+}
+
+function bindUnitTable(){
+  var t=el('unitTable');
+  t.addEventListener('input',function(e){
+    var inp=e.target.closest('input'); if(!inp) return;
+    var tr=inp.closest('tr'); var u=state.einheiten.filter(function(x){return x.id===tr.dataset.u;})[0];
+    if(!u) return;
+    var f=inp.dataset.f;
+    u[f] = inp.classList.contains('money')||inp.classList.contains('qty') ? parseNum(inp.value) : inp.value;
+    touch();
+  });
+  t.addEventListener('change',function(e){
+    var inp=e.target.closest('input.money,input.qty'); if(!inp) return;
+    inp.value = inp.dataset.f==='personen' ? num0.format(parseNum(inp.value)) : n2(parseNum(inp.value));
+    renderVerbTable(); renderKostTable(); refresh();
+  });
+  t.addEventListener('click',function(e){
+    var b=e.target.closest('[data-del]'); if(!b) return;
+    if(state.einheiten.length<2) return;
+    state.einheiten=state.einheiten.filter(function(x){return x.id!==b.dataset.del;});
+    rebuildAll();
+  });
+  el('addUnit').addEventListener('click',function(){
+    state.einheiten.push({id:uid(),name:'Weitere Einheit',mieter:'',flaeche:0,personen:1,von:'',bis:'',
+      kaltmiete:0,vzNK:0,vzHeiz:0,vHeiz:0,vWW:0});
+    rebuildAll();
+  });
+}
+
+function bindKostTable(){
+  var t=el('kostTable');
+  t.addEventListener('input',function(e){
+    var inp=e.target.closest('input,select'); if(!inp) return;
+    var tr=inp.closest('tr'); if(!tr||!tr.dataset.k) return;
+    var k=state.kosten.filter(function(x){return x.id===tr.dataset.k;})[0]; if(!k) return;
+    if(inp.dataset.d!=null){ k.direkt[inp.dataset.d]=parseNum(inp.value);
+      var bi=tr.querySelector('[data-f="betrag"]'); if(bi) bi.value=n2(kostBetrag(k));
+      touch(); return; }
+    var f=inp.dataset.f;
+    if(f==='betrag') k.betrag=parseNum(inp.value);
+    else if(f==='schluessel'){ k.schluessel=inp.value; state.demo=false; renderKostTable(); refresh(); queueSave(); return; }
+    else k[f]=inp.value;
+    touch();
+  });
+  t.addEventListener('change',function(e){
+    var inp=e.target.closest('input.money'); if(!inp) return;
+    inp.value=n2(parseNum(inp.value));
+  });
+  t.addEventListener('click',function(e){
+    var b=e.target.closest('[data-del]'); if(!b) return;
+    state.kosten=state.kosten.filter(function(x){return x.id!==b.dataset.del;});
+    renderKostTable(); refresh(); queueSave();
+  });
+  el('addKost').addEventListener('click',function(){
+    state.kosten.push({id:uid(),nr:'+',pos:'Neue Position',schluessel:'flaeche',betrag:0,beleg:'',notiz:'',direkt:{}});
+    renderKostTable(); refresh(); queueSave();
+    var rows=t.querySelectorAll('tbody tr[data-k]');
+    var last=rows[rows.length-1]; if(last){ last.scrollIntoView({block:'center'}); last.querySelector('input').focus(); last.querySelector('input').select(); }
+  });
+}
+
+function bindHeiz(){
+  [['hBrenn','brenn'],['hStrom','strom'],['hWartung','wartung'],['hMess','mess'],['hSchorn','schorn'],['hTank','tank'],
+   ['hGrund','grund'],['hWW','ww'],['cKosten','co2Kosten'],['cMenge','co2Menge'],['cProz','co2Proz']].forEach(function(p){
+    var e=el(p[0]);
+    e.addEventListener('input',function(){ state.heizung[p[1]]=parseNum(this.value); touch(); });
+    e.addEventListener('change',function(){ this.value=n2(parseNum(this.value)); });
+  });
+  el('verbTable').addEventListener('input',function(e){
+    var inp=e.target.closest('input'); if(!inp) return;
+    var tr=inp.closest('tr'); var u=state.einheiten.filter(function(x){return x.id===tr.dataset.u;})[0]; if(!u) return;
+    u[inp.dataset.f]=parseNum(inp.value); touch();
+  });
+  el('verbTable').addEventListener('change',function(e){
+    var inp=e.target.closest('input'); if(inp) inp.value=n2(parseNum(inp.value));
+  });
+}
+
+function bindMisc(){
+  el('clearAmounts').addEventListener('click',function(){
+    state.kosten.forEach(function(k){ k.betrag=0; k.direkt={}; });
+    var h=state.heizung; ['brenn','strom','wartung','mess','schorn','tank','co2Kosten','co2Menge'].forEach(function(f){ h[f]=0; });
+    state.einheiten.forEach(function(u){ u.vHeiz=0; u.vWW=0; });
+    state.demo=false;
+    renderKostTable(); renderVerbTable(); renderHeizInputs(); refresh(); queueSave();
+  });
+  el('printBtn').addEventListener('click',function(){ window.print(); });
+  el('csvBtn').addEventListener('click',function(){
+    var csv=buildCsv(), name='Nebenkosten_'+state.jahr+'.csv';
+    cap('downloads').then(function(d){
+      if(!d) throw 0;
+      return d.save({filename:name,data:csv});
+    }).then(function(){
+      el('csvBtn').textContent='CSV gespeichert'; setTimeout(function(){ el('csvBtn').textContent='CSV exportieren'; },2200);
+    }).catch(function(err){
+      if(err && err.code==='declined'){ return; }
+      try{
+        var url=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
+        var a=document.createElement('a'); a.href=url; a.download=name; a.click();
+        setTimeout(function(){ URL.revokeObjectURL(url); },1000);
+      }catch(e){
+        el('csvBtn').textContent='Export hier nicht möglich';
+        setTimeout(function(){ el('csvBtn').textContent='CSV exportieren'; },2600);
+      }
+    });
+  });
+  el('themeBtn').addEventListener('click',function(){
+    var r=document.documentElement, cur=r.getAttribute('data-theme');
+    var dark = cur ? cur==='dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+    r.setAttribute('data-theme', dark?'light':'dark');
+    try{ localStorage.setItem('nka.theme', dark?'light':'dark'); }catch(e){}
+  });
+  el('jahrSel').addEventListener('change',function(){ switchJahr(parseInt(this.value,10)); });
+  el('jahrNeu').addEventListener('click',function(){
+    var max=Math.max.apply(null,jahre), nj=max+1;
+    while(jahre.indexOf(nj)>-1) nj++;
+    var vorlage=JSON.parse(JSON.stringify(state));
+    vorlage.jahr=nj; vorlage.demo=false;
+    vorlage.objekt.von=nj+'-01-01'; vorlage.objekt.bis=nj+'-12-31';
+    vorlage.kosten.forEach(function(k){ k.betrag=0; k.direkt={}; k.beleg=''; });
+    ['brenn','strom','wartung','mess','schorn','tank','co2Kosten','co2Menge'].forEach(function(f){ vorlage.heizung[f]=0; });
+    vorlage.einheiten.forEach(function(u){ u.vHeiz=0; u.vWW=0; });
+    jahre.push(nj); jahre.sort(function(a,b){return a-b;});
+    state=vorlage;
+    renderJahrSel(); rebuildAll(); queueSave();
+  });
+}
+
+function renderJahrSel(){
+  el('jahrSel').innerHTML=jahre.map(function(j){
+    return '<option value="'+j+'"'+(j===state.jahr?' selected':'')+'>'+j+'</option>'; }).join('');
+}
+function switchJahr(j){
+  if(j===state.jahr) return;
+  var loaded=loadLocal(j);
+  if(loaded){ state=migrate(loaded); renderJahrSel(); rebuildAll(); }
+  if(db){
+    db.doc('abrechnungen/'+j).get().then(function(s){
+      if(s.exists){ state=migrate(s.data()); renderJahrSel(); rebuildAll(); persistLocal(); }
+      else if(!loaded){ state=defaultState(j); state.demo=false; renderJahrSel(); rebuildAll(); }
+    }).catch(function(){});
+  } else if(!loaded){ state=defaultState(j); state.demo=false; renderJahrSel(); rebuildAll(); }
+}
+
+function migrate(s){
+  var d=defaultState(s.jahr||new Date().getFullYear()-1);
+  s.objekt=Object.assign({},d.objekt,s.objekt||{});
+  s.heizung=Object.assign({},d.heizung,s.heizung||{});
+  (s.einheiten||[]).forEach(function(u){ if(!u.direkt) u.direkt={}; });
+  (s.kosten||[]).forEach(function(k){ if(!k.direkt) k.direkt={}; });
+  if(!s.einheiten||!s.einheiten.length) s.einheiten=d.einheiten;
+  if(!s.kosten||!s.kosten.length) s.kosten=d.kosten;
+  katalog.fix(s.kosten);
+  return s;
+}
+
+function rebuildAll(){
+  renderObjekt(); renderUnitTable(); renderKostTable(); renderHeizInputs(); renderVerbTable(); refresh();
+}
+
+/* ================= Start ================= */
+try{ var th=localStorage.getItem('nka.theme'); if(th) document.documentElement.setAttribute('data-theme',th); }catch(e){}
+
+var storedJahre=lsJahre();
+if(storedJahre.length){ jahre=storedJahre; }
+var lastJ=null; try{ lastJ=parseInt(localStorage.getItem('nka.last'),10); }catch(e){}
+if(lastJ && jahre.indexOf(lastJ)>-1){ var lj=loadLocal(lastJ); if(lj) state=migrate(lj); }
+else { var l0=loadLocal(state.jahr); if(l0) state=migrate(l0); }
+if(jahre.indexOf(state.jahr)<0){ jahre.push(state.jahr); jahre.sort(function(a,b){return a-b;}); }
+
+renderJahrSel();
+bindTabs(); bindObjekt(); bindUnitTable(); bindKostTable(); bindHeiz(); bindMisc();
+renderLegal();
+rebuildAll();
+setSave('','lokal');
+
+cap('db').then(function(d){
+  if(!d){ setSave('ok','lokal gespeichert'); return; }
+  db=d;
+  setSave('busy','synchronisiert…');
+  return db.collection('abrechnungen').get().then(function(snap){
+    var found=[];
+    snap.docs.forEach(function(doc){ var j=parseInt(doc.id,10); if(isFinite(j)) found.push(j); });
+    if(found.length){
+      found.forEach(function(j){ if(jahre.indexOf(j)<0) jahre.push(j); });
+      jahre.sort(function(a,b){return a-b;});
+      var target = jahre.indexOf(state.jahr)>-1 && found.indexOf(state.jahr)>-1 ? state.jahr : found[found.length-1];
+      var doc = snap.docs.filter(function(x){ return parseInt(x.id,10)===target; })[0];
+      if(doc && doc.exists){ state=migrate(doc.data()); }
+      renderJahrSel(); rebuildAll(); persistLocal();
+    } else {
+      renderJahrSel();
+    }
+    setSave('ok','gesichert · '+state.jahr);
+    db.doc('abrechnungen/'+state.jahr).onSnapshot(function(s){
+      if(!s.exists) return;
+      var incoming=s.data();
+      if(s.metadata.hasPendingWrites) return;
+      if(JSON.stringify(incoming)===JSON.stringify(state)) return;
+      if(document.activeElement && /INPUT|SELECT|TEXTAREA/.test(document.activeElement.tagName)) return;
+      state=migrate(incoming); rebuildAll(); persistLocal();
+    },function(){ setSave('off','nur lokal'); });
+  });
+}).catch(function(){ setSave('ok','lokal gespeichert'); });
+
+})();
+</script>

@@ -7,8 +7,9 @@ This guide covers the finance skills and their Python automation tools.
 **Available Skills:**
 1. **financial-analyst/** - Financial statement analysis, ratio analysis, DCF valuation, budgeting, forecasting (4 Python tools)
 2. **steuerrechner-selbststaendigkeit/** - German tax calculator for self-employed sole traders (EÜR): USt, GewSt (configurable Hebesatz), ESt, Soli, KiSt incl. §35 EStG credit, plus monthly Qonto reserve transfers (1 Python tool, German-language docs)
+3. **nebenkostenabrechner/** - German residential service-charge settlement (Betriebskostenabrechnung) per § 2 BetrKV and HeizkostenV: 17-position catalogue, allocation keys with pro-rata time weighting, heating split (50-70% consumption-based), CO2 cost allocation per CO2KostAufG, tenant-ready printable statement (1 Python tool + interactive HTML dashboard, German-language docs)
 
-**Total Tools:** 5 Python automation tools, 6 knowledge bases, 7 templates
+**Total Tools:** 6 Python automation tools, 8 knowledge bases, 9 templates
 
 ## Python Automation Tools
 
@@ -120,3 +121,34 @@ python3 steuerrechner-selbststaendigkeit/scripts/steuerrechner.py --umsatz 12500
 **Last Updated:** August 2026
 **Skills Deployed:** 2/2 finance skills production-ready
 **Total Tools:** 5 Python automation tools
+
+### 6. Nebenkostenabrechner (`nebenkostenabrechner/scripts/nebenkosten.py`)
+
+**Purpose:** German residential service-charge settlement for landlords without a property manager
+
+**Features:**
+- 17-position § 2 BetrKV cost catalogue with per-position allocation keys
+- Allocation by floor area, units, occupants, or direct metering
+- Pro-rata time weighting for mid-year tenant changes
+- Heating and hot water per HeizkostenV (30-50% base cost, 50-70% consumption)
+- CO2 cost split per CO2KostAufG 10-step model (values require manual verification)
+- Deadline check against the 12-month bar of § 556 Abs. 3 BGB
+- Plausibility checks (missing receipts, illegal base-cost share, advance-payment adjustment per § 560 Abs. 4 BGB)
+- No external dependencies
+
+**Usage:**
+```bash
+python3 nebenkostenabrechner/scripts/nebenkosten.py akte.json
+python3 nebenkostenabrechner/scripts/nebenkosten.py akte.json --format json
+python3 nebenkostenabrechner/scripts/nebenkosten.py akte.json --format csv
+python3 nebenkostenabrechner/scripts/nebenkosten.py akte.json --pruefen
+```
+
+**Companion dashboard:** `nebenkostenabrechner/assets/nebenkosten-dashboard.html`
+publishes as a Claude artifact with the `db` and `downloads` capabilities. It keeps
+one settlement file per year at `abrechnungen/<jahr>` and produces the printable
+tenant statement.
+
+**Scope limit:** The tool calculates and structures. It does not assess whether a
+cost item is contractually agreed, nor does it replace legal advice.
+
