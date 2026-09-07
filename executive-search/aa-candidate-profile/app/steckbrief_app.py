@@ -447,15 +447,46 @@ OBERFLAECHE = r"""<!doctype html>
 <html lang="de"><head><meta charset="utf-8">
 <title>A/A Steckbrief-Arbeitsplatz</title>
 <style>
-:root{--bg:#f6f6f4;--fg:#1c1c1a;--line:#d6d4cf;--akz:#8a1c1c;--ok:#1d6b3a;--warn:#8a5a00}
+:root{--bg:#f1f1ee;--card:#fff;--fg:#1c1c1a;--muted:#6b6a65;--line:#dedcd6;
+      --akz:#8a1c1c;--akz-hell:#fbeaea;--ok:#1d6b3a;--ok-hell:#e7f3ea;
+      --warn:#8a5a00;--warn-hell:#fdf3e0}
 *{box-sizing:border-box}
 body{margin:0;font:15px/1.55 "Segoe UI",system-ui,sans-serif;background:var(--bg);color:var(--fg)}
-header{background:#1c1c1a;color:#fff;padding:14px 22px}
+header{background:#1c1c1a;color:#fff;padding:14px 22px;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
 header b{font-size:17px;letter-spacing:.3px}
-header span{opacity:.75;font-size:13px;margin-left:10px}
-main{max-width:1080px;margin:0 auto;padding:22px}
-section{background:#fff;border:1px solid var(--line);border-radius:6px;padding:18px 20px;margin-bottom:16px}
-h2{font-size:15px;margin:0 0 12px;text-transform:uppercase;letter-spacing:.6px;color:var(--akz)}
+header span{opacity:.7;font-size:13px}
+
+.layout{max-width:1180px;margin:0 auto;padding:20px;display:grid;grid-template-columns:260px 1fr;gap:20px;align-items:start}
+@media (max-width:860px){.layout{grid-template-columns:1fr}}
+
+/* Dashboard-Leiste: Ampel plus Kennzahlen, bleibt beim Scrollen sichtbar */
+.dash{position:sticky;top:20px;display:flex;flex-direction:column;gap:10px}
+.dash .kachel{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:14px 16px}
+.dash .ampel{display:flex;align-items:center;gap:10px;font-weight:700;font-size:14px}
+.dash .lampe{width:14px;height:14px;border-radius:50%;background:#c7c5be;flex:none;transition:background .2s;box-shadow:inset 0 0 0 1px rgba(0,0,0,.06)}
+.dash .lampe.rot{background:var(--akz)}.dash .lampe.gelb{background:#c98a00}.dash .lampe.gruen{background:var(--ok)}
+.dash .kennzahl{display:flex;justify-content:space-between;align-items:baseline;padding:6px 0;border-bottom:1px solid #f0efec;font-size:13px}
+.dash .kennzahl:last-child{border-bottom:0}
+.dash .kennzahl b{font-size:20px;font-variant-numeric:tabular-nums}
+.dash .schritte{display:flex;flex-direction:column;gap:2px}
+.dash .schritt{display:flex;align-items:center;gap:8px;font-size:13px;padding:5px 6px;border-radius:5px;color:var(--muted)}
+.dash .schritt.aktiv{background:var(--akz-hell);color:var(--akz);font-weight:600}
+.dash .schritt.fertig{color:var(--ok)}
+.dash .schritt .punkt{width:18px;height:18px;border-radius:50%;border:2px solid var(--line);flex:none;
+  display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--muted)}
+.dash .schritt.aktiv .punkt{border-color:var(--akz);color:var(--akz)}
+.dash .schritt.fertig .punkt{border-color:var(--ok);background:var(--ok);color:#fff}
+
+main{min-width:0}
+section{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:18px 20px;margin-bottom:14px;
+  scroll-margin-top:20px}
+section.aktiv{border-color:var(--akz)}
+h2{font-size:14px;margin:0 0 12px;display:flex;align-items:center;gap:10px;text-transform:none;
+   letter-spacing:.2px;color:var(--fg);font-weight:700}
+h2 .nr{background:var(--akz);color:#fff;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;
+       justify-content:center;font-size:13px;flex:none}
+h2 .haken{margin-left:auto;color:var(--ok);font-size:16px;display:none}
+section.fertig h2 .haken{display:inline}
 label{display:block;font-weight:600;font-size:13px;margin:10px 0 4px}
 input[type=text],textarea,select{width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:4px;font:inherit;background:#fff}
 textarea{min-height:120px;font-family:Consolas,monospace;font-size:13px}
@@ -463,23 +494,37 @@ button{background:var(--akz);color:#fff;border:0;border-radius:4px;padding:9px 1
 button.sek{background:#4a4a46}
 button:disabled{opacity:.45;cursor:not-allowed}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:0 16px}
-.hint{font-size:13px;color:#5c5a55;margin:6px 0 0}
+.hint{font-size:13px;color:var(--muted);margin:6px 0 0}
 .pill{display:inline-block;border:1px solid var(--line);border-radius:14px;padding:3px 10px;margin:3px 4px 0 0;font-size:13px;cursor:pointer;background:#fff;user-select:none}
 .pill.an{background:var(--akz);color:#fff;border-color:var(--akz)}
 .status{padding:9px 12px;border-radius:4px;margin-top:10px;font-size:13px;display:none}
-.status.ok{display:block;background:#e7f3ea;color:var(--ok)}
-.status.err{display:block;background:#fbeaea;color:var(--akz)}
-.status.warn{display:block;background:#fdf3e0;color:var(--warn)}
+.status.ok{display:block;background:var(--ok-hell);color:var(--ok)}
+.status.err{display:block;background:var(--akz-hell);color:var(--akz)}
+.status.warn{display:block;background:var(--warn-hell);color:var(--warn)}
 pre{background:#fafaf8;border:1px solid var(--line);border-radius:4px;padding:12px;white-space:pre-wrap;font-size:13px;max-height:340px;overflow:auto}
 .f{font-size:13px;padding:3px 0;border-bottom:1px solid #eee}
 .f b{display:inline-block;min-width:74px}
-.f.fehler b{color:var(--akz)}.f.warnung b{color:var(--warn)}.f.hinweis b{color:#5c5a55}
-footer{padding:14px 22px;font-size:12px;color:#5c5a55;text-align:center}
-</style></head><body>
+.f.fehler b{color:var(--akz)}.f.warnung b{color:var(--warn)}.f.hinweis b{color:var(--muted)}
+footer{padding:14px 22px;font-size:12px;color:var(--muted);text-align:center}
+</style></head><body></style></head><body>
 <header><b>A/A Steckbrief-Arbeitsplatz</b><span>lokal auf diesem Rechner, Klardaten verlassen die Maschine nicht</span></header>
+<div class="layout">
+
+<aside class="dash">
+  <div class="kachel">
+    <div class="ampel"><span class="lampe" id="ampel_lampe"></span><span id="ampel_text">Noch kein Profil erzeugt</span></div>
+  </div>
+  <div class="kachel">
+    <div class="kennzahl"><span>Offene grüne Felder</span><b id="kz_offen">–</b></div>
+    <div class="kennzahl"><span>Muss-Kriterien erfüllt</span><b id="kz_muss">–</b></div>
+    <div class="kennzahl"><span>Compliance-Fehler</span><b id="kz_fehler">–</b></div>
+  </div>
+  <div class="kachel schritte" id="schrittleiste"></div>
+</aside>
+
 <main>
 
-<section><h2>1 Mandat</h2>
+<section data-schritt="1"><h2><span class="nr">1</span>Mandat<span class="haken">&check;</span></h2>
 <div class="grid">
 <div><label>Position</label><input type="text" id="m_position" placeholder="Geschaeftsfuehrer Vertrieb"></div>
 <div><label>Auftraggeber</label><input type="text" id="m_kunde" placeholder="Musterhaus Automobile GmbH"></div>
@@ -494,14 +539,14 @@ footer{padding:14px 22px;font-size:12px;color:#5c5a55;text-align:center}
 <p class="hint">Der Name des Auftraggebers wird mit pseudonymisiert. Dass dieses Haus sucht, ist vertrauliche Marktinformation und verlaesst den Rechner nicht im Klartext.</p>
 </section>
 
-<section><h2>2 Lebenslauf laden</h2>
+<section data-schritt="2"><h2><span class="nr">2</span>Lebenslauf laden<span class="haken">&check;</span></h2>
 <label>Datei (.docx oder .txt)</label><input type="file" id="datei" accept=".docx,.txt,.md">
 <p class="hint">PDF wird nicht gelesen. Text im Reader kopieren und unten einfuegen. Die Datei wird lokal gelesen und nicht hochgeladen.</p>
 <label>Lebenslauftext</label><textarea id="cvtext" placeholder="Text einfuegen oder Datei waehlen"></textarea>
 <label>Interviewnotizen, optional</label><textarea id="notizen" style="min-height:80px" placeholder="Wechselmotiv, Gehaltsrahmen, Kuendigungsfrist, Referenzstand"></textarea>
 </section>
 
-<section><h2>3 Anforderungsprofil des Auftraggebers</h2>
+<section data-schritt="3"><h2><span class="nr">3</span>Anforderungsprofil des Auftraggebers<span class="haken">&check;</span></h2>
 <p class="hint">Optional, aber der groesste Qualitaetssprung. Liegt ein schriftliches Profil vor, wird Block 9 Punkt fuer Punkt dagegen abgeglichen statt frei formuliert.</p>
 <label>Datei (.docx oder .txt)</label><input type="file" id="jddatei" accept=".docx,.txt,.md">
 <label>oder Text einfuegen</label><textarea id="jdtext" style="min-height:90px" placeholder="Stellenbeschreibung oder Anforderungsprofil"></textarea>
@@ -511,7 +556,7 @@ footer{padding:14px 22px;font-size:12px;color:#5c5a55;text-align:center}
 <textarea id="jdliste" style="min-height:110px" placeholder="muss: Mindestens zehn Jahre Fuehrungserfahrung im Automobilhandel"></textarea>
 </section>
 
-<section><h2>4 Pseudonymisieren</h2>
+<section data-schritt="4"><h2><span class="nr">4</span>Pseudonymisieren<span class="haken">&check;</span></h2>
 <label>Name der Kandidatin oder des Kandidaten</label><input type="text" id="kandidat" placeholder="Vorname Nachname">
 <label>Arbeitgeber, die ersetzt werden (anklicken zum Abwaehlen)</label>
 <div id="entitaeten"></div>
@@ -524,7 +569,7 @@ footer{padding:14px 22px;font-size:12px;color:#5c5a55;text-align:center}
 <button id="b_api" class="sek" style="display:none" onclick="apiSenden()">Ueber API senden, falls Schluessel hinterlegt</button>
 </section>
 
-<section><h2>5 Antwort zurueckspielen</h2>
+<section data-schritt="5"><h2><span class="nr">5</span>Antwort zurueckspielen<span class="haken">&check;</span></h2>
 <p class="hint">Prompt in Claude einfuegen, die JSON-Antwort hier hereinkopieren. Die Klardaten werden lokal wieder eingesetzt.</p>
 <textarea id="antwort" placeholder="JSON-Antwort des Modells"></textarea>
 <button onclick="bauen()">Steckbrief erzeugen und pruefen</button>
@@ -533,13 +578,13 @@ footer{padding:14px 22px;font-size:12px;color:#5c5a55;text-align:center}
 <pre id="vorschau" style="display:none"></pre>
 </section>
 
-<section><h2>6 Arbeitsstand ausgeben</h2>
+<section data-schritt="6"><h2><span class="nr">6</span>Arbeitsstand ausgeben<span class="haken">&check;</span></h2>
 <button id="b_export" disabled onclick="exportieren()">Word-Datei erzeugen, mit gruenen Feldern</button>
 <div id="s_export" class="status"></div>
 <p class="hint">Die Word-Datei ist der Arbeitsstand. Gruene Felder darin sind noch offen und gehoeren nicht zum Auftraggeber.</p>
 </section>
 
-<section><h2>7 Finalisieren, freigeben, PDF</h2>
+<section data-schritt="7"><h2><span class="nr">7</span>Finalisieren, freigeben, PDF<span class="haken">&check;</span></h2>
 <div id="gate" class="status warn" style="display:block">Noch kein Profil erzeugt.</div>
 <p class="hint">Das PDF ist das Freigabedokument. Es entsteht erst, wenn kein gruenes Feld mehr offen ist, kein Compliance-Fehler vorliegt, die Einwilligung des Kandidaten dokumentiert ist und ein Votum im Block 13 steht.</p>
 <label style="font-weight:400"><input type="checkbox" id="freigabe_ok"> Ich habe das Profil final geprueft und gebe es zur Weitergabe an den Auftraggeber frei.</label>
@@ -548,7 +593,7 @@ footer{padding:14px 22px;font-size:12px;color:#5c5a55;text-align:center}
 <div id="s_pdf" class="status"></div>
 </section>
 
-<section><h2>8 Versenden</h2>
+<section data-schritt="8"><h2><span class="nr">8</span>Versenden<span class="haken">&check;</span></h2>
 <div class="grid">
 <div><label>Empfaenger</label><input type="text" id="mail_to" placeholder="name@auftraggeber.de"></div>
 <div><label>Betreff</label><input type="text" id="mail_betreff" value="Kandidatenprofil, vertraulich"></div>
@@ -566,12 +611,53 @@ A/A Executive Search</textarea>
 </section>
 
 </main>
+</div>
 <footer>Alle Dateien liegen unter Dokumente, AA-Steckbriefe. Zuordnungstabelle und Lebenslauf verlassen diesen Rechner nicht.</footer>
 
 <script>
 const T="__TOKEN__";
 let MAPPING={}, ENTS=[], AKTIV=new Set(), LETZTER_PFAD="", LETZTE_ID="";
 document.getElementById("m_datum").value=new Date().toLocaleDateString("de-DE");
+
+// Dashboard: Schrittleiste, Ampel, Kennzahlen. Erledigt wird ueber SCHRITT_OK
+// nachgefuehrt, sobald eine Aktion in dem Schritt sichtbar erfolgreich war.
+const SCHRITT_NAMEN={1:"Mandat",2:"Lebenslauf",3:"Anforderungsprofil",4:"Pseudonymisieren",
+  5:"Antwort",6:"Arbeitsstand",7:"Freigabe",8:"Versenden"};
+const SCHRITT_OK={1:false,2:false,3:false,4:false,5:false,6:false,7:false,8:false};
+
+function schrittleisteZeichnen(){
+  const box=document.getElementById("schrittleiste"); box.innerHTML="";
+  let aktiv=1;
+  for(let n=1;n<=8;n++){ if(SCHRITT_OK[n]) aktiv=Math.min(n+1,8); }
+  for(let n=1;n<=8;n++){
+    const fertig=SCHRITT_OK[n], istAktiv=(n===aktiv&&!fertig);
+    const el=document.createElement("div");
+    el.className="schritt"+(fertig?" fertig":"")+(istAktiv?" aktiv":"");
+    el.innerHTML="<span class='punkt'>"+(fertig?"&check;":n)+"</span><span>"+SCHRITT_NAMEN[n]+"</span>";
+    el.style.cursor="pointer";
+    el.onclick=()=>{const s=document.querySelector('section[data-schritt="'+n+'"]');
+      if(s) s.scrollIntoView({behavior:"smooth",block:"start"});};
+    box.appendChild(el);
+  }
+  document.querySelectorAll("section[data-schritt]").forEach(sec=>{
+    const n=sec.getAttribute("data-schritt");
+    sec.classList.toggle("fertig", !!SCHRITT_OK[n]);
+    sec.classList.toggle("aktiv", Number(n)===aktiv && !SCHRITT_OK[n]);
+  });
+}
+
+function schrittErledigt(n){ SCHRITT_OK[n]=true; schrittleisteZeichnen(); }
+schrittleisteZeichnen();
+
+function ampelSetzen(farbe, text){
+  document.getElementById("ampel_lampe").className="lampe "+farbe;
+  document.getElementById("ampel_text").textContent=text;
+}
+function kennzahlenSetzen(offen, mussText, fehler){
+  document.getElementById("kz_offen").textContent=(offen===null?"–":offen);
+  document.getElementById("kz_muss").textContent=(mussText===null?"–":mussText);
+  document.getElementById("kz_fehler").textContent=(fehler===null?"–":fehler);
+}
 
 function zeige(id,text,art){const e=document.getElementById(id);e.className="status "+art;e.textContent=text;}
 async function post(pfad,daten){
@@ -592,6 +678,7 @@ document.getElementById("datei").addEventListener("change",async e=>{
     document.getElementById("cvtext").value=j.text;
     ENTS=j.entitaeten; AKTIV=new Set(ENTS); zeichneEnts();
     zeige("s_prompt","Lebenslauf gelesen, "+j.text.length+" Zeichen, "+ENTS.length+" Arbeitgeber erkannt.","ok");
+    schrittErledigt(2);
   }catch(err){zeige("s_prompt",err.message,"err");}
 });
 
@@ -629,6 +716,7 @@ function setzeAnforderungen(j){
     (j.anforderungen.length-mu)+" Kann."+
     (j.abschnitt_erkannt?"":" Kein Anforderungsabschnitt gefunden, Liste bitte pruefen."),
     j.anforderungen.length?"ok":"warn");
+  if(j.anforderungen.length) schrittErledigt(3);
 }
 
 function anforderungsListe(){
@@ -649,7 +737,8 @@ async function promptBauen(){
     document.getElementById("promptbox").textContent=j.prompt;
     document.getElementById("b_copy").style.display="inline-block";
     document.getElementById("b_api").style.display="inline-block";
-    if(j.sauber){zeige("s_prompt","Pseudonymisiert. Rueckstandspruefung sauber, "+Object.keys(MAPPING).length+" Ersetzungen.","ok");}
+    if(j.sauber){zeige("s_prompt","Pseudonymisiert. Rueckstandspruefung sauber, "+Object.keys(MAPPING).length+" Ersetzungen.","ok");
+      schrittErledigt(4);}
     else{zeige("s_prompt","Achtung, es steht noch Klartext im Prompt: "+j.rest.join(", "),"err");}
   }catch(err){zeige("s_prompt",err.message,"err");}
 }
@@ -692,6 +781,14 @@ async function bauen(){
     else{g.className="status warn";g.textContent="Noch nicht freigabefaehig ("+j.offene_felder+" offene Felder): "+j.blocker.join(" | ");}
     if(j.fehler_anzahl>0){zeige("s_build",j.fehler_anzahl+" Fehler. Nicht freigabefaehig, bitte beheben.","err");}
     else{zeige("s_build","Keine Fehler. Freigabefaehig. Dateien unter "+j.ordner,"ok");}
+    schrittErledigt(5);
+    const passung=(j.profil.passung)||[];
+    const musse=passung.filter(a=>(a.gewichtung||"").toLowerCase()==="muss");
+    const mussErfuellt=musse.filter(a=>(a.status||"").toLowerCase().includes("erf")&&!(a.status||"").toLowerCase().includes("nicht")).length;
+    kennzahlenSetzen(j.offene_felder, musse.length?(mussErfuellt+" von "+musse.length):"–", j.fehler_anzahl);
+    if(j.fehler_anzahl>0){ampelSetzen("rot","Compliance-Fehler beheben");}
+    else if(j.blocker.length>0){ampelSetzen("gelb",j.blocker.length+" Punkt(e) bis zur Freigabe");}
+    else{ampelSetzen("gruen","Freigabefaehig");}
   }catch(err){zeige("s_build",err.message,"err");}
 }
 
@@ -700,6 +797,7 @@ async function exportieren(){
     const j=await post("/api/export",{steckbrief:document.getElementById("vorschau").textContent,profil_id:LETZTE_ID});
     LETZTER_PFAD=j.docx; document.getElementById("b_mail").disabled=false;
     zeige("s_export","Word-Datei erzeugt: "+j.docx,"ok");
+    schrittErledigt(6);
   }catch(err){zeige("s_export",err.message,"err");}
 }
 
@@ -710,6 +808,8 @@ async function pdfBauen(entwurf){
     if(j.pfad){LETZTER_PFAD=j.pfad;document.getElementById("b_mail").disabled=false;}
     zeige("s_pdf",j.meldung+(j.blocker&&j.blocker.length?" Offen: "+j.blocker.join(" | "):""),
           j.freigegeben?"ok":"warn");
+    if(j.freigegeben){schrittErledigt(7);ampelSetzen("gruen","Freigabe-PDF erstellt");}
+    else if(j.blocker&&j.blocker.length){kennzahlenSetzen(null,null,null);ampelSetzen("gelb",j.blocker.length+" Punkt(e) bis zur Freigabe");}
   }catch(err){zeige("s_pdf",err.message,"err");}
 }
 
@@ -718,8 +818,17 @@ async function mailen(){
     const j=await post("/api/mail",{pfad:LETZTER_PFAD,empfaenger:v("mail_to"),
       betreff:v("mail_betreff"),text:document.getElementById("mail_text").value});
     zeige("s_mail",j.meldung,"ok");
+    schrittErledigt(8);
   }catch(err){zeige("s_mail",err.message,"err");}
 }
+
+// Schritt 1 gilt als erledigt, sobald Position, Auftraggeber und Profil-ID
+// stehen. Kein eigener Button, deshalb per Feldpruefung statt Aktion.
+function mandatPruefen(){
+  if(v("m_position") && v("m_kunde") && v("m_id")) schrittErledigt(1);
+}
+["m_position","m_kunde","m_id"].forEach(id=>
+  document.getElementById(id).addEventListener("input", mandatPruefen));
 </script></body></html>"""
 
 

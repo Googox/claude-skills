@@ -14,6 +14,10 @@ Wird kein Python gefunden, zeigt das Fenster eine Fehlermeldung mit der Installa
 
 Alternativ in der Eingabeaufforderung: `py -3 steckbrief_app.py`. Optionen: `--port 8731` und `--kein-browser`.
 
+## Dashboard
+
+Links steht eine feste Statusleiste mit drei Kacheln: eine Ampel (rot bei Compliance-Fehlern, gelb bei offenen Punkten, grün wenn freigabefähig), die Kennzahlen offene grüne Felder, erfüllte Muss-Kriterien und Compliance-Fehler, sowie eine Schrittliste mit Haken bei erledigten Schritten. Ein Klick auf einen Schritt springt zur passenden Karte. Die aktive Karte ist rot umrandet. Die Ampel und die Kennzahlen aktualisieren sich, sobald in Schritt 5 der Steckbrief erzeugt wird, und erneut bei jedem PDF-Versuch in Schritt 7.
+
 ## Ablauf in der Oberfläche
 
 Schritt 1, Mandat: Position, Auftraggeber, Profil-ID, Datum, Berater und Modus eintragen. Der Modus entscheidet über Vollprofil mit Klarnamen oder anonymisiertes Blindprofil.
