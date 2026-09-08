@@ -8,7 +8,9 @@ This guide covers the finance skills and their Python automation tools.
 1. **financial-analyst/** - Financial statement analysis, ratio analysis, DCF valuation, budgeting, forecasting (4 Python tools)
 2. **steuerrechner-selbststaendigkeit/** - German tax calculator for self-employed sole traders (EÜR): USt, GewSt (configurable Hebesatz), ESt, Soli, KiSt incl. §35 EStG credit, plus monthly Qonto reserve transfers (1 Python tool, German-language docs)
 
-**Total Tools:** 5 Python automation tools, 6 knowledge bases, 7 templates
+3. **gold-daytrading-dashboard/** - Decision support for XAUUSD intraday trading: fixed screenshot analysis protocol, deterministic position sizing and R-multiple math, rule-based setup scoring with hard vetoes, trade journal with expectancy verdict (3 Python tools, private use only, not investment advice)
+
+**Total Tools:** 8 Python automation tools, 10 knowledge bases, 10 templates
 
 ## Python Automation Tools
 
@@ -120,3 +122,60 @@ python3 steuerrechner-selbststaendigkeit/scripts/steuerrechner.py --umsatz 12500
 **Last Updated:** August 2026
 **Skills Deployed:** 2/2 finance skills production-ready
 **Total Tools:** 5 Python automation tools
+
+### 6. Position Sizer (`gold-daytrading-dashboard/scripts/position_sizer.py`)
+
+**Purpose:** Compute XAUUSD position size, risk in account currency, and the R-multiple ladder
+
+**Features:**
+- Lot sizing from account balance, risk percent, entry and structural stop
+- EUR account handling via USD conversion rate
+- Take-profit ladder at 1R, 1.5R, 2R, 3R with profit in both currencies
+- Reward-to-risk scoring of a concrete target against a 1.5 floor
+- Warnings for stops inside spread noise, excessive risk percent, lot-rounding drift
+
+**Usage:**
+```bash
+python3 gold-daytrading-dashboard/scripts/position_sizer.py --balance 25000 --risk-pct 0.5 --entry 2412.50 --stop 2405 --target 2430 --usd-rate 0.92
+python3 gold-daytrading-dashboard/scripts/position_sizer.py --balance 25000 --entry 2412.50 --stop 2405 --json
+```
+
+### 7. Setup Scorer (`gold-daytrading-dashboard/scripts/setup_scorer.py`)
+
+**Purpose:** Score a trade setup against weighted confluence criteria before entry
+
+**Features:**
+- Eight weighted criteria (HTF trend, structure break, key level, pullback, momentum, session, volatility, plan match)
+- Hard vetoes that override the score: news window, daily loss limit, R:R below 1.5, trade count
+- Verdict bands: TAKE, TAKE REDUCED, WATCH, NO TRADE
+- Unanswered criteria score as zero and are flagged explicitly
+- Interactive mode for use away from the terminal
+
+**Usage:**
+```bash
+python3 gold-daytrading-dashboard/scripts/setup_scorer.py --htf-trend aligned --structure-break yes --at-key-level yes --pullback yes --session overlap --rr 2.3
+python3 gold-daytrading-dashboard/scripts/setup_scorer.py --interactive
+```
+
+### 8. Trade Journal (`gold-daytrading-dashboard/scripts/trade_journal.py`)
+
+**Purpose:** Log closed trades and measure realised expectancy in R
+
+**Features:**
+- R-multiple computed from entry, stop and actual exit
+- Expectancy gross and net of assumed transaction cost
+- Break-even hit rate implied by realised win/loss sizes
+- Max drawdown in R, longest losing streak, profit factor
+- Breakdown by setup, session, direction or plan adherence
+- Blunt verdict after 30 trades, including NEGATIVE EXPECTANCY
+
+**Usage:**
+```bash
+python3 gold-daytrading-dashboard/scripts/trade_journal.py add --entry 2412.50 --stop 2405 --exit 2427.50 --setup breakout --session overlap
+python3 gold-daytrading-dashboard/scripts/trade_journal.py stats --by setup
+```
+
+**Scope note:** The gold-daytrading-dashboard skill is built for private use.
+It has no live market data, no verified predictive edge, and is not investment
+advice. Screenshot analysis is latency-bound and explicitly labelled as such
+throughout the package.
