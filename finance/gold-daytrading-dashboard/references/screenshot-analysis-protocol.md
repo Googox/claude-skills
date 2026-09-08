@@ -126,3 +126,35 @@ DISCLOSURE: <closing statement, verbatim>
 - Treat a screenshot as current without a timestamp
 - Assign a probability to the trade working
 - Recommend increasing size to recover a loss
+
+## Handover line for the dashboard
+
+The dashboard cannot receive images: the published page has no image channel
+on this account, so screenshots go into the chat. To move a reading from the
+chat into the dashboard's deterministic machinery, every analysis ends with a
+single machine-readable line that the dashboard parses.
+
+Format, order irrelevant, missing fields skipped:
+
+```
+LONG entry=2412.5 stop=2405 t1=2427.5 t2=2435 htf=aligned bos=yes level=yes pull=yes plan=yes mom=mixed sess=overlap vola=yes
+```
+
+| Field | Values |
+|-------|--------|
+| direction | `LONG`, `SHORT`, or `NO TRADE` |
+| entry, stop, t1, t2 | prices in USD |
+| htf | `aligned`, `neutral`, `against` |
+| bos | `yes`, `unclear`, `no` |
+| level | `yes`, `near`, `no` |
+| pull | `yes`, `partial`, `no` |
+| plan | `yes`, `loosely`, `no` |
+| mom | `yes`, `mixed`, `no` |
+| sess | `overlap`, `london`, `asia`, `offhours` |
+| vola | `yes`, `tight`, `no` |
+
+On `NO TRADE` the prices are deliberately not carried over, so a rejected
+setup cannot be sized by accident. Criteria left out of the line stay
+unanswered in the dashboard and keep scoring zero, which holds the veto in
+place. That is intended: the handover must never make a setup look more
+examined than it is.

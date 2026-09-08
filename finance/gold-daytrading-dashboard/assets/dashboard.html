@@ -85,6 +85,9 @@ h1,h2,h3{margin:0;text-wrap:balance}
 label.f{display:flex;flex-direction:column;gap:5px}
 label.f span{font-family:var(--mono);font-size:10px;letter-spacing:.11em;
   text-transform:uppercase;color:var(--ink-mute)}
+textarea{font-family:var(--mono);font-size:13px;line-height:1.6;background:var(--raised);
+  color:var(--ink);border:1px solid var(--rule);border-radius:2px;padding:9px 10px;width:100%;resize:vertical}
+textarea:focus-visible{outline:2px solid var(--brass);outline-offset:1px}
 input[type=number],input[type=text],select{font-family:var(--mono);
   font-variant-numeric:tabular-nums;font-size:14.5px;background:var(--raised);
   color:var(--ink);border:1px solid var(--rule);border-radius:2px;padding:8px 9px;width:100%}
@@ -189,40 +192,9 @@ input[type=checkbox]{accent-color:var(--brass);width:15px;height:15px}
 .storage{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;
   text-transform:uppercase;color:var(--ink-mute);margin-top:10px}
 
-/* analysis */
-.drop{border:2px dashed var(--rule);border-radius:3px;padding:22px 18px;text-align:center;
-  background:var(--raised);cursor:pointer;transition:border-color .15s,background .15s}
-.drop:hover,.drop.over{border-color:var(--brass);background:var(--brass-soft)}
-.drop .big{font-family:var(--slab);font-size:16px;font-weight:600;margin-bottom:4px}
-.drop .sm{font-size:12.5px;color:var(--ink-mute);line-height:1.5;max-width:60ch;margin:0 auto}
-.thumbs{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
-.thumb{position:relative;border:1px solid var(--rule);border-radius:2px;overflow:hidden;
-  width:132px;background:var(--raised)}
-.thumb img{display:block;width:100%;height:84px;object-fit:cover}
-.thumb .cap{font-family:var(--mono);font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;
-  color:var(--ink-mute);padding:4px 6px;display:flex;justify-content:space-between;gap:6px}
-.thumb button{background:none;border:none;color:var(--crit);cursor:pointer;
-  font-family:var(--mono);font-size:9.5px;padding:0}
+/* handover */
 .arow{display:flex;flex-wrap:wrap;gap:12px;align-items:end;margin-top:14px}
 .arow label.f{min-width:132px}
-.analysis{margin-top:18px;border-top:1px solid var(--rule-soft);padding-top:18px;
-  display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:22px}
-@media (max-width:900px){.analysis{grid-template-columns:1fr}}
-.block{margin-bottom:15px}
-.block:last-child{margin-bottom:0}
-.block h3{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;
-  color:var(--ink-mute);font-weight:500;margin-bottom:6px}
-.block p{margin:0;font-size:13.5px;line-height:1.55;color:var(--ink-mid)}
-.block ul{margin:0;padding-left:17px;font-size:13px;line-height:1.55;color:var(--ink-mid)}
-.block ul li{margin-bottom:3px}
-.block ul.assumed li{color:var(--ink-mute);font-style:italic}
-.params{width:100%;border-collapse:collapse;font-family:var(--mono);
-  font-variant-numeric:tabular-nums;font-size:13.5px}
-.params td{padding:6px 0;border-bottom:1px solid var(--rule-soft);text-align:right}
-.params td:first-child{text-align:left;font-size:10px;letter-spacing:.11em;
-  text-transform:uppercase;color:var(--ink-mute);font-family:var(--mono)}
-.params tr:last-child td{border-bottom:none}
-.spinner{font-family:var(--mono);font-size:12px;color:var(--ink-mute);margin-top:14px}
 .notice{background:var(--watch-soft);border-left:3px solid var(--watch);padding:10px 13px;
   font-size:12.5px;line-height:1.5;color:var(--ink-mid);margin-top:14px}
 @media (max-width:900px){.cols{grid-template-columns:1fr}.masthead h1{font-size:27px}}
@@ -244,24 +216,21 @@ input[type=checkbox]{accent-color:var(--brass);width:15px;height:15px}
 
   <section class="panel" id="apanel">
     <header>
-      <h2>Chart-Analyse</h2>
-      <span class="eyebrow" id="astatus">Wird geprüft</span>
+      <h2>Analyse übernehmen</h2>
+      <span class="eyebrow">aus dem Chat</span>
     </header>
     <div class="body">
-      <div class="drop" id="drop" tabindex="0" role="button" aria-label="Screenshot hinzufügen">
-        <div class="big">Screenshot hierher ziehen, einfügen oder klicken</div>
-        <div class="sm">Am besten zwei Bilder: H1 für den Kontext, M15 für das Setup. Symbol, Zeiteinheit, Uhrzeit und Preisachse müssen lesbar sein. Indikatorwerte ohne sichtbare Parameter werden nicht zitiert.</div>
-      </div>
-      <input type="file" id="fileinput" accept="image/*" multiple hidden>
-      <div class="thumbs" id="thumbs"></div>
+      <p class="hint" style="margin:0 0 14px">Screenshots gehen in den Chat mit Claude, diese Ansicht kann keine Bilder senden. Claude antwortet dort mit einer Übernahmezeile. Die hier einfügen, dann stehen Richtung, Kurse und alle acht Kriterien sofort im Rechner und die harten Vetos prüfen dagegen.</p>
+      <label class="f" style="gap:6px">
+        <span>Übernahmezeile</span>
+        <textarea id="paste" rows="3" spellcheck="false" placeholder="LONG entry=2412.5 stop=2405 t1=2427.5 t2=2435 htf=aligned bos=yes level=yes pull=yes plan=yes mom=mixed sess=overlap vola=yes"></textarea>
+      </label>
       <div class="arow">
-        <label class="f"><span>Screenshot-Zeit</span><input type="text" id="shottime" placeholder="14:32"></label>
-        <label class="f"><span>Zeiteinheiten</span><input type="text" id="shottf" placeholder="H1 + M15"></label>
-        <button class="btn" type="button" id="analyze">Analysieren</button>
-        <button class="btn ghost" type="button" id="clearshots">Bilder verwerfen</button>
+        <button class="btn" type="button" id="applypaste">Übernehmen</button>
+        <button class="btn ghost" type="button" id="showformat">Format anzeigen</button>
+        <button class="btn ghost" type="button" id="resetcrit">Kriterien zurücksetzen</button>
       </div>
-      <div id="aspin"></div>
-      <div id="aout"></div>
+      <div id="pasteout"></div>
     </div>
   </section>
 
@@ -722,114 +691,81 @@ if(window.claude&&typeof window.claude.use==="function"){
   $("#storagestate").textContent="Speicher: nur dieser Browser";
 }
 
-/* ---------- chart analysis via sample ---------- */
-var sampleFn=null, sampleImgOk=false, shots=[], busy=false;
-var PROTOCOL=[
-"Du bist ein disziplinierter Intraday-Analyst fuer Spot-Gold (XAUUSD). Du liest Chart-Screenshots nach einem festen Protokoll.",
-"HARTE REGELN:",
-"1. Trenne strikt zwischen dem, was im Bild lesbar ist (observed), und allem anderen (assumed). Erfinde nichts.",
-"2. Zitiere Indikatorwerte NUR, wenn die Parameter im Bild sichtbar sind. Schaetze niemals RSI, MACD oder aehnliches aus dem Kurvenverlauf.",
-"3. 'none' (kein Trade) ist die Standardantwort und braucht keine Begruendung. Long oder Short brauchen eine. Erfinde keinen Bias, um nuetzlich zu wirken.",
-"4. Der Stop gehoert an die strukturelle Invalidierung, nicht an einen runden Verlustbetrag.",
-"5. Ziele muessen Levels sein, die im Chart existieren. Chance-Risiko zu Ziel 1 unter 1,5 bedeutet bias='none'.",
-"6. Formuliere immer den staerksten Gegenfall. Wenn Dir keiner einfaellt, ist die Analyse unvollstaendig, nicht das Setup stark.",
-"7. Ein Screenshot ist historisch. Benenne die Unsicherheit ueber die Aktualitaet explizit.",
-"8. Antworte auf Deutsch, sachlich, ohne Werbesprache und ohne Wahrscheinlichkeitsangaben in Prozent.",
-"LESEREIHENFOLGE: hoehere Zeiteinheit fuer Richtung und Levels, dann Struktur (Folge der Hochs und Tiefs), dann das Level am Einstieg, dann die Invalidierung, erst danach Ziele.",
-"Antworte AUSSCHLIESSLICH mit einem JSON-Objekt in genau dieser Form, ohne Text davor oder danach:",
-'{"admissible":true|false,"missing":["fehlende Angaben"],"staleness":"Satz zur Aktualitaet","observed":["lesbare Fakten mit Preisen"],"assumed":["jede Annahme"],"structure":{"htf":"...","swings":"...","levels":"...","location":"..."},"bias":"long"|"short"|"none","reason":"Begruendung oder warum kein Trade","entry":Zahl|null,"trigger":"Ausloeser","stop":Zahl|null,"stop_reason":"strukturelle Begruendung","target1":Zahl|null,"target2":Zahl|null,"rr":Zahl|null,"criteria":{"htf":"aligned|neutral|against","bos":"yes|unclear|no","level":"yes|near|no","pull":"yes|partial|no","plan":"yes|loosely|no","mom":"yes|mixed|no","sess":"overlap|london|asia|offhours","vola":"yes|tight|no"},"confidence":"low"|"medium"|"high","confidence_reason":"...","counter_case":"staerkstes Argument dagegen"}'
-].join("\n");
+/* ---------- take an analysis over from the chat ---------- */
+var KEYMAP={htf:"htf",bos:"bos",level:"level",lvl:"level",pull:"pull",plan:"plan",
+  mom:"mom",sess:"sess",session:"sess",vola:"vola",vol:"vola"};
 
-function renderThumbs(){
-  var h=$("#thumbs");h.innerHTML="";
-  shots.forEach(function(sh,i){
-    var d=el("div","thumb");
-    var img=document.createElement("img");img.src=sh.url;img.alt="Screenshot "+(i+1);d.appendChild(img);
-    var cap=el("div","cap");cap.appendChild(el("span",null,"Bild "+(i+1)));
-    var b=el("button",null,"entfernen");b.type="button";
-    b.addEventListener("click",function(){URL.revokeObjectURL(sh.url);shots.splice(i,1);renderThumbs();});
-    cap.appendChild(b);d.appendChild(cap);h.appendChild(d);
-  });
-}
-function addFiles(list){
-  if(!list)return;
-  Array.prototype.forEach.call(list,function(f){
-    if(!f||!/^image\//.test(f.type))return;
-    if(shots.length>=maxShots)return;
-    shots.push({file:f,url:URL.createObjectURL(f)});
-  });
-  renderThumbs();
-}
-var maxShots=2;
-
-function block(title,node){var b=el("div","block");b.appendChild(el("h3",null,title));b.appendChild(node);return b;}
-function ul(items,cls){var u=el("ul",cls||null);(items||[]).forEach(function(x){u.appendChild(el("li",null,String(x)))});return u;}
-function para(t){return el("p",null,t||"—");}
-
-function applyAnalysis(a){
-  var out=$("#aout");out.innerHTML="";
-  if(!a||typeof a!=="object"){out.appendChild(el("div","notice","Die Antwort war nicht auswertbar. Bitte erneut versuchen."));return;}
-  var grid=el("div","analysis"), left=el("div"), right=el("div");
-
-  if(a.admissible===false||(a.missing&&a.missing.length)){
-    var nt=el("div","notice","Fehlende Angaben im Screenshot: "+((a.missing||[]).join(", ")||"unbenannt")+". Die Analyse stuetzt sich insoweit auf Annahmen.");
-    out.appendChild(nt);
+function parseLine(txt){
+  var res={crit:{},nums:{},dir:null,unknown:[],bad:[]};
+  if(!txt||!txt.trim()) return res;
+  var head=txt.match(/\b(long|short|kein\s*trade|no\s*trade|none)\b/i);
+  if(head){
+    var h=head[1].toLowerCase().replace(/\s+/g,"");
+    res.dir = (h==="long"||h==="short") ? h : "none";
   }
-  left.appendChild(block("Aktualität",para(a.staleness)));
-  left.appendChild(block("Beobachtet",ul(a.observed)));
-  left.appendChild(block("Angenommen",ul(a.assumed,"assumed")));
-  var st=a.structure||{};
-  var sd=el("div");
-  [["Höhere Zeiteinheit",st.htf],["Struktur",st.swings],["Levels",st.levels],["Lage",st.location]].forEach(function(pair){
-    if(!pair[1])return;var p=el("p",null,pair[0]+": "+pair[1]);p.style.marginBottom="5px";sd.appendChild(p);
-  });
-  left.appendChild(block("Struktur",sd));
+  var re=/([a-zA-ZäöüÄÖÜ_]+)\s*[=:]\s*("[^"]*"|[^\s,;]+)/g, m;
+  while((m=re.exec(txt))!==null){
+    var k=m[1].toLowerCase(), v=m[2].replace(/^"|"$/g,"").toLowerCase();
+    if(k==="dir"||k==="bias"||k==="richtung"){
+      if(v==="long"||v==="short") res.dir=v; else res.dir="none";
+      continue;
+    }
+    if(k==="entry"||k==="einstieg"){res.nums.entry=parseFloat(v);continue;}
+    if(k==="stop"||k==="sl"){res.nums.stop=parseFloat(v);continue;}
+    if(k==="t1"||k==="target"||k==="target1"||k==="ziel"||k==="ziel1"||k==="tp"||k==="tp1"){res.nums.t1=parseFloat(v);continue;}
+    if(k==="t2"||k==="target2"||k==="ziel2"||k==="tp2"){res.nums.t2=parseFloat(v);continue;}
+    if(k==="rr"||k==="crv"){continue;}
+    var ck=KEYMAP[k];
+    if(!ck){res.unknown.push(m[1]);continue;}
+    var c=null;
+    for(var i=0;i<CRIT.length;i++){if(CRIT[i].k===ck)c=CRIT[i];}
+    if(c&&c.o.some(function(o){return o[0]===v})) res.crit[ck]=v;
+    else res.bad.push(m[1]+"="+m[2]);
+  }
+  return res;
+}
 
-  var names={long:"Long",short:"Short",none:"Kein Trade"};
-  var stamp=el("div","stamp");
-  stamp.setAttribute("data-v", a.bias==="none"?"no":"take");
-  var v=el("div","verdict",names[a.bias]||"Kein Trade");stamp.appendChild(v);
-  stamp.appendChild(el("div","why",a.reason||""));
-  right.appendChild(stamp);
+function applyPaste(){
+  var out=$("#pasteout");out.innerHTML="";
+  var r=parseLine($("#paste").value);
+  var done=[], skipped=[];
 
-  var tbl=el("table","params");
-  var tb=document.createElement("tbody");
-  function row(k,val){var tr=document.createElement("tr");tr.appendChild(el("td",null,k));
-    tr.appendChild(el("td",null,val==null||val===""?"—":String(val)));tb.appendChild(tr);}
-  row("Entry",a.entry!=null?n2(a.entry):null);
-  row("Auslöser",a.trigger);
-  row("Stop",a.stop!=null?n2(a.stop):null);
-  row("Ziel 1",a.target1!=null?n2(a.target1):null);
-  row("Ziel 2",a.target2!=null?n2(a.target2):null);
-  row("Chance-Risiko",a.rr!=null?n2(a.rr):null);
-  row("Konfidenz",a.confidence||null);
-  tbl.appendChild(tb);
-  var pb=el("div","block");pb.appendChild(el("h3",null,"Trade-Parameter"));pb.appendChild(tbl);
-  pb.style.marginTop="15px";right.appendChild(pb);
-  if(a.stop_reason) right.appendChild(block("Warum dieser Stop",para(a.stop_reason)));
-  if(a.confidence_reason) right.appendChild(block("Warum diese Konfidenz",para(a.confidence_reason)));
-  right.appendChild(block("Gegenfall",para(a.counter_case)));
-
-  grid.appendChild(left);grid.appendChild(right);out.appendChild(grid);
-  out.appendChild(el("div","notice","Strukturierte Lesung eines statischen Bildes, keine Prognose und keine Anlageberatung. Sie trägt keinen nachgewiesenen Vorteil. Die Vetos unten prüfen sie gegen Deine Regeln; die Entscheidung bleibt bei Dir."));
-
-  if(a.bias==="long"||a.bias==="short"){
-    state.dir=a.bias;
+  if(r.dir==="long"||r.dir==="short"){
+    state.dir=r.dir;
     Array.prototype.forEach.call(document.querySelectorAll(".dirtoggle button"),function(x){
-      x.setAttribute("aria-pressed",String(x.getAttribute("data-dir")===a.bias))});
-    if(typeof a.entry==="number") $("#entry").value=a.entry;
-    if(typeof a.stop==="number") $("#stop").value=a.stop;
-    if(typeof a.target1==="number") $("#target").value=a.target1;
+      x.setAttribute("aria-pressed",String(x.getAttribute("data-dir")===r.dir))});
+    done.push("Richtung "+(r.dir==="long"?"Long":"Short"));
+  }else if(r.dir==="none"){
+    done.push("Kein Trade laut Analyse, Kurse wurden nicht übernommen");
   }
-  if(a.criteria&&typeof a.criteria==="object"){
-    CRIT.forEach(function(c){
-      var val=a.criteria[c.k];
-      if(val&&c.o.some(function(o){return o[0]===val})) state.answers[c.k]=val;
-    });
-    syncSegments();
+  if(r.dir!=="none"){
+    if(!isNaN(r.nums.entry)){$("#entry").value=r.nums.entry;done.push("Entry "+n2(r.nums.entry));}
+    if(!isNaN(r.nums.stop)){$("#stop").value=r.nums.stop;done.push("Stop "+n2(r.nums.stop));}
+    if(!isNaN(r.nums.t1)){$("#target").value=r.nums.t1;done.push("Ziel "+n2(r.nums.t1));}
+    if(!isNaN(r.nums.t2)) done.push("Ziel 2 "+n2(r.nums.t2)+" notiert, der Rechner nutzt Ziel 1");
+  }
+  var nc=0;
+  for(var k in r.crit){state.answers[k]=r.crit[k];nc++;}
+  if(nc){syncSegments();done.push(nc+" Kriterien gesetzt");}
+
+  if(r.unknown.length) skipped.push("unbekannte Felder: "+r.unknown.join(", "));
+  if(r.bad.length) skipped.push("ungültige Werte: "+r.bad.join(", "));
+
+  if(!done.length&&!skipped.length){
+    out.appendChild(el("div","notice","Nichts erkannt. Prüfe das Format über den Knopf daneben."));
+  }else{
+    var d=el("div","notice",(done.length?"Übernommen: "+done.join(", ")+". ":"")+
+      (skipped.length?"Ignoriert: "+skipped.join("; ")+".":""));
+    if(!skipped.length){d.style.borderLeftColor="var(--good)";d.style.background="var(--good-soft)";}
+    out.appendChild(d);
   }
   render();
+  var un=CRIT.filter(function(c){return !state.answers[c.k]});
+  if(un.length&&nc){
+    out.appendChild(el("div","notice",un.length+" Kriterien sind weiterhin unbeantwortet und zählen als null Punkte. Das Veto bleibt bestehen, bis Du sie beantwortest."));
+  }
 }
+
 function syncSegments(){
   var rows=$("#criteria").children;
   CRIT.forEach(function(c,i){
@@ -840,87 +776,31 @@ function syncSegments(){
   });
 }
 
-function runAnalysis(){
-  if(busy)return;
-  if(!sampleFn||!sampleImgOk){return;}
-  if(!shots.length){$("#aspin").innerHTML="";$("#aspin").appendChild(el("div","notice","Erst einen Screenshot hinzufügen."));return;}
-  busy=true;
-  $("#analyze").disabled=true;
-  $("#aspin").innerHTML="";
-  var sp=el("div","spinner","Analyse läuft. Das dauert typischerweise 10 bis 40 Sekunden.");
-  $("#aspin").appendChild(sp);
-  var now=new Date();
-  var ctx=[
-    "Kontext dieses Aufrufs:",
-    "Aktuelle Uhrzeit des Nutzers: "+now.toTimeString().slice(0,5)+" am "+today()+".",
-    "Angegebene Screenshot-Zeit: "+($("#shottime").value.trim()||"nicht angegeben")+".",
-    "Angegebene Zeiteinheiten: "+($("#shottf").value.trim()||"nicht angegeben")+".",
-    "Anzahl Bilder: "+shots.length+".",
-    "Beurteile die Bilder in dieser Reihenfolge und benenne, welches Bild welche Zeiteinheit zeigt."
-  ].join("\n");
-  sampleFn.json(PROTOCOL+"\n\n"+ctx,{images:shots.map(function(s){return s.file}),modelTier:"complex"})
-   .then(function(a){$("#aspin").innerHTML="";applyAnalysis(a);})
-   .catch(function(e){
-     $("#aspin").innerHTML="";
-     var code=(e&&e.code)||"unknown", msg;
-     if(code==="rate_limited") msg="Zu viele Anfragen. Kurz warten und erneut versuchen.";
-     else if(code==="not_granted") msg="Die Analyse wurde nicht freigegeben.";
-     else if(code==="images_unavailable"||code==="image_rejected") msg="Dieses Bild wurde nicht angenommen. Anderes Format oder kleinere Datei versuchen.";
-     else if(code==="cancelled") msg="Analyse abgebrochen.";
-     else msg="Die Analyse ist fehlgeschlagen ("+code+"). Du kannst den Screenshot stattdessen direkt in den Chat einfügen.";
-     $("#aspin").appendChild(el("div","notice",msg));
-   })
-   .then(function(){busy=false;$("#analyze").disabled=false;});
-}
-
-(function wireDrop(){
-  var d=$("#drop"), fi=$("#fileinput");
-  d.addEventListener("click",function(){fi.click()});
-  d.addEventListener("keydown",function(e){if(e.key==="Enter"||e.key===" "){e.preventDefault();fi.click();}});
-  fi.addEventListener("change",function(){addFiles(fi.files);fi.value="";});
-  ["dragenter","dragover"].forEach(function(t){d.addEventListener(t,function(e){e.preventDefault();d.classList.add("over")})});
-  ["dragleave","drop"].forEach(function(t){d.addEventListener(t,function(e){e.preventDefault();d.classList.remove("over")})});
-  d.addEventListener("drop",function(e){if(e.dataTransfer)addFiles(e.dataTransfer.files)});
-  window.addEventListener("paste",function(e){
-    if(!e.clipboardData)return;
-    var items=e.clipboardData.files;
-    if(items&&items.length){addFiles(items);}
-  });
-  $("#clearshots").addEventListener("click",function(){
-    shots.forEach(function(s){URL.revokeObjectURL(s.url)});shots=[];renderThumbs();
-    $("#aout").innerHTML="";$("#aspin").innerHTML="";
-  });
-  $("#analyze").addEventListener("click",runAnalysis);
-})();
-
-function disableAnalysis(reason){
-  $("#astatus").textContent="Nicht verfügbar";
-  $("#drop").style.display="none";
-  document.querySelector(".arow").style.display="none";
-  $("#aspin").innerHTML="";
-  $("#aspin").appendChild(el("div","notice",reason));
-}
-
-if(window.claude&&typeof window.claude.use==="function"){
-  window.claude.use("sample").then(function(fn){
-    if(!fn){disableAnalysis("Die Bildanalyse ist in dieser Ansicht nicht verfügbar. Füge den Screenshot stattdessen direkt in den Chat mit Claude ein; dort gilt dasselbe Protokoll.");return;}
-    sampleFn=fn;
-    return fn.limits().then(function(lim){
-      if(!lim||!lim.images){
-        disableAnalysis("Diese Ansicht kann keine Bilder senden. Füge den Screenshot direkt in den Chat mit Claude ein; dort gilt dasselbe Protokoll.");
-        return;
-      }
-      sampleImgOk=true;
-      maxShots=Math.max(1,Math.min(2,lim.images.maxCount||1));
-      $("#fileinput").accept=(lim.images.mediaTypes||["image/*"]).join(",");
-      $("#astatus").textContent="bis zu "+maxShots+(maxShots===1?" Bild":" Bilder");
-    });
-  }).catch(function(){
-    disableAnalysis("Die Bildanalyse konnte nicht geladen werden. Füge den Screenshot direkt in den Chat mit Claude ein.");
-  });
-}else{
-  disableAnalysis("Die Bildanalyse läuft nur in der veröffentlichten Ansicht. Füge den Screenshot sonst direkt in den Chat mit Claude ein.");
-}
+$("#applypaste").addEventListener("click",applyPaste);
+$("#resetcrit").addEventListener("click",function(){
+  state.answers={};syncSegments();$("#pasteout").innerHTML="";render();
+});
+$("#showformat").addEventListener("click",function(){
+  var out=$("#pasteout");out.innerHTML="";
+  var box=el("div","notice");
+  var t=el("div");t.style.marginBottom="8px";
+  t.textContent="Erwartetes Format, Reihenfolge egal, fehlende Felder werden übersprungen:";
+  box.appendChild(t);
+  var code=el("div",null,"LONG entry=2412.5 stop=2405 t1=2427.5 t2=2435 htf=aligned bos=yes level=yes pull=yes plan=yes mom=mixed sess=overlap vola=yes");
+  code.style.fontFamily="var(--mono)";code.style.fontSize="11.5px";code.style.lineHeight="1.6";
+  code.style.wordBreak="break-word";code.style.color="var(--ink)";
+  box.appendChild(code);
+  var legend=el("div");legend.style.marginTop="9px";legend.style.fontSize="12px";
+  legend.textContent=CRIT.map(function(c){
+    return c.k+": "+c.o.map(function(o){return o[0]}).join("|");
+  }).join("   ");
+  legend.style.fontFamily="var(--mono)";legend.style.color="var(--ink-mute)";
+  legend.style.lineHeight="1.7";box.appendChild(legend);
+  out.appendChild(box);
+});
+$("#paste").addEventListener("keydown",function(e){
+  if((e.metaKey||e.ctrlKey)&&e.key==="Enter"){e.preventDefault();applyPaste();}
+});
 
 })();
 </script>
