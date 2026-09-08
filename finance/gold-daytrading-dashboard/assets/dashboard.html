@@ -171,9 +171,6 @@ input[type=checkbox]{accent-color:var(--brass);width:15px;height:15px}
 .rpos{color:var(--good)} .rneg{color:var(--crit)}
 .tag{font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;
   padding:2px 6px;border-radius:2px;background:var(--brass-soft);color:var(--brass)}
-.example-note{display:flex;justify-content:space-between;align-items:center;gap:12px;
-  flex-wrap:wrap;background:var(--brass-soft);border-left:3px solid var(--brass);
-  padding:9px 13px;font-size:12.5px;color:var(--ink-mid);margin-bottom:14px}
 
 /* stats */
 .statgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(122px,1fr));gap:15px 18px}
@@ -290,10 +287,6 @@ input[type=checkbox]{accent-color:var(--brass);width:15px;height:15px}
       <span class="eyebrow" id="jcount">0 Trades</span>
     </header>
     <div class="body">
-      <div class="example-note" id="examplenote" hidden>
-        <span><b>Beispieldaten.</b> Diese vier Trades sind erfunden und dienen nur der Ansicht. Der erste eigene Eintrag ersetzt sie.</span>
-        <button class="btn ghost" type="button" id="clearexamples">Beispiele ausblenden</button>
-      </div>
       <div class="jform">
         <label class="f"><span>Datum</span><input type="text" id="jdate" placeholder="2026-09-08"></label>
         <label class="f"><span>Entry</span><input type="number" id="jentry" step="0.10" placeholder="2412.50"></label>
@@ -361,14 +354,7 @@ var CRIT=[
  {k:"vola",w:8,l:"Tagesrange trägt das Ziel",o:[["yes","ja",1],["tight","eng",.3],["no","nein",0]],n:"Ein 3R-Ziel in einer bereits ausgereizten Range ist Rechenfiktion."}
 ];
 
-var EXAMPLES=[
- {id:"x1",date:"2026-09-01",direction:"long",entry:2398.4,stop:2391.2,exit:2413.8,setup:"trend-pullback",session:"overlap",offplan:false,example:true},
- {id:"x2",date:"2026-09-02",direction:"short",entry:2421,stop:2428.5,exit:2428.5,setup:"break-retest",session:"london",offplan:false,example:true},
- {id:"x3",date:"2026-09-03",direction:"long",entry:2405.6,stop:2399.9,exit:2418.2,setup:"level-rejection",session:"overlap",offplan:false,example:true},
- {id:"x4",date:"2026-09-04",direction:"long",entry:2432.1,stop:2426,exit:2426,setup:"unclassified",session:"asia",offplan:true,example:true}
-];
-
-var state={dir:"long",answers:{},news:false,trades:EXAMPLES.slice(),usingExamples:true};
+var state={dir:"long",answers:{},news:false,trades:[]};
 var db=null;
 var $=function(s){return document.querySelector(s)};
 var el=function(t,c,x){var e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e};
@@ -513,7 +499,7 @@ function renderStrip(){
   cell("Ergebnis heute",(d.rToday>=0?"+":"")+n2(d.rToday)+"R","Tageslimit "+DAILY_LIMIT_R+"R",d.rToday<=-DAILY_LIMIT_R?"bad":(d.rToday>0?"ok":""));
   cell("Risiko je Trade",sz.ok?n2(sz.riskEur)+" EUR":"—",sz.ok?n2(sz.pct)+" % vom Konto":"Eingaben unvollständig",sz.ok&&sz.pct>1?"warn":"");
   cell("R:R-Boden",n2(MIN_RR),"darunter kein Trade");
-  cell("Gebuchte Trades",String(state.trades.length),state.usingExamples?"Beispieldaten":"eigene Daten");
+  cell("Gebuchte Trades",String(state.trades.length),"eigene Daten");
 }
 
 function renderJournal(){
@@ -526,14 +512,13 @@ function renderJournal(){
     tr.appendChild(el("td",null,t.setup));
     var pd=el("td");if(t.offplan){var g=el("span","tag","off-plan");pd.appendChild(g);}else{pd.textContent="ja";}tr.appendChild(pd);
     var ad=el("td");
-    if(!t.example){var b=el("button","btn ghost","Löschen");b.type="button";
-      b.style.padding="3px 8px";b.style.fontSize="10px";
-      b.addEventListener("click",function(){removeTrade(t.id)});ad.appendChild(b);}
+    var b=el("button","btn ghost","Löschen");b.type="button";
+    b.style.padding="3px 8px";b.style.fontSize="10px";
+    b.addEventListener("click",function(){removeTrade(t.id)});ad.appendChild(b);
     tr.appendChild(ad);
     tb.appendChild(tr);
   });
   $("#jcount").textContent=state.trades.length+(state.trades.length===1?" Trade":" Trades");
-  $("#examplenote").hidden=!state.usingExamples;
 }
 
 function renderStats(){
@@ -617,11 +602,11 @@ function renderCurve(rs){
 
 /* ---------- persistence ---------- */
 function persistLocal(){
-  try{localStorage.setItem("gold-cockpit-trades",JSON.stringify(state.trades.filter(function(t){return !t.example})));}catch(e){}
+  try{localStorage.setItem("gold-cockpit-trades",JSON.stringify(state.trades));}catch(e){}
 }
 function loadLocal(){
   try{var raw=localStorage.getItem("gold-cockpit-trades");
-    if(raw){var a=JSON.parse(raw);if(a&&a.length){state.trades=a;state.usingExamples=false;}}}catch(e){}
+    if(raw){var a=JSON.parse(raw);if(a&&a.length){state.trades=a;}}}catch(e){}
 }
 function addTrade(){
   var e=+$("#jentry").value, s=+$("#jstop").value, x=+$("#jexit").value;
@@ -629,8 +614,7 @@ function addTrade(){
   var t={id:"t"+Date.now()+Math.random().toString(36).slice(2,7),
     date:$("#jdate").value.trim()||today(),direction:s<e?"long":"short",
     entry:e,stop:s,exit:x,setup:$("#jsetup").value,session:$("#jsession").value,
-    offplan:$("#offplan").checked,example:false};
-  if(state.usingExamples){state.trades=[];state.usingExamples=false;}
+    offplan:$("#offplan").checked};
   state.trades.push(t);
   ["#jentry","#jstop","#jexit"].forEach(function(q){$(q).value=""});
   persistLocal();
@@ -660,9 +644,6 @@ Array.prototype.forEach.call(document.querySelectorAll(".dirtoggle button"),func
 });
 $("#news").addEventListener("change",function(){state.news=$("#news").checked;render()});
 $("#addtrade").addEventListener("click",addTrade);
-$("#clearexamples").addEventListener("click",function(){
-  state.trades=[];state.usingExamples=false;persistLocal();render();
-});
 $("#jdate").placeholder=today();
 
 buildCriteria();
@@ -675,12 +656,12 @@ if(window.claude&&typeof window.claude.use==="function"){
     if(!d){$("#storagestate").textContent="Speicher: nur dieser Browser";return;}
     db=d;
     return d.collection("trades").get().then(function(snap){
-      var rows=snap.docs.map(function(doc){var o=doc.data()||{};o.id=doc.id;o.example=false;return o;})
+      var rows=snap.docs.map(function(doc){var o=doc.data()||{};o.id=doc.id;return o;})
         .filter(function(o){return typeof o.entry==="number"&&typeof o.stop==="number"&&typeof o.exit==="number"});
       if(rows.length){
         rows.sort(function(a,b){return String(a.date).localeCompare(String(b.date))});
-        state.trades=rows;state.usingExamples=false;
-      }else if(!state.usingExamples&&state.trades.length){
+        state.trades=rows;
+      }else if(state.trades.length){
         state.trades.forEach(function(t){d.collection("trades").doc(t.id).set(t).catch(function(){})});
       }
       $("#storagestate").textContent="Speicher: dauerhaft, geräteübergreifend";
