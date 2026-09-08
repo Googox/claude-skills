@@ -608,6 +608,25 @@ function loadLocal(){
   try{var raw=localStorage.getItem("gold-cockpit-trades");
     if(raw){var a=JSON.parse(raw);if(a&&a.length){state.trades=a;}}}catch(e){}
 }
+/* Account settings (balance, risk %, EUR/USD rate) are stable between
+   sessions, so they persist automatically on every change. Trade-specific
+   fields (entry, stop, target, the eight setup criteria) do not: carrying
+   yesterday's half-finished analysis forward would show stale numbers as if
+   they were live, the same mistake the screenshot protocol exists to avoid. */
+function persistSettings(){
+  try{localStorage.setItem("gold-cockpit-settings",JSON.stringify({
+    balance:$("#balance").value,riskpct:$("#riskpct").value,usdrate:$("#usdrate").value
+  }));}catch(e){}
+}
+function loadSettings(){
+  try{var raw=localStorage.getItem("gold-cockpit-settings");
+    if(!raw)return;
+    var s=JSON.parse(raw);
+    if(s.balance)$("#balance").value=s.balance;
+    if(s.riskpct)$("#riskpct").value=s.riskpct;
+    if(s.usdrate)$("#usdrate").value=s.usdrate;
+  }catch(e){}
+}
 function addTrade(){
   var e=+$("#jentry").value, s=+$("#jstop").value, x=+$("#jexit").value;
   if(!(e>0&&s>0&&x>0&&Math.abs(e-s)>0)){alert("Entry, Stop und Exit müssen gesetzt sein, und Entry darf nicht gleich Stop sein.");return;}
@@ -639,7 +658,10 @@ Array.prototype.forEach.call(document.querySelectorAll(".dirtoggle button"),func
     render();
   });
 });
-["#balance","#riskpct","#usdrate","#entry","#stop","#target"].forEach(function(q){
+["#balance","#riskpct","#usdrate"].forEach(function(q){
+  $(q).addEventListener("input",function(){persistSettings();render();});
+});
+["#entry","#stop","#target"].forEach(function(q){
   $(q).addEventListener("input",render);
 });
 $("#news").addEventListener("change",function(){state.news=$("#news").checked;render()});
@@ -648,6 +670,7 @@ $("#jdate").placeholder=today();
 
 buildCriteria();
 loadLocal();
+loadSettings();
 render();
 
 /* db is optional: the page is fully usable without it */
