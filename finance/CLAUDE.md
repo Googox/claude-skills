@@ -117,12 +117,6 @@ python3 steuerrechner-selbststaendigkeit/scripts/steuerrechner.py --umsatz 12500
 - **Business & Growth:** Revenue operations, sales metrics -> `../business-growth/`
 - **Product Team:** Budget allocation, RICE scoring -> `../product-team/`
 
----
-
-**Last Updated:** August 2026
-**Skills Deployed:** 2/2 finance skills production-ready
-**Total Tools:** 5 Python automation tools
-
 ### 6. Position Sizer (`gold-daytrading-dashboard/scripts/position_sizer.py`)
 
 **Purpose:** Compute XAUUSD position size, risk in account currency, and the R-multiple ladder
@@ -179,3 +173,7 @@ python3 gold-daytrading-dashboard/scripts/trade_journal.py stats --by setup
 It has no live market data, no verified predictive edge, and is not investment
 advice. Screenshot analysis is latency-bound and explicitly labelled as such
 throughout the package.
+
+**Last Updated:** September 2026
+**Skills Deployed:** 3/3 finance skills production-ready
+**Total Tools:** 8 Python automation tools
