@@ -1,0 +1,664 @@
+<title>Gold Trading Cockpit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Zilla+Slab:wght@500;600;700&display=swap">
+<style>
+:root{
+  --ground:#EEECE6; --surface:#F7F6F2; --raised:#FFFFFF;
+  --ink:#1E1C17; --ink-mid:#4A4740; --ink-mute:#6E695E;
+  --rule:#D8D4C9; --rule-soft:#E6E2D8;
+  --brass:#8A6A2A; --brass-soft:#EFE6D0;
+  --good:#2E6F53; --good-soft:#DDEBE3;
+  --crit:#A33A2E; --crit-soft:#F3DFDB;
+  --watch:#3A5F80; --watch-soft:#DCE7F0;
+  --shadow:0 1px 2px rgba(30,28,23,.06),0 8px 24px -14px rgba(30,28,23,.24);
+  --sans:"IBM Plex Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --slab:"Zilla Slab",Georgia,"Times New Roman",serif;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --ground:#161512; --surface:#1E1D19; --raised:#262420;
+    --ink:#EDEAE1; --ink-mid:#BAB5A8; --ink-mute:#948F82;
+    --rule:#34322C; --rule-soft:#2A2823;
+    --brass:#C9A75A; --brass-soft:#332C1C;
+    --good:#6BBF95; --good-soft:#1B2A22;
+    --crit:#E58270; --crit-soft:#301F1B;
+    --watch:#7FAAD1; --watch-soft:#1B242E;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px -14px rgba(0,0,0,.7);
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#161512; --surface:#1E1D19; --raised:#262420;
+  --ink:#EDEAE1; --ink-mid:#BAB5A8; --ink-mute:#948F82;
+  --rule:#34322C; --rule-soft:#2A2823;
+  --brass:#C9A75A; --brass-soft:#332C1C;
+  --good:#6BBF95; --good-soft:#1B2A22;
+  --crit:#E58270; --crit-soft:#301F1B;
+  --watch:#7FAAD1; --watch-soft:#1B242E;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px -14px rgba(0,0,0,.7);
+}
+*{box-sizing:border-box}
+body{background:var(--ground);color:var(--ink);font-family:var(--sans);
+  font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1180px;margin:0 auto;padding:28px 20px 72px;
+  display:flex;flex-direction:column;gap:22px}
+h1,h2,h3{margin:0;text-wrap:balance}
+.eyebrow{font-family:var(--mono);font-size:10.5px;font-weight:500;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--ink-mute)}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+
+/* masthead */
+.masthead{display:flex;flex-wrap:wrap;gap:18px;align-items:flex-end;
+  justify-content:space-between;border-bottom:2px solid var(--ink);padding-bottom:14px}
+.masthead h1{font-family:var(--slab);font-weight:700;font-size:34px;
+  letter-spacing:-.015em;line-height:1.05}
+.masthead .sub{color:var(--ink-mid);font-size:13.5px;max-width:52ch;margin-top:6px}
+.themebtn{font-family:var(--mono);font-size:11px;letter-spacing:.08em;
+  text-transform:uppercase;background:none;border:1px solid var(--rule);
+  color:var(--ink-mid);padding:7px 12px;border-radius:2px;cursor:pointer}
+.themebtn:hover{border-color:var(--brass);color:var(--brass)}
+
+/* day strip */
+.strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(148px,1fr));
+  background:var(--surface);border:1px solid var(--rule);border-radius:3px}
+.strip > div{padding:12px 15px;border-right:1px solid var(--rule-soft)}
+.strip > div:last-child{border-right:none}
+.strip .k{font-family:var(--mono);font-size:10px;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--ink-mute)}
+.strip .v{font-family:var(--mono);font-variant-numeric:tabular-nums;
+  font-size:20px;font-weight:500;margin-top:3px}
+.strip .n{font-size:11.5px;color:var(--ink-mute);margin-top:1px}
+.v.ok{color:var(--good)} .v.bad{color:var(--crit)} .v.warn{color:var(--watch)}
+
+/* panels */
+.cols{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:22px;align-items:start}
+.panel{background:var(--surface);border:1px solid var(--rule);border-radius:3px}
+.panel > header{display:flex;justify-content:space-between;align-items:baseline;
+  gap:12px;padding:13px 18px;border-bottom:1px solid var(--rule)}
+.panel > header h2{font-family:var(--slab);font-size:16.5px;font-weight:600;letter-spacing:-.005em}
+.panel .body{padding:18px}
+.hint{font-size:12.5px;color:var(--ink-mute);line-height:1.45}
+
+/* fields */
+.fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(112px,1fr));gap:12px}
+label.f{display:flex;flex-direction:column;gap:5px}
+label.f span{font-family:var(--mono);font-size:10px;letter-spacing:.11em;
+  text-transform:uppercase;color:var(--ink-mute)}
+input[type=number],input[type=text],select{font-family:var(--mono);
+  font-variant-numeric:tabular-nums;font-size:14.5px;background:var(--raised);
+  color:var(--ink);border:1px solid var(--rule);border-radius:2px;padding:8px 9px;width:100%}
+input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid var(--brass);outline-offset:1px}
+.dirtoggle{display:flex;gap:0;margin-bottom:14px;border:1px solid var(--rule);
+  border-radius:2px;overflow:hidden;width:max-content}
+.dirtoggle button{font-family:var(--mono);font-size:11.5px;letter-spacing:.09em;
+  text-transform:uppercase;padding:7px 18px;background:var(--raised);
+  color:var(--ink-mute);border:none;cursor:pointer;border-right:1px solid var(--rule)}
+.dirtoggle button:last-child{border-right:none}
+.dirtoggle button[aria-pressed=true]{background:var(--ink);color:var(--ground)}
+
+/* readout */
+.readout{margin-top:16px;border-top:1px solid var(--rule-soft);padding-top:14px;
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:14px 18px}
+.ro .k{font-family:var(--mono);font-size:10px;letter-spacing:.11em;
+  text-transform:uppercase;color:var(--ink-mute)}
+.ro .v{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:19px;
+  font-weight:500;margin-top:2px}
+.ro .v small{font-size:12px;font-weight:400;color:var(--ink-mute);margin-left:3px}
+
+/* ladder */
+table{width:100%;border-collapse:collapse;font-family:var(--mono);
+  font-variant-numeric:tabular-nums;font-size:13px}
+th{font-size:10px;letter-spacing:.11em;text-transform:uppercase;color:var(--ink-mute);
+  font-weight:500;text-align:right;padding:0 0 7px;border-bottom:1px solid var(--rule)}
+th:first-child,td:first-child{text-align:left}
+td{text-align:right;padding:6px 0;border-bottom:1px solid var(--rule-soft)}
+tbody tr:last-child td{border-bottom:none}
+.scroller{overflow-x:auto}
+.scroller table{min-width:600px}
+
+/* criteria */
+.crit-row{display:grid;grid-template-columns:1fr auto auto;gap:10px;align-items:center;
+  padding:7px 0;border-bottom:1px solid var(--rule-soft)}
+.crit-row:last-of-type{border-bottom:none}
+.crit-row .lbl{font-size:13px;line-height:1.3}
+.crit-row .lbl b{font-weight:500}
+.seg{display:flex;border:1px solid var(--rule);border-radius:2px;overflow:hidden}
+.seg button{font-family:var(--mono);font-size:10.5px;letter-spacing:.05em;
+  text-transform:uppercase;padding:5px 9px;background:var(--raised);color:var(--ink-mute);
+  border:none;border-right:1px solid var(--rule);cursor:pointer;white-space:nowrap}
+.seg button:last-child{border-right:none}
+.seg button[aria-pressed=true]{background:var(--brass);color:var(--raised)}
+.crit-row .pts{font-family:var(--mono);font-variant-numeric:tabular-nums;
+  font-size:12px;color:var(--ink-mute);min-width:46px;text-align:right}
+.vetoes{display:flex;flex-direction:column;gap:8px;margin-top:14px}
+.veto{display:flex;gap:9px;align-items:flex-start;background:var(--crit-soft);
+  border-left:3px solid var(--crit);padding:9px 12px;font-size:12.5px;line-height:1.4}
+.veto b{color:var(--crit);font-family:var(--mono);font-size:11px;letter-spacing:.06em}
+.toggles{display:flex;flex-wrap:wrap;gap:16px;margin:14px 0 2px;
+  padding-top:13px;border-top:1px solid var(--rule-soft)}
+.toggles label{display:flex;gap:7px;align-items:center;font-size:12.5px;color:var(--ink-mid)}
+input[type=checkbox]{accent-color:var(--brass);width:15px;height:15px}
+
+/* assay stamp */
+.stamp{border:2px solid var(--ink);border-radius:2px;padding:16px 18px;
+  background:var(--raised);display:flex;flex-direction:column;gap:9px}
+.stamp[data-v="take"]{border-color:var(--good);background:var(--good-soft)}
+.stamp[data-v="reduced"]{border-color:var(--good);background:var(--raised)}
+.stamp[data-v="watch"]{border-color:var(--watch);background:var(--watch-soft)}
+.stamp[data-v="no"]{border-color:var(--crit);background:var(--crit-soft)}
+.stamp .verdict{font-family:var(--slab);font-size:27px;font-weight:700;
+  letter-spacing:.02em;line-height:1;text-transform:uppercase}
+.stamp[data-v="take"] .verdict,.stamp[data-v="reduced"] .verdict{color:var(--good)}
+.stamp[data-v="watch"] .verdict{color:var(--watch)}
+.stamp[data-v="no"] .verdict{color:var(--crit)}
+.stamp .why{font-size:13px;color:var(--ink-mid);line-height:1.45}
+.gauge{height:6px;background:var(--rule-soft);border-radius:1px;overflow:hidden}
+.gauge i{display:block;height:100%;background:var(--brass);transition:width .25s ease}
+.scoreline{display:flex;justify-content:space-between;align-items:baseline;
+  font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:12px;color:var(--ink-mute)}
+
+/* journal */
+.jform{display:grid;grid-template-columns:repeat(auto-fit,minmax(96px,1fr));gap:11px;align-items:end}
+.btn{font-family:var(--mono);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;
+  padding:9px 16px;background:var(--ink);color:var(--ground);border:none;border-radius:2px;cursor:pointer}
+.btn:hover{background:var(--brass)}
+.btn.ghost{background:none;color:var(--ink-mute);border:1px solid var(--rule)}
+.btn.ghost:hover{background:none;border-color:var(--crit);color:var(--crit)}
+.rpos{color:var(--good)} .rneg{color:var(--crit)}
+.tag{font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;
+  padding:2px 6px;border-radius:2px;background:var(--brass-soft);color:var(--brass)}
+.example-note{display:flex;justify-content:space-between;align-items:center;gap:12px;
+  flex-wrap:wrap;background:var(--brass-soft);border-left:3px solid var(--brass);
+  padding:9px 13px;font-size:12.5px;color:var(--ink-mid);margin-bottom:14px}
+
+/* stats */
+.statgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(122px,1fr));gap:15px 18px}
+.verdictbar{margin-top:16px;padding:13px 15px;border-left:3px solid var(--ink-mute);
+  background:var(--raised);font-size:13px;line-height:1.5;color:var(--ink-mid)}
+.verdictbar b{display:block;font-family:var(--mono);font-size:11px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--ink);margin-bottom:4px}
+.verdictbar[data-v="pos"]{border-color:var(--good)} .verdictbar[data-v="pos"] b{color:var(--good)}
+.verdictbar[data-v="neg"]{border-color:var(--crit)} .verdictbar[data-v="neg"] b{color:var(--crit)}
+.verdictbar[data-v="marg"]{border-color:var(--watch)} .verdictbar[data-v="marg"] b{color:var(--watch)}
+
+/* footer */
+.disclosure{border-top:1px solid var(--rule);padding-top:16px;font-size:12.5px;
+  color:var(--ink-mute);line-height:1.6;max-width:76ch}
+.disclosure strong{color:var(--ink-mid);font-weight:500}
+.storage{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;
+  text-transform:uppercase;color:var(--ink-mute);margin-top:10px}
+@media (max-width:900px){.cols{grid-template-columns:1fr}.masthead h1{font-size:27px}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<div class="wrap">
+  <header class="masthead">
+    <div>
+      <div class="eyebrow">XAUUSD &middot; Spot Gold &middot; Intraday</div>
+      <h1>Gold Trading Cockpit</h1>
+      <p class="sub">Größe, Regelprüfung und Erwartungswert für jeden Trade. Das Cockpit erzeugt keine Signale, es erzwingt Disziplin und misst das Ergebnis.</p>
+    </div>
+    <button class="themebtn" id="themebtn" type="button">Theme</button>
+  </header>
+
+  <section class="strip" id="strip" aria-label="Tageslimits"></section>
+
+  <div class="cols">
+    <section class="panel">
+      <header>
+        <h2>Positionsgröße</h2>
+        <span class="eyebrow">1 Lot = 100 oz</span>
+      </header>
+      <div class="body">
+        <div class="dirtoggle" role="group" aria-label="Richtung">
+          <button type="button" data-dir="long" aria-pressed="true">Long</button>
+          <button type="button" data-dir="short" aria-pressed="false">Short</button>
+        </div>
+        <div class="fields">
+          <label class="f"><span>Konto EUR</span><input type="number" id="balance" value="25000" step="100" min="1"></label>
+          <label class="f"><span>Risiko %</span><input type="number" id="riskpct" value="0.5" step="0.05" min="0.05"></label>
+          <label class="f"><span>EUR je USD</span><input type="number" id="usdrate" value="0.92" step="0.005" min="0.1"></label>
+          <label class="f"><span>Entry USD</span><input type="number" id="entry" value="2412.50" step="0.10"></label>
+          <label class="f"><span>Stop USD</span><input type="number" id="stop" value="2405.00" step="0.10"></label>
+          <label class="f"><span>Ziel USD</span><input type="number" id="target" value="2430.00" step="0.10"></label>
+        </div>
+        <div class="readout" id="sizeout"></div>
+        <div style="margin-top:18px">
+          <div class="eyebrow" style="margin-bottom:8px">Take-Profit-Leiter</div>
+          <table id="ladder"><thead><tr><th>R</th><th>Kurs USD</th><th>Gewinn USD</th><th>Gewinn EUR</th></tr></thead><tbody></tbody></table>
+        </div>
+        <div id="sizewarn" class="vetoes"></div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <header>
+        <h2>Setup-Prüfung</h2>
+        <span class="eyebrow">8 Kriterien</span>
+      </header>
+      <div class="body">
+        <div class="stamp" id="stamp" data-v="no">
+          <div class="verdict" id="verdict">Kein Trade</div>
+          <div class="scoreline"><span id="scoretxt">0.0 / 100</span><span id="rrtxt">R:R &ndash;</span></div>
+          <div class="gauge"><i id="gauge" style="width:0%"></i></div>
+          <div class="why" id="why">Kriterien beantworten. Unbeantwortet zählt als null Punkte.</div>
+        </div>
+        <div id="criteria" style="margin-top:16px"></div>
+        <div class="toggles">
+          <label><input type="checkbox" id="news"> News in 30 Min</label>
+          <label><input type="checkbox" id="offplan"> Nicht im Plan</label>
+        </div>
+        <div class="vetoes" id="vetoes"></div>
+      </div>
+    </section>
+  </div>
+
+  <section class="panel">
+    <header>
+      <h2>Journal</h2>
+      <span class="eyebrow" id="jcount">0 Trades</span>
+    </header>
+    <div class="body">
+      <div class="example-note" id="examplenote" hidden>
+        <span><b>Beispieldaten.</b> Diese vier Trades sind erfunden und dienen nur der Ansicht. Der erste eigene Eintrag ersetzt sie.</span>
+        <button class="btn ghost" type="button" id="clearexamples">Beispiele ausblenden</button>
+      </div>
+      <div class="jform">
+        <label class="f"><span>Datum</span><input type="text" id="jdate" placeholder="2026-09-08"></label>
+        <label class="f"><span>Entry</span><input type="number" id="jentry" step="0.10" placeholder="2412.50"></label>
+        <label class="f"><span>Stop</span><input type="number" id="jstop" step="0.10" placeholder="2405.00"></label>
+        <label class="f"><span>Exit</span><input type="number" id="jexit" step="0.10" placeholder="2427.50"></label>
+        <label class="f"><span>Setup</span><select id="jsetup">
+          <option value="trend-pullback">Trend-Pullback</option>
+          <option value="level-rejection">Level-Rejection</option>
+          <option value="break-retest">Break &amp; Retest</option>
+          <option value="session-open">Session-Open</option>
+          <option value="unclassified">Unklassifiziert</option>
+        </select></label>
+        <label class="f"><span>Session</span><select id="jsession">
+          <option value="overlap">Overlap</option>
+          <option value="london">London</option>
+          <option value="newyork">New York</option>
+          <option value="asia">Asien</option>
+          <option value="offhours">Randzeit</option>
+        </select></label>
+        <button class="btn" type="button" id="addtrade">Trade buchen</button>
+      </div>
+      <div class="scroller" style="margin-top:18px">
+        <table id="jtable">
+          <thead><tr><th>Datum</th><th>Richtung</th><th>Entry</th><th>Stop</th><th>Exit</th><th>R</th><th>Setup</th><th>Plan</th><th></th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <header>
+      <h2>Erwartungswert</h2>
+      <span class="eyebrow">Einheit R</span>
+    </header>
+    <div class="body">
+      <div class="statgrid" id="stats"></div>
+      <div style="margin-top:20px">
+        <div class="eyebrow" style="margin-bottom:8px">Equity-Kurve in R</div>
+        <div class="scroller"><div id="curve"></div></div>
+      </div>
+      <div class="verdictbar" id="jverdict"><b>Unzureichende Datenbasis</b>Noch keine Trades gebucht. Vor 30 Trades ist jede Schlussfolgerung eine Geschichte, kein Ergebnis.</div>
+    </div>
+  </section>
+
+  <footer class="disclosure">
+    <strong>Offenlegung.</strong> Dieses Cockpit rechnet und protokolliert. Es hat keine Live-Kurse, keinen nachgewiesenen Vorhersagevorteil und ist keine Anlageberatung. Ein Screenshot ist in dem Moment veraltet, in dem er entsteht; Gold bewegt sich im M5 in wenigen Minuten um 5 bis 15 USD. Gebaut für den privaten Eigengebrauch. Entscheidung, Position und Ergebnis liegen bei Dir.
+    <div class="storage" id="storagestate">Speicher wird geprüft</div>
+  </footer>
+</div>
+
+<script>
+(function(){
+"use strict";
+var OZ=100, MIN_RR=1.5, MAX_TRADES=2, DAILY_LIMIT_R=2, COST_R=0.05, MIN_SAMPLE=30;
+
+var CRIT=[
+ {k:"htf",w:20,l:"H1/H4-Trend in Richtung",o:[["aligned","ja",1],["neutral","neutral",.4],["against","gegen",0]],n:"Gegen den übergeordneten Trend braucht es einen schriftlichen Grund, keine hübsche Kerze."},
+ {k:"bos",w:15,l:"Bruch der Struktur in Richtung",o:[["yes","ja",1],["unclear","unklar",.3],["no","nein",0]],n:"Ohne Strukturbruch rätst Du eine Umkehr."},
+ {k:"level",w:15,l:"Entry an markiertem Level",o:[["yes","ja",1],["near","nah",.5],["no","nein",0]],n:"Mitten in der Range gibt es keinen natürlichen Stop."},
+ {k:"pull",w:12,l:"Pullback statt Nachlaufen",o:[["yes","ja",1],["partial","teils",.5],["no","nein",0]],n:"Nachlaufen weitet den Stop und kürzt das R gleichzeitig."},
+ {k:"plan",w:10,l:"Setup steht so im Tagesplan",o:[["yes","ja",1],["loosely","lose",.4],["no","nein",0]],n:"Ein improvisiertes Setup ist später nicht auswertbar."},
+ {k:"mom",w:10,l:"Momentum bestätigt",o:[["yes","ja",1],["mixed","gemischt",.4],["no","nein",0]],n:"Bestätigung ist Tiebreaker, nie der Grund für den Trade."},
+ {k:"sess",w:10,l:"Session",o:[["overlap","overlap",1],["london","london",.8],["asia","asien",.3],["offhours","rand",0]],n:"Gold-Liquidität sitzt in London und im Overlap. Dünne Zeiten liefern Fehlausbrüche."},
+ {k:"vola",w:8,l:"Tagesrange trägt das Ziel",o:[["yes","ja",1],["tight","eng",.3],["no","nein",0]],n:"Ein 3R-Ziel in einer bereits ausgereizten Range ist Rechenfiktion."}
+];
+
+var EXAMPLES=[
+ {id:"x1",date:"2026-09-01",direction:"long",entry:2398.4,stop:2391.2,exit:2413.8,setup:"trend-pullback",session:"overlap",offplan:false,example:true},
+ {id:"x2",date:"2026-09-02",direction:"short",entry:2421,stop:2428.5,exit:2428.5,setup:"break-retest",session:"london",offplan:false,example:true},
+ {id:"x3",date:"2026-09-03",direction:"long",entry:2405.6,stop:2399.9,exit:2418.2,setup:"level-rejection",session:"overlap",offplan:false,example:true},
+ {id:"x4",date:"2026-09-04",direction:"long",entry:2432.1,stop:2426,exit:2426,setup:"unclassified",session:"asia",offplan:true,example:true}
+];
+
+var state={dir:"long",answers:{},news:false,trades:EXAMPLES.slice(),usingExamples:true};
+var db=null;
+var $=function(s){return document.querySelector(s)};
+var el=function(t,c,x){var e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e};
+var n2=function(v){return (Math.round(v*100)/100).toFixed(2)};
+var today=function(){var d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")};
+
+/* ---------- theme ---------- */
+$("#themebtn").addEventListener("click",function(){
+  var r=document.documentElement, cur=r.getAttribute("data-theme");
+  if(!cur){cur=window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";}
+  r.setAttribute("data-theme",cur==="dark"?"light":"dark");
+});
+
+/* ---------- sizing ---------- */
+function sizing(){
+  var bal=+$("#balance").value||0, rp=+$("#riskpct").value||0, fx=+$("#usdrate").value||1;
+  var e=+$("#entry").value||0, s=+$("#stop").value||0, t=+$("#target").value||0;
+  var dist=Math.abs(e-s), warn=[];
+  if(!(bal>0&&rp>0&&fx>0&&e>0&&s>0&&dist>0)) return {ok:false,warn:["Konto, Risiko, Entry und Stop müssen gesetzt und Entry ungleich Stop sein."]};
+  var inferred = s<e ? "long":"short";
+  if(inferred!==state.dir) warn.push("Der Stop liegt auf der falschen Seite für "+(state.dir==="long"?"Long":"Short")+". Ein "+(state.dir==="long"?"Long-Stop muss unter":"Short-Stop muss über")+" dem Entry liegen.");
+  var riskEur=bal*rp/100, riskUsd=riskEur/fx;
+  var lots=Math.floor((riskUsd/(dist*OZ)+1e-9)*100)/100;
+  var actUsd=lots*dist*OZ, actEur=actUsd*fx, actPct=bal>0?actEur/bal*100:0;
+  var sign=state.dir==="long"?1:-1;
+  var rr=null;
+  if(t>0){var rew=sign*(t-e); rr = rew>0 ? rew/dist : 0;}
+  if(lots<=0) warn.push("Positionsgröße rundet auf null. Der Stop ist für dieses Konto und Risiko zu weit.");
+  if(dist<3) warn.push("Stopabstand nur "+n2(dist)+" USD. Spread und Tickrauschen decken diese Spanne regelmäßig ab; der Stop wird eher vom Rauschen als vom Irrtum geholt.");
+  if(rp>2) warn.push("Risiko "+n2(rp)+" Prozent pro Trade. Ab 2 Prozent kostet eine normale Verlustserie von sechs Trades mehr als ein Viertel des Kontos.");
+  if(rr!==null&&rr>0&&rr<MIN_RR) warn.push("Chance-Risiko "+n2(rr)+" liegt unter dem Minimum von 1,5. Bei diesem Verhältnis braucht es eine Trefferquote, die Du noch nicht nachgewiesen hast.");
+  if(t>0&&rr===0) warn.push("Das Ziel liegt auf der falschen Seite des Entrys.");
+  var lad=[1,1.5,2,3].map(function(r){return {r:r,px:e+sign*r*dist,usd:r*actUsd,eur:r*actUsd*fx}});
+  return {ok:true,dist:dist,lots:lots,oz:lots*OZ,riskUsd:actUsd,riskEur:actEur,pct:actPct,rr:rr,ladder:lad,warn:warn};
+}
+
+function renderSizing(){
+  var r=sizing(), out=$("#sizeout"), lad=$("#ladder").querySelector("tbody"), wz=$("#sizewarn");
+  out.innerHTML="";lad.innerHTML="";wz.innerHTML="";
+  function ro(k,v,sub,cls){var d=el("div","ro");d.appendChild(el("div","k",k));
+    var vv=el("div","v"+(cls?" "+cls:""),v);if(sub){var sm=el("small",null,sub);vv.appendChild(sm);}d.appendChild(vv);out.appendChild(d);}
+  if(r.ok){
+    ro("Stopabstand",n2(r.dist),"USD");
+    ro("Position",n2(r.lots),"Lots");
+    ro("Menge",String(Math.round(r.oz)),"oz");
+    ro("Risiko",n2(r.riskEur),"EUR");
+    ro("Risiko ist",n2(r.pct)+" %","vom Konto");
+    ro("Chance-Risiko", r.rr===null?"—":n2(r.rr), r.rr===null?"":"zu Ziel", r.rr===null?null:(r.rr>=MIN_RR?"ok":"bad"));
+    r.ladder.forEach(function(x){
+      var tr=document.createElement("tr");
+      [x.r.toFixed(1)+"R",n2(x.px),n2(x.usd),n2(x.eur)].forEach(function(c){var td=el("td",null,c);tr.appendChild(td)});
+      lad.appendChild(tr);
+    });
+  }
+  r.warn.forEach(function(w){
+    var d=el("div","veto");d.appendChild(el("b",null,"Hinweis"));d.appendChild(el("span",null,w));wz.appendChild(d);
+  });
+  return r;
+}
+
+/* ---------- criteria ---------- */
+function buildCriteria(){
+  var host=$("#criteria");
+  CRIT.forEach(function(c){
+    var row=el("div","crit-row");
+    var lbl=el("div","lbl");lbl.appendChild(el("b",null,c.l));row.appendChild(lbl);
+    var seg=el("div","seg");
+    c.o.forEach(function(o){
+      var b=el("button",null,o[1]);b.type="button";b.setAttribute("aria-pressed","false");
+      b.addEventListener("click",function(){
+        state.answers[c.k]= state.answers[c.k]===o[0] ? undefined : o[0];
+        Array.prototype.forEach.call(seg.children,function(x,i){x.setAttribute("aria-pressed",String(c.o[i][0]===state.answers[c.k]))});
+        render();
+      });
+      seg.appendChild(b);
+    });
+    row.appendChild(seg);
+    row.appendChild(el("div","pts","0/"+c.w));
+    host.appendChild(row);
+  });
+}
+
+function scoring(r){
+  var pts=0, gaps=[];
+  CRIT.forEach(function(c,i){
+    var a=state.answers[c.k], f=0;
+    if(a){for(var j=0;j<c.o.length;j++){if(c.o[j][0]===a)f=c.o[j][2];}}
+    pts+=c.w*f;
+    var cell=$("#criteria").children[i].querySelector(".pts");
+    cell.textContent=(c.w*f).toFixed(0)+"/"+c.w;
+    cell.style.color = f>=1 ? "var(--good)" : (f>0 ? "var(--ink-mute)" : "var(--ink-mute)");
+    if(f<0.5) gaps.push({w:c.w-c.w*f,n:c.n,l:c.l});
+  });
+  var score=Math.round(pts*10)/10;
+  var d=dayState();
+  var v=[];
+  if(state.news) v.push(["News-Fenster","Hochrelevante Veröffentlichung in den nächsten 30 Minuten. Gold springt bei CPI, NFP und FOMC durch Stops hindurch. Dein Stop ist während eines Prints kein Stop."]);
+  if(d.rToday<=-DAILY_LIMIT_R) v.push(["Tagesverlust","Tageslimit von "+DAILY_LIMIT_R+"R erreicht ("+n2(d.rToday)+"R). Jeder weitere Trade heute ist Rache, egal wie er im Chart aussieht."]);
+  if(d.count>=MAX_TRADES) v.push(["Trade-Limit","Heute bereits "+d.count+" von "+MAX_TRADES+" Trades. Frequenz ist der Ort, an dem Intraday-Vorteile sterben."]);
+  if(r.ok&&r.rr!==null&&r.rr<MIN_RR) v.push(["Chance-Risiko","R:R von "+n2(r.rr)+" liegt unter dem Boden von 1,5. Bei 1:1 verliert eine Trefferquote von 50 Prozent nach Kosten Geld."]);
+  var un=CRIT.filter(function(c){return !state.answers[c.k]});
+  if(un.length) v.push(["Unbeantwortet",un.length+" Kriterien ohne Antwort, gewertet als null Punkte. Beantworte sie oder akzeptiere, dass das Setup ungeprüft ist."]);
+  var verdict,why;
+  if(v.length){verdict="no";why="Hartes Veto. Der Score ist irrelevant, solange es steht.";}
+  else if(score>=75){verdict="take";why="Volles geplantes Risiko. Das Setup trägt seine eigene Begründung.";}
+  else if(score>=60){verdict="reduced";why="Halbes Risiko. Die Konfluenz ist ausreichend, nicht stark.";}
+  else if(score>=45){verdict="watch";why="Keine Position. Level markieren und auf das fehlende Stück warten.";}
+  else {verdict="no";why="Kein Setup. Es zu nehmen ist eine Spendenentscheidung.";}
+  if(!v.length&&gaps.length){gaps.sort(function(a,b){return b.w-a.w});why+=" Schwächster Punkt: "+gaps[0].n;}
+  return {score:score,verdict:verdict,why:why,vetoes:v};
+}
+
+function renderScore(r){
+  var s=scoring(r), names={take:"Trade nehmen",reduced:"Reduziert",watch:"Beobachten",no:"Kein Trade"};
+  $("#stamp").setAttribute("data-v",s.verdict);
+  $("#verdict").textContent=names[s.verdict];
+  $("#scoretxt").textContent=s.score.toFixed(1)+" / 100";
+  $("#rrtxt").textContent = (r.ok&&r.rr!==null) ? ("R:R "+n2(r.rr)) : "R:R —";
+  $("#gauge").style.width=s.score+"%";
+  $("#why").textContent=s.why;
+  var vz=$("#vetoes");vz.innerHTML="";
+  s.vetoes.forEach(function(v){
+    var d=el("div","veto");d.appendChild(el("b",null,v[0]));d.appendChild(el("span",null,v[1]));vz.appendChild(d);
+  });
+}
+
+/* ---------- journal ---------- */
+function rOf(t){var risk=Math.abs(t.entry-t.stop); if(!risk) return 0;
+  var move=t.direction==="long"?(t.exit-t.entry):(t.entry-t.exit); return move/risk;}
+
+function dayState(){
+  var d=today(), c=0, r=0;
+  state.trades.forEach(function(t){if(t.date===d){c++;r+=rOf(t);}});
+  return {count:c,rToday:r};
+}
+
+function renderStrip(){
+  var d=dayState(), sz=sizing(), host=$("#strip");host.innerHTML="";
+  function cell(k,v,note,cls){var x=el("div");x.appendChild(el("div","k",k));
+    x.appendChild(el("div","v"+(cls?" "+cls:""),v));x.appendChild(el("div","n",note));host.appendChild(x);}
+  cell("Trades heute",d.count+" / "+MAX_TRADES,d.count>=MAX_TRADES?"Limit erreicht":"Kontingent offen",d.count>=MAX_TRADES?"bad":"ok");
+  cell("Ergebnis heute",(d.rToday>=0?"+":"")+n2(d.rToday)+"R","Tageslimit "+DAILY_LIMIT_R+"R",d.rToday<=-DAILY_LIMIT_R?"bad":(d.rToday>0?"ok":""));
+  cell("Risiko je Trade",sz.ok?n2(sz.riskEur)+" EUR":"—",sz.ok?n2(sz.pct)+" % vom Konto":"Eingaben unvollständig",sz.ok&&sz.pct>1?"warn":"");
+  cell("R:R-Boden",n2(MIN_RR),"darunter kein Trade");
+  cell("Gebuchte Trades",String(state.trades.length),state.usingExamples?"Beispieldaten":"eigene Daten");
+}
+
+function renderJournal(){
+  var tb=$("#jtable").querySelector("tbody");tb.innerHTML="";
+  var rows=state.trades.slice().reverse();
+  rows.forEach(function(t){
+    var tr=document.createElement("tr"), r=rOf(t);
+    [t.date,t.direction==="long"?"Long":"Short",n2(t.entry),n2(t.stop),n2(t.exit)].forEach(function(c){tr.appendChild(el("td",null,c))});
+    var rd=el("td",null,(r>=0?"+":"")+n2(r)+"R");rd.className=r>=0?"rpos":"rneg";tr.appendChild(rd);
+    tr.appendChild(el("td",null,t.setup));
+    var pd=el("td");if(t.offplan){var g=el("span","tag","off-plan");pd.appendChild(g);}else{pd.textContent="ja";}tr.appendChild(pd);
+    var ad=el("td");
+    if(!t.example){var b=el("button","btn ghost","Löschen");b.type="button";
+      b.style.padding="3px 8px";b.style.fontSize="10px";
+      b.addEventListener("click",function(){removeTrade(t.id)});ad.appendChild(b);}
+    tr.appendChild(ad);
+    tb.appendChild(tr);
+  });
+  $("#jcount").textContent=state.trades.length+(state.trades.length===1?" Trade":" Trades");
+  $("#examplenote").hidden=!state.usingExamples;
+}
+
+function renderStats(){
+  var rs=state.trades.map(rOf), host=$("#stats");host.innerHTML="";
+  function st(k,v,note,cls){var d=el("div","ro");d.appendChild(el("div","k",k));
+    var vv=el("div","v"+(cls?" "+cls:""),v);d.appendChild(vv);
+    if(note){var s=el("div","n",note);s.style.fontSize="11.5px";s.style.color="var(--ink-mute)";d.appendChild(s);}host.appendChild(d);}
+  if(!rs.length){st("Trades","0","noch nichts gebucht");renderCurve([]);return;}
+  var wins=rs.filter(function(r){return r>0}), losses=rs.filter(function(r){return r<=0});
+  var gw=wins.reduce(function(a,b){return a+b},0), gl=Math.abs(losses.reduce(function(a,b){return a+b},0));
+  var hit=wins.length/rs.length*100;
+  var aw=wins.length?gw/wins.length:0, al=losses.length?gl/losses.length:0;
+  var exp=rs.reduce(function(a,b){return a+b},0)/rs.length, net=exp-COST_R;
+  var be=(aw+al)>0?al/(aw+al)*100:NaN;
+  var eq=0,peak=0,dd=0,streak=0,worst=0;
+  rs.forEach(function(r){eq+=r;peak=Math.max(peak,eq);dd=Math.max(dd,peak-eq);
+    streak=r<=0?streak+1:0;worst=Math.max(worst,streak);});
+  st("Trades",String(rs.length));
+  st("Trefferquote",n2(hit)+" %", isNaN(be)?"":"Break-even bei "+n2(be)+" %");
+  st("Ø Gewinn","+"+n2(aw)+"R",null,"ok");
+  st("Ø Verlust","-"+n2(al)+"R",null,"bad");
+  st("Erwartung netto",(net>=0?"+":"")+n2(net)+"R","je Trade, Kosten "+n2(COST_R)+"R",net>0?"ok":"bad");
+  st("Summe",(eq>=0?"+":"")+n2(eq)+"R",null,eq>=0?"ok":"bad");
+  st("Profitfaktor",gl>0?n2(gw/gl):"—");
+  st("Max. Drawdown",n2(dd)+"R");
+  st("Längste Serie",worst+(worst===1?" Verlust":" Verluste"));
+  renderCurve(rs);
+  var vb=$("#jverdict");vb.innerHTML="";
+  var head,txt,vv;
+  if(rs.length<MIN_SAMPLE){vv="";head="Unzureichende Datenbasis";
+    txt=rs.length+" von "+MIN_SAMPLE+" Trades. Nichts davon ist bislang ein Ergebnis. Weiter protokollieren und das System nicht auf Basis dieser Stichprobe ändern.";}
+  else if(net>0.15){vv="pos";head="Positiver Erwartungswert";
+    txt="Netto "+(net>=0?"+":"")+n2(net)+"R je Trade über "+rs.length+" Trades. Das System zahlt. Das Risiko nicht schneller erhöhen, als die Stichprobe wächst.";}
+  else if(net>0){vv="marg";head="Grenzwertig";
+    txt="Netto "+(net>=0?"+":"")+n2(net)+"R je Trade. Über Wasser, aber in dem Bereich, den eine Pechsträhne oder eine Kostenerhöhung auslöscht. Noch kein Grund, größer zu werden.";}
+  else {vv="neg";head="Negativer Erwartungswert";
+    txt="Netto "+n2(net)+"R je Trade über "+rs.length+" Trades. Nach dieser Evidenz verliert das System Geld. Die ehrlichen Optionen sind aufhören oder eine Variable ändern und über weitere "+MIN_SAMPLE+" Trades neu messen. Unverändert weitermachen ist die teure Option.";}
+  vb.setAttribute("data-v",vv);
+  vb.appendChild(el("b",null,head));vb.appendChild(document.createTextNode(txt));
+}
+
+function renderCurve(rs){
+  var host=$("#curve");host.innerHTML="";
+  var W=680,H=170,PL=44,PR=14,PT=14,PB=26;
+  var pts=[0],c=0;rs.forEach(function(r){c+=r;pts.push(c)});
+  var mx=Math.max.apply(null,pts), mn=Math.min.apply(null,pts);
+  if(mx-mn<1){mx=mx+0.5;mn=mn-0.5;}
+  var pad=(mx-mn)*0.12;mx+=pad;mn-=pad;
+  var x=function(i){return PL+(pts.length<2?0:i/(pts.length-1))*(W-PL-PR)};
+  var y=function(v){return PT+(1-(v-mn)/(mx-mn))*(H-PT-PB)};
+  var ns="http://www.w3.org/2000/svg";
+  var svg=document.createElementNS(ns,"svg");
+  svg.setAttribute("viewBox","0 0 "+W+" "+H);svg.setAttribute("width","100%");
+  svg.setAttribute("height",String(H));svg.setAttribute("role","img");
+  svg.setAttribute("aria-label","Kumulierte R-Multiples über "+rs.length+" Trades");
+  svg.style.minWidth="480px";svg.style.display="block";
+  function mk(t,a){var e=document.createElementNS(ns,t);for(var k in a)e.setAttribute(k,a[k]);return e}
+  var ticks=[mx,(mx+mn)/2,mn];
+  ticks.forEach(function(v){
+    svg.appendChild(mk("line",{x1:PL,x2:W-PR,y1:y(v),y2:y(v),stroke:"var(--rule-soft)","stroke-width":1,fill:"none"}));
+    var tx=mk("text",{x:PL-8,y:y(v)+3.5,"text-anchor":"end",fill:"var(--ink-mute)","font-size":10,
+      "font-family":"IBM Plex Mono, monospace"});
+    tx.textContent=(v>=0?"+":"")+v.toFixed(1)+"R";svg.appendChild(tx);
+  });
+  if(mn<0&&mx>0) svg.appendChild(mk("line",{x1:PL,x2:W-PR,y1:y(0),y2:y(0),stroke:"var(--ink-mute)","stroke-width":1,"stroke-dasharray":"3 3",fill:"none"}));
+  if(pts.length>1){
+    var d=pts.map(function(v,i){return (i?"L":"M")+n2(x(i))+" "+n2(y(v))}).join(" ");
+    var area=d+" L "+n2(x(pts.length-1))+" "+n2(y(Math.max(mn,0)))+" L "+n2(x(0))+" "+n2(y(Math.max(mn,0)))+" Z";
+    var last=pts[pts.length-1], col=last>=0?"var(--good)":"var(--crit)";
+    svg.appendChild(mk("path",{d:area,fill:col,"fill-opacity":".10",stroke:"none"}));
+    svg.appendChild(mk("path",{d:d,fill:"none",stroke:col,"stroke-width":2,"stroke-linejoin":"round","stroke-linecap":"round"}));
+    svg.appendChild(mk("circle",{cx:x(pts.length-1),cy:y(last),r:3.5,fill:col,stroke:"var(--surface)","stroke-width":1.5}));
+    var lt=mk("text",{x:x(pts.length-1)-6,y:y(last)-9,"text-anchor":"end",fill:col,"font-size":11,
+      "font-weight":600,"font-family":"IBM Plex Mono, monospace"});
+    lt.textContent=(last>=0?"+":"")+last.toFixed(2)+"R";svg.appendChild(lt);
+  }
+  var xl=mk("text",{x:PL,y:H-7,fill:"var(--ink-mute)","font-size":10,"font-family":"IBM Plex Mono, monospace"});
+  xl.textContent=rs.length?("Trade 1 bis "+rs.length):"noch keine Trades";svg.appendChild(xl);
+  host.appendChild(svg);
+}
+
+/* ---------- persistence ---------- */
+function persistLocal(){
+  try{localStorage.setItem("gold-cockpit-trades",JSON.stringify(state.trades.filter(function(t){return !t.example})));}catch(e){}
+}
+function loadLocal(){
+  try{var raw=localStorage.getItem("gold-cockpit-trades");
+    if(raw){var a=JSON.parse(raw);if(a&&a.length){state.trades=a;state.usingExamples=false;}}}catch(e){}
+}
+function addTrade(){
+  var e=+$("#jentry").value, s=+$("#jstop").value, x=+$("#jexit").value;
+  if(!(e>0&&s>0&&x>0&&Math.abs(e-s)>0)){alert("Entry, Stop und Exit müssen gesetzt sein, und Entry darf nicht gleich Stop sein.");return;}
+  var t={id:"t"+Date.now()+Math.random().toString(36).slice(2,7),
+    date:$("#jdate").value.trim()||today(),direction:s<e?"long":"short",
+    entry:e,stop:s,exit:x,setup:$("#jsetup").value,session:$("#jsession").value,
+    offplan:$("#offplan").checked,example:false};
+  if(state.usingExamples){state.trades=[];state.usingExamples=false;}
+  state.trades.push(t);
+  ["#jentry","#jstop","#jexit"].forEach(function(q){$(q).value=""});
+  persistLocal();
+  if(db) db.collection("trades").doc(t.id).set(t).catch(function(){});
+  render();
+}
+function removeTrade(id){
+  state.trades=state.trades.filter(function(t){return t.id!==id});
+  persistLocal();
+  if(db) db.collection("trades").doc(id).delete().catch(function(){});
+  render();
+}
+
+/* ---------- wiring ---------- */
+function render(){var r=renderSizing();renderScore(r);renderStrip();renderJournal();renderStats();}
+
+Array.prototype.forEach.call(document.querySelectorAll(".dirtoggle button"),function(b){
+  b.addEventListener("click",function(){
+    state.dir=b.getAttribute("data-dir");
+    Array.prototype.forEach.call(document.querySelectorAll(".dirtoggle button"),function(x){
+      x.setAttribute("aria-pressed",String(x===b))});
+    render();
+  });
+});
+["#balance","#riskpct","#usdrate","#entry","#stop","#target"].forEach(function(q){
+  $(q).addEventListener("input",render);
+});
+$("#news").addEventListener("change",function(){state.news=$("#news").checked;render()});
+$("#addtrade").addEventListener("click",addTrade);
+$("#clearexamples").addEventListener("click",function(){
+  state.trades=[];state.usingExamples=false;persistLocal();render();
+});
+$("#jdate").placeholder=today();
+
+buildCriteria();
+loadLocal();
+render();
+
+/* db is optional: the page is fully usable without it */
+if(window.claude&&typeof window.claude.use==="function"){
+  window.claude.use("db").then(function(d){
+    if(!d){$("#storagestate").textContent="Speicher: nur dieser Browser";return;}
+    db=d;
+    return d.collection("trades").get().then(function(snap){
+      var rows=snap.docs.map(function(doc){var o=doc.data()||{};o.id=doc.id;o.example=false;return o;})
+        .filter(function(o){return typeof o.entry==="number"&&typeof o.stop==="number"&&typeof o.exit==="number"});
+      if(rows.length){
+        rows.sort(function(a,b){return String(a.date).localeCompare(String(b.date))});
+        state.trades=rows;state.usingExamples=false;
+      }else if(!state.usingExamples&&state.trades.length){
+        state.trades.forEach(function(t){d.collection("trades").doc(t.id).set(t).catch(function(){})});
+      }
+      $("#storagestate").textContent="Speicher: dauerhaft, geräteübergreifend";
+      render();
+    });
+  }).catch(function(){$("#storagestate").textContent="Speicher: nur dieser Browser";});
+}else{
+  $("#storagestate").textContent="Speicher: nur dieser Browser";
+}
+})();
+</script>
