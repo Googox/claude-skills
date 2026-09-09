@@ -76,10 +76,20 @@ most often skipped.
 ## Handling an automated pre-session briefing
 
 Aaron runs an unpaid make.com automation that sends a formatted XAUUSD
-briefing before the 09:00 preparation window. It is self-built against
-whatever data source the automation queries, not a vetted provider, so it
-gets the same treatment as any unverified input: useful for context, never
-for a decision.
+briefing. It is self-built against whatever data source the automation
+queries, not a vetted provider, so it gets the same treatment as any
+unverified input: useful for context, never for a decision.
+
+**Two runs a day, not one.** DXY, US10Y and risk sentiment do not hold still
+for seven hours. A single briefing generated in the morning is stale by the
+afternoon window in exactly the way a seven-hour-old chart screenshot would
+be, just for macro instead of price.
+
+- **08:55**, five minutes ahead of the 09:00 preparation window. Covers the
+  London open and the 09:30 decision window.
+- **15:40**, five minutes ahead of the 15:45 decision window, generated
+  after the 15:30 US cash open so DXY and US10Y reflect the actual afternoon
+  state rather than the pre-open one.
 
 **Extract and treat as unverified context:** D1 and H4 trend direction, DXY,
 US10Y, risk sentiment, prior day high and low, key levels, ATR, and the
