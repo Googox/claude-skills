@@ -72,3 +72,29 @@ the same 50 percent produces zero before costs and a loss after them.
 
 Question three is the one that catches revenge trades. It is also the one
 most often skipped.
+
+## Handling an automated pre-session briefing
+
+Aaron runs an unpaid make.com automation that sends a formatted XAUUSD
+briefing before the 09:00 preparation window. It is self-built against
+whatever data source the automation queries, not a vetted provider, so it
+gets the same treatment as any unverified input: useful for context, never
+for a decision.
+
+**Extract and treat as unverified context:** D1 and H4 trend direction, DXY,
+US10Y, risk sentiment, prior day high and low, key levels, ATR, and the
+scheduled news items. Lay this next to the live chart reading; never state
+any of these figures as confirmed, since their source and freshness cannot
+be checked from here.
+
+**Discard entirely, every time:** any block that pairs a directional bias
+with an entry zone, stop-loss, take-profit and a confidence label (the
+briefing formats these as "London Session" / "New York Session" blocks).
+These are ready-made trade signals from an unaudited source, structurally
+identical to the percentage-based buy/sell indicator on Aaron's TradingView
+chart that this project already rejected. They do not enter the analysis,
+do not inform the bias, and are not mentioned in the handover line, even
+when they are part of what Aaron pastes in. If a session's actual decision
+already looks pre-formed before the 09:30 or 15:45 window runs its own
+protocol on the live screenshot, say so plainly: a decision made at 08:55
+is not an analysis made at 09:30, it is a confirmation search.
