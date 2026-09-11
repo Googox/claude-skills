@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "goldapi": {
+      "command": "npx",
+      "args": ["-y", "@goldapi/mcp-server@1.0.0"],
+      "env": {
+        "GOLDAPI_KEY": "${GOLDAPI_KEY}"
+      }
+    }
+  }
+}
