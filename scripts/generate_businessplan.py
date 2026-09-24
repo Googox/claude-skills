@@ -960,6 +960,19 @@ def main():
     size = os.path.getsize(out)
     print(f"✓  Gespeichert: {out}")
     print(f"   Folien: {len(prs.slides)}  |  Größe: {size/1024:.0f} KB")
+
+    # Always also generate the HTML version
+    try:
+        import importlib.util, pathlib
+        html_script = pathlib.Path(__file__).parent / "generate_html_businessplan.py"
+        spec = importlib.util.spec_from_file_location("gen_html", html_script)
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+        html_out = "/home/user/ARENA_Executive_Search_Businessplan_2026.html"
+        mod.generate_html(html_out)
+    except Exception as ex:
+        print(f"⚠  HTML-Generierung übersprungen: {ex}")
+
     return out
 
 if __name__ == "__main__":
