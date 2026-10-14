@@ -57,6 +57,13 @@
 - [ ] Messdienstgebühr genau einmal in der Abrechnung, nicht doppelt
 - [ ] Bei unterjährigem Zählereinbau: Aufteilung nach Gradtagzahlen, nicht nach Tagen
 
+## Leerstand und Mieterwechsel
+
+- [ ] Nutzungszeitraum je Einheit eingetragen (Einzugs- und Auszugsdatum)
+- [ ] Leerstandsanteil wird ausgewiesen und nicht auf die übrigen Mieter verteilt
+- [ ] Bei Leerstand: Vermietungsabsicht belegbar (Inserate, Maklerauftrag)
+- [ ] Bei Mieterwechsel: Zwischenablesung für verbrauchsabhängige Positionen
+
 ## Steuer
 
 - [ ] Bei Vermietung an Angehörige: Quote gegen die ortsübliche Warmmiete geprüft

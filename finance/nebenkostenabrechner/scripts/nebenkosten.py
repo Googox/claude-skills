@@ -91,14 +91,21 @@ class Abrechnung:
         return sum(float(u.get("flaeche", 0)) for u in self.units)
 
     def anteile(self, schluessel):
+        """Nenner ist die volle Basis ueber den vollen Abrechnungszeitraum.
+
+        Steht eine Einheit leer, faellt ihr Anteil damit nicht den uebrigen
+        Mietern zu, sondern bleibt beim Eigentuemer (Leerstandskosten).
+        """
         basis = {"flaeche": lambda u: float(u.get("flaeche", 0)),
                  "einheiten": lambda u: 1.0,
                  "personen": lambda u: float(u.get("personen", 0))}.get(schluessel)
         if not basis:
             return {u["id"]: 0.0 for u in self.units}
-        gew = {u["id"]: basis(u) * self.unit_tage(u) for u in self.units}
-        s = sum(gew.values())
-        return {k: (v / s if s > 0 else 0.0) for k, v in gew.items()}
+        gt = self.gesamttage()
+        nenner = sum(basis(u) * gt for u in self.units)
+        if nenner <= 0:
+            return {u["id"]: 0.0 for u in self.units}
+        return {u["id"]: basis(u) * self.unit_tage(u) / nenner for u in self.units}
 
     # ---------- Oelbestand ----------
     def oel(self):
@@ -162,7 +169,11 @@ class Abrechnung:
             return out
 
         eigen, abweichung = umlage, 0.0
-        if h.get("extern"):
+        if h.get("ohneErfassung") and not h.get("extern"):
+            a_hz = {u["id"]: umlage * fl[u["id"]] for u in self.units}
+            a_ww = {u["id"]: 0.0 for u in self.units}
+            pot_hz, pot_ww = umlage, 0.0
+        elif h.get("extern"):
             a_hz = {u["id"]: float(u.get("extHeiz", 0)) for u in self.units}
             a_ww = {u["id"]: float(u.get("extWW", 0)) for u in self.units}
             pot_hz, pot_ww = sum(a_hz.values()), sum(a_ww.values())
@@ -172,9 +183,16 @@ class Abrechnung:
             a_hz, a_ww = split(pot_hz, "vHeiz"), split(pot_ww, "vWW")
         fg = self.flaeche_gesamt()
         kennwert = float(h.get("co2Menge", 0)) / fg if fg > 0 else 0.0
+        kuerzung = {u["id"]: (a_hz[u["id"]] + a_ww[u["id"]]) * (0.15 if h.get("kuerzung15") else 0.0)
+                    for u in self.units}
+        verteilt = sum(a_hz[u["id"]] + a_ww[u["id"]] for u in self.units)
         return {"brutto": brutto, "co2_vermieter": co2_v, "umlage": umlage,
                 "pot_hz": pot_hz, "pot_ww": pot_ww, "a_hz": a_hz, "a_ww": a_ww,
-                "ges": {u["id"]: a_hz[u["id"]] + a_ww[u["id"]] for u in self.units},
+                "kuerzung": kuerzung, "kuerz_summe": sum(kuerzung.values()),
+                "leer": max(0.0, umlage - verteilt),
+                "ohne_erfassung": bool(h.get("ohneErfassung")),
+                "ges": {u["id"]: a_hz[u["id"]] + a_ww[u["id"]] - kuerzung[u["id"]]
+                        for u in self.units},
                 "kennwert": kennwert, "grund_q": grund_q, "oel": oel,
                 "extern": bool(h.get("extern")), "eigen": eigen, "abweichung": abweichung}
 
@@ -182,7 +200,7 @@ class Abrechnung:
     def rechne(self):
         heiz = self.heizung()
         zeilen, pro_unit = [], {u["id"]: 0.0 for u in self.units}
-        summe_kalt = summe_nicht = 0.0
+        summe_kalt = summe_nicht = summe_leer = 0.0
         for k in self.kosten:
             schl = k.get("schluessel", "flaeche")
             if schl == "direkt":
@@ -199,12 +217,15 @@ class Abrechnung:
             else:
                 q = self.anteile(schl)
                 a = {u["id"]: betrag * q[u["id"]] for u in self.units}
+            verteilt = sum(a.values())
+            leer = max(0.0, betrag - verteilt)
             for u in self.units:
                 pro_unit[u["id"]] += a[u["id"]]
             summe_kalt += betrag
+            summe_leer += leer
             zeilen.append({"nr": k.get("nr", ""), "pos": k.get("pos", ""),
                            "schluessel": schl, "beleg": k.get("beleg", ""),
-                           "betrag": betrag, "anteile": a})
+                           "betrag": betrag, "anteile": a, "leer": leer})
 
         ergebnis = []
         for u in self.units:
@@ -224,6 +245,8 @@ class Abrechnung:
         return {"zeilen": zeilen, "heizung": heiz, "einheiten": ergebnis,
                 "summe_kalt": summe_kalt, "summe_warm": sum(heiz["ges"].values()),
                 "summe_nicht": summe_nicht,
+                "summe_leerstand": summe_leer + heiz["leer"],
+                "summe_kuerzung": heiz["kuerz_summe"],
                 "summe_gesamt": sum(e["gesamt"] for e in ergebnis),
                 "summe_vz": sum(e["vorauszahlung"] for e in ergebnis),
                 "summe_saldo": sum(e["saldo"] for e in ergebnis)}
@@ -243,13 +266,28 @@ class Abrechnung:
             else:
                 p.append(("HINWEIS", "Messdienst rechnet ab. Verteilte Kosten {} EUR stimmen mit der "
                                      "eigenen Kostenseite ueberein.".format(euro(hz["umlage"]))))
+        if r["summe_leerstand"] > 0.005:
+            p.append(("HINWEIS", "Leerstandsanteil {} EUR wird nicht umgelegt und bleibt beim "
+                                 "Eigentuemer.".format(euro(r["summe_leerstand"]))))
+        if r["heizung"]["ohne_erfassung"] and not self.h.get("kuerzung15") and not selbst:
+            p.append(("WARNUNG", "Keine Verbrauchserfassung, Kuerzung nicht angesetzt. Der Mieter darf "
+                                 "nach Paragraf 12 Abs. 1 HeizkostenV 15 Prozent kuerzen, rund {} EUR."
+                      .format(euro(r["heizung"]["umlage"] * 0.15))))
+        if r["summe_kuerzung"] > 0.005:
+            p.append(("HINWEIS", "15-Prozent-Kuerzung angesetzt: {} EUR, vom Eigentuemer getragen."
+                      .format(euro(r["summe_kuerzung"]))))
         z = d(self.h.get("zaehlerSeit"))
         von, bis_z = d(self.o.get("von")), d(self.o.get("bis"))
         if z and bis_z and z > bis_z and not selbst:
-            p.append(("FEHLER", "Zaehler erst seit {} in Betrieb, Zeitraum endet {}. In diesem Zeitraum "
-                                "gab es keine Verbrauchserfassung. Kuerzungsrecht des Mieters nach "
-                                "Paragraf 12 Abs. 1 HeizkostenV: 15 Prozent, rund {} EUR."
-                      .format(z.isoformat(), bis_z.isoformat(), euro(hz["umlage"] * 0.15))))
+            if self.h.get("kuerzung15"):
+                p.append(("HINWEIS", "Zaehler erst seit {} in Betrieb. Fuer diesen Zeitraum gab es keine "
+                                     "Verbrauchserfassung; die 15-Prozent-Kuerzung ist angesetzt."
+                          .format(z.isoformat())))
+            else:
+                p.append(("FEHLER", "Zaehler erst seit {} in Betrieb, Zeitraum endet {}. In diesem Zeitraum "
+                                    "gab es keine Verbrauchserfassung. Kuerzungsrecht des Mieters nach "
+                                    "Paragraf 12 Abs. 1 HeizkostenV: 15 Prozent, rund {} EUR."
+                          .format(z.isoformat(), bis_z.isoformat(), euro(hz["umlage"] * 0.15))))
         if z and von and bis_z and von < z <= bis_z:
             nach = (bis_z - z).days + 1
             ges_t = self.gesamttage()
@@ -344,6 +382,10 @@ def als_text(ab, r):
         o["von"], o["bis"], euro(ab.flaeche_gesamt())))
     w("=" * 78 + "\n\n")
     for e in r["einheiten"]:
+        if e["tage"] <= 0:
+            w("-" * 78 + "\n")
+            w("{}: im Abrechnungszeitraum nicht vermietet, keine Abrechnung.\n\n".format(e["name"]))
+            continue
         w("-" * 78 + "\n")
         w("{}   {}\n".format(e["name"], e["mieter"] or "Mieter/in"))
         w("{} m2   {} Tage Nutzung\n\n".format(euro(e["flaeche"]), e["tage"]))
@@ -358,14 +400,18 @@ def als_text(ab, r):
         h = r["heizung"]
         if h["umlage"] > 0:
             w("{:<40}{:>12}{:>9}{:>14}\n".format(
-                "Heizkosten (HeizkostenV)", euro(h["pot_hz"]), "",
-                euro(h["a_hz"][e["id"]])))
+                "Heizkosten (nach Wohnflaeche)" if h["ohne_erfassung"] else "Heizkosten (HeizkostenV)",
+                euro(h["pot_hz"]), "", euro(h["a_hz"][e["id"]])))
             if h["pot_ww"] > 0:
                 w("{:<40}{:>12}{:>9}{:>14}\n".format(
                     "Warmwasserkosten", euro(h["pot_ww"]), "", euro(h["a_ww"][e["id"]])))
             if h["co2_vermieter"] > 0:
                 w("{:<40}{:>12}{:>9}{:>14}\n".format(
                     "abzgl. CO2-Anteil Vermieter", "-" + euro(h["co2_vermieter"]), "", "beruecks."))
+            if h["kuerzung"].get(e["id"], 0) > 0.005:
+                w("{:<40}{:>12}{:>8.2f}%{:>14}\n".format(
+                    "Kuerzung Paragraf 12 HeizkostenV", "", 15.0,
+                    "-" + euro(h["kuerzung"][e["id"]])))
         w("-" * 78 + "\n")
         w("{:<62}{:>16}\n".format("Summe umlagefaehig", euro(e["gesamt"])))
         w("{:<62}{:>16}\n".format(
@@ -377,6 +423,8 @@ def als_text(ab, r):
     w("{:<62}{:>16}\n".format("Umlagefaehig gesamt", euro(r["summe_gesamt"])))
     w("{:<62}{:>16}\n".format("Vorauszahlungen gesamt", euro(r["summe_vz"])))
     w("{:<62}{:>16}\n".format("Saldo gesamt", euro(r["summe_saldo"])))
+    w("{:<62}{:>16}\n".format("Leerstandsanteil (Vermieter)", euro(r["summe_leerstand"])))
+    w("{:<62}{:>16}\n".format("Kuerzung Paragraf 12 HeizkostenV (Vermieter)", euro(r["summe_kuerzung"])))
     w("{:<62}{:>16}\n".format("Nicht umlagefaehig (Vermieter)", euro(r["summe_nicht"])))
     p = ab.pruefe(r)
     if p:

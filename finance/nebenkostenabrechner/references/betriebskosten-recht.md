@@ -248,3 +248,35 @@ mietrechtlichen Prüfung und nicht in eine Rechenhilfe.
 **Nachrüstpflicht.** Nicht fernablesbare Erfassungsgeräte im Bestand sind
 nachzurüsten oder zu ersetzen. Wer die Frist nutzt, sollte zugleich den Punkt
 Kauf gegen Miete klären: Mietkosten sind umlagefähig, Anschaffungskosten nicht.
+
+## 13. Leerstand: der Eigentümer trägt seinen Anteil selbst
+
+Steht eine Wohnung ganz oder zeitweise leer, dürfen die auf diese Zeit
+entfallenden Betriebskosten **nicht** auf die übrigen Mieter umgelegt werden.
+Der Eigentümer trägt sie selbst. Das gilt auch, wenn im Haus nur noch eine
+einzige Partei wohnt.
+
+Rechnerisch heißt das: Der Nenner der Verteilung ist die **volle Basis über den
+vollen Abrechnungszeitraum**, nicht die Summe der tatsächlich genutzten
+Zeitanteile.
+
+    Anteil Mieter = (Basis x Nutzungstage) / (Summe aller Basen x Gesamttage)
+
+Die Anteile summieren sich dann auf weniger als hundert Prozent. Die Differenz
+ist der Leerstandsanteil und bleibt beim Eigentümer.
+
+Rechnet man stattdessen durch die Summe der genutzten Zeitanteile, verteilt man
+den Leerstand still auf die verbleibenden Mieter. Beispiel: Zwei Wohnungen mit
+101 und 149 m², die kleinere steht ein ganzes Jahr leer. Falsch gerechnet trägt
+die verbleibende Mietpartei hundert Prozent aller flächenbezogenen Kosten statt
+59,6 Prozent. Bei 5.000 Euro Gesamtkosten sind das über 2.000 Euro zu viel.
+
+**Steuerlich** sind die selbst getragenen Leerstandskosten Werbungskosten bei
+den Einkünften aus Vermietung und Verpachtung, solange eine Vermietungsabsicht
+bestand und belegbar ist (Inserate, Maklerauftrag, Besichtigungsprotokolle).
+Ohne diesen Nachweis kann das Finanzamt den Abzug versagen.
+
+**Beim Mieterwechsel** gilt dasselbe Prinzip zeitanteilig: Vormieter und
+Nachmieter tragen jeweils ihren Zeitanteil, Leerstandstage dazwischen bleiben
+beim Eigentümer. Verbrauchsabhängige Positionen werden dabei über eine
+Zwischenablesung getrennt, nicht über Zeitanteile.

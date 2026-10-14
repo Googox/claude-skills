@@ -82,7 +82,20 @@ Ohne Internet lädt lediglich die Webschrift nicht; die Anwendung rechnet unver�
    warnt das Dashboard vor der Zweiteilung und der Gradtagzahlen-Aufteilung;
    liegt es danach, weist es auf das 15-Prozent-Kürzungsrecht hin.
 
-## Workflow 5 — Ölabrechnung über die Bestandsrechnung
+## Workflow 5 — Leerstand und unterjähriger Mieterwechsel
+
+1. Je Einheit das Einzugs- und gegebenenfalls Auszugsdatum in die Felder
+   „Nutzung von“ und „Nutzung bis“ eintragen. Leer lassen bedeutet: volle Dauer.
+2. Liegt das Einzugsdatum nach dem Ende des Abrechnungszeitraums, zählt die
+   Einheit als nicht vermietet und erhält keine Abrechnung.
+3. Der Leerstandsanteil wird auf der Übersicht ausgewiesen und nicht auf die
+   übrigen Mieter verteilt. Er bleibt beim Eigentümer.
+4. Vermietungsabsicht für die Leerstandszeit dokumentieren, damit die Kosten
+   steuerlich als Werbungskosten anerkannt werden.
+5. Für verbrauchsabhängige Positionen beim Wechsel eine Zwischenablesung
+   veranlassen; eine Zeitanteilung ist dort nur zweite Wahl.
+
+## Workflow 6 — Ölabrechnung über die Bestandsrechnung
 
 1. Tankpeilung zum Ende des Abrechnungszeitraums dokumentieren (Datum, Foto).
 2. Anfangsbestand in Litern und Euro aus der Vorjahresabrechnung übernehmen.
@@ -92,7 +105,7 @@ Ohne Internet lädt lediglich die Webschrift nicht; die Anwendung rechnet unver�
 5. Der errechnete Verbrauchswert ersetzt die Brennstoffkosten. Der Endbestandswert
    wird beim Anlegen der nächsten Jahresakte automatisch vorgetragen.
 
-## Workflow 6 — Angehörigenvermietung absichern
+## Workflow 7 — Angehörigenvermietung absichern
 
 1. Betroffene Einheit im Register „Objekt“ markieren.
 2. Ortsübliche Kaltmiete je Quadratmeter aus dem örtlichen Mietspiegel eintragen
@@ -104,7 +117,7 @@ Ohne Internet lädt lediglich die Webschrift nicht; die Anwendung rechnet unver�
    welchen Beitrag die Abrechnung zur steuerlichen Absicherung leistet.
 5. Prüfung jährlich wiederholen — die ortsübliche Miete steigt, die vereinbarte nicht.
 
-## Workflow 7 — Vorauszahlungen anpassen
+## Workflow 8 — Vorauszahlungen anpassen
 
 1. Nach jeder Abrechnung prüfen, ob die Nachzahlung 25 Prozent der geleisteten
    Vorauszahlung übersteigt.
@@ -113,7 +126,7 @@ Ohne Internet lädt lediglich die Webschrift nicht; die Anwendung rechnet unver�
 3. Anpassung schriftlich und unter Bezug auf die Abrechnung erklären; sie wirkt
    ab dem auf die Erklärung folgenden Monat.
 
-## Workflow 8 — Streitfall Belegeinsicht
+## Workflow 9 — Streitfall Belegeinsicht
 
 1. Der Mieter hat Anspruch auf Einsicht in die Originalbelege.
 2. Beleg-Nummern aus dem Kostenkatalog gegen die abgelegten Rechnungen prüfen.
@@ -131,6 +144,7 @@ Ohne Internet lädt lediglich die Webschrift nicht; die Anwendung rechnet unver�
 - Nicht umlagefähige Kosten sind erfasst, aber nicht verteilt.
 - Die Abrechnung ist innerhalb der Zwölfmonatsfrist zugegangen.
 - Nach jeder Sitzung liegt eine JSON-Sicherung außerhalb des Browserspeichers.
+- Der Leerstandsanteil ist ausgewiesen und bleibt beim Eigentümer.
 
 ## Anti-Patterns
 
@@ -148,3 +162,4 @@ Ohne Internet lädt lediglich die Webschrift nicht; die Anwendung rechnet unver�
 - Sich auf den Browserspeicher als Archiv verlassen, ohne je zu sichern.
 - Die Abrechnung des Messdienstes ungeprüft übernehmen, ohne Summenabgleich.
 - Bei unterjährigem Zählereinbau nach Kalendertagen statt nach Gradtagzahlen teilen.
+- Leerstandskosten auf die verbleibenden Mieter umlegen, statt sie selbst zu tragen.
