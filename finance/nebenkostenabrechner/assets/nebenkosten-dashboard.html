@@ -47,10 +47,11 @@ h1,h2,h3,h4{font-family:var(--disp);font-weight:600;letter-spacing:-.012em;margi
 /* ---------- Kopf ---------- */
 .topbar{position:sticky;top:0;z-index:40;background:var(--surface);border-bottom:1px solid var(--line);
   display:flex;flex-wrap:wrap;gap:14px;align-items:center;padding:12px 22px}
-.brand{display:flex;flex-direction:column;gap:1px;margin-right:auto;min-width:210px}
+.brand{display:flex;flex-direction:column;gap:1px;margin-right:auto;flex:1 1 210px;min-width:0}
 .brand h1{font-size:17px;letter-spacing:-.02em}
 .brand span{font-size:12px;color:var(--ink-3)}
-.topctl{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.topctl{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end;flex:0 1 auto}
+.topctl .btn{flex:none}
 .savestate{font-size:12px;color:var(--ink-3);display:flex;align-items:center;gap:6px;font-family:var(--mono)}
 .dot{width:7px;height:7px;border-radius:50%;background:var(--ink-3);flex:none}
 .dot.ok{background:var(--good)} .dot.busy{background:var(--warn)} .dot.off{background:var(--crit)}
@@ -170,6 +171,17 @@ svg{display:block;max-width:100%;height:auto}
 .doc .meta{font-size:13px;color:var(--ink-3);margin-bottom:18px}
 .doc table{min-width:0}
 .doc+.doc{margin-top:20px}
+.brief{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:30px 34px;
+  box-shadow:var(--shadow);max-width:760px;line-height:1.62}
+.brief+.doc{margin-top:20px}
+.doc+.brief{margin-top:20px}
+.brief .absender{font-size:12px;color:var(--ink-3);border-bottom:1px solid var(--line-2);padding-bottom:8px;margin-bottom:22px}
+.brief .empf{margin-bottom:26px;font-size:14.5px}
+.brief .datum{text-align:right;font-size:13px;color:var(--ink-2);margin-bottom:22px}
+.brief h3{font-size:15px;margin-bottom:14px}
+.brief p{margin:0 0 13px;font-size:14.5px;max-width:68ch}
+.brief .gruss{margin-top:24px}
+.brief .unterschrift{margin-top:40px;font-size:14.5px}
 .sig{margin-top:26px;display:grid;grid-template-columns:1fr 1fr;gap:26px;font-size:12.5px;color:var(--ink-3)}
 .sig div{border-top:1px solid var(--line);padding-top:6px}
 
@@ -193,6 +205,7 @@ svg{display:block;max-width:100%;height:auto}
   main{padding:0;max-width:none}
   .doc{border:none;box-shadow:none;padding:0;page-break-after:always}
   .doc:last-child{page-break-after:auto}
+  .brief{border:none;box-shadow:none;padding:0;page-break-after:always;max-width:none}
   th,td{border-color:#bbb}
 }
 </style>
@@ -255,6 +268,10 @@ svg{display:block;max-width:100%;height:auto}
           <div class="field"><label for="oOrt">PLZ, Ort</label><input type="text" id="oOrt"></div>
           <div class="field"><label for="oVon">Zeitraum von</label><input type="date" id="oVon"></div>
           <div class="field"><label for="oBis">Zeitraum bis</label><input type="date" id="oBis"></div>
+          <div class="field"><label for="oVermieter">Vermieter (Name)</label><input type="text" id="oVermieter" placeholder="Vor- und Nachname"></div>
+          <div class="field"><label for="oVAdresse">Vermieter (Anschrift)</label><input type="text" id="oVAdresse" placeholder="Straße, PLZ Ort"></div>
+          <div class="field"><label for="oIban">IBAN für Zahlung oder Erstattung</label><input type="text" id="oIban" placeholder="DE.."></div>
+          <div class="field"><label for="oZiel">Zahlungsziel in Tagen</label><input type="text" class="qty" id="oZiel"></div>
           <div class="field"><label for="oHeizart">Heizungsart</label>
             <select id="oHeizart"><option>Gas-Zentralheizung</option><option>Öl-Zentralheizung</option><option>Wärmepumpe</option><option>Fernwärme</option><option>Pellets / Holz</option><option>Etagenheizungen (dezentral)</option></select></div>
         </div>
@@ -413,6 +430,8 @@ svg{display:block;max-width:100%;height:auto}
     <div class="rowline noprint" style="justify-content:space-between">
       <div class="note" style="flex:1;min-width:260px">Prüfe vor dem Versand: Abrechnungszeitraum, Vorauszahlungen und Belege. Die Abrechnung muss dem Mieter <strong>innerhalb von 12 Monaten</strong> nach Ende des Zeitraums zugehen.</div>
       <div style="display:flex;gap:8px;align-items:center">
+        <label style="display:flex;gap:7px;align-items:center;font-size:13.5px;cursor:pointer;white-space:nowrap">
+          <input type="checkbox" id="briefAn" style="width:auto"> Anschreiben mitdrucken</label>
         <button class="btn" id="csvBtn">CSV exportieren</button>
         <button class="btn primary" id="printBtn">Abrechnungen drucken</button>
       </div>
@@ -517,7 +536,8 @@ function defaultState(jahr){
     jahr: jahr,
     demo: true,
     objekt:{ name:'Zweifamilienhaus', strasse:'', ort:'',
-      von: jahr+'-01-01', bis: jahr+'-12-31', heizart:'Öl-Zentralheizung', selbst:false },
+      von: jahr+'-01-01', bis: jahr+'-12-31', heizart:'Öl-Zentralheizung', selbst:false,
+      vermieter:'', vAdresse:'', iban:'', ziel:30, brief:true },
     einheiten:[
       {id:'og',name:'Wohnung Obergeschoss',mieter:'',flaeche:101,personen:2,von:'2026-01-01',bis:'',
        kaltmiete:1100,vzNK:120,vzHeiz:110,vHeiz:4200,vWW:38,angehoerig:false,ortsQm:0,extHeiz:0,extWW:0,art:'vorauszahlung'},
@@ -740,6 +760,11 @@ function renderObjekt(){
   el('oVon').value=state.objekt.von||'';
   el('oBis').value=state.objekt.bis||'';
   el('oHeizart').value=state.objekt.heizart||'Gas-Zentralheizung';
+  el('oVermieter').value=state.objekt.vermieter||'';
+  el('oVAdresse').value=state.objekt.vAdresse||'';
+  el('oIban').value=state.objekt.iban||'';
+  el('oZiel').value=num0.format(parseNum(state.objekt.ziel)||30);
+  el('briefAn').checked=state.objekt.brief!==false;
   el('oSelbst').checked=!!state.objekt.selbst;
 }
 function renderUnitTable(){
@@ -1241,6 +1266,85 @@ function renderResults(c){
 }
 
 /* ================= Druckfertige Abrechnung ================= */
+function anrede(name){
+  var n=(name||'').trim();
+  if(/^frau\s+\S/i.test(n))  return 'Sehr geehrte '+esc(n)+',';
+  if(/^herrn?\s+\S/i.test(n)) return 'Sehr geehrter '+esc(n.replace(/^herrn\b/i,'Herrn')) +',';
+  return 'Sehr geehrte Damen und Herren,';
+}
+
+function briefHtml(x, c){
+  var o=state.objekt, u=x.u;
+  var heute=dfmt.format(new Date());
+  var zr=dfmtStr(o.von)+' bis '+dfmtStr(o.bis);
+  var bis=dparse(o.bis);
+  var ziel=Math.max(1, parseNum(o.ziel)||30);
+  var faellig=new Date(Date.now()+ziel*86400000);
+  var nach=x.saldo>0.005, gut=x.saldo<-0.005;
+  var absaetze=[];
+
+  absaetze.push('anbei erhalten Sie die Betriebskostenabrechnung für den Zeitraum '+zr+'.');
+
+  if(unitTage(u)<gesamtTage()){
+    absaetze.push('Ihr Mietverhältnis bestand im Abrechnungszeitraum an '+num0.format(unitTage(u))+' von '+num0.format(gesamtTage())+' Tagen. '+
+      'Alle Positionen sind entsprechend zeitanteilig berechnet. Für die Zeit davor entfallen auf Sie keine Kosten.');
+  }
+  if(c.sumLeer>0.005){
+    absaetze.push('Die Wohnung im übrigen Teil des Hauses war im Abrechnungszeitraum nicht durchgehend vermietet. '+
+      'Die auf diese Zeiten entfallenden Betriebskosten werden nicht auf Sie umgelegt, sondern von mir als Eigentümer getragen. '+
+      'Ihr Anteil bemisst sich ausschließlich nach Ihrer Wohnfläche und Ihrer Mietdauer.');
+  }
+  if(c.heiz.kuerzung && c.heiz.kuerzung[u.id]>0.005){
+    absaetze.push('Im Abrechnungszeitraum war die Wohnung noch nicht mit Geräten zur Verbrauchserfassung ausgestattet. '+
+      'Die Heizkosten konnten daher nicht verbrauchsabhängig, sondern nur nach Wohnfläche verteilt werden. '+
+      'Den Ihnen nach § 12 Abs. 1 HeizkostenV zustehenden Abschlag von 15 Prozent habe ich bereits berücksichtigt; '+
+      'er ist in der Abrechnung als eigene Position ausgewiesen und beträgt '+money(c.heiz.kuerzung[u.id])+'.');
+  }
+  if(dparse(state.heizung.zaehlerSeit)){
+    absaetze.push('Seit dem '+dfmtStr(state.heizung.zaehlerSeit)+' sind Heizkostenverteiler und Warmwasserzähler installiert. '+
+      'Ab dem darauffolgenden Abrechnungszeitraum wird verbrauchsabhängig abgerechnet.');
+  }
+
+  if(x.pauschale){
+    absaetze.push('Für die Betriebskosten ist eine Pauschale vereinbart. Die Abrechnung dient daher Ihrer Information; '+
+      'es ergibt sich weder eine Nachzahlung noch eine Erstattung.');
+  } else if(gut){
+    absaetze.push('Es ergibt sich ein Guthaben zu Ihren Gunsten in Höhe von <strong>'+money(Math.abs(x.saldo))+'</strong>. '+
+      'Den Betrag überweise ich Ihnen innerhalb von '+num0.format(ziel)+' Tagen auf das mir bekannte Konto. '+
+      'Sollte sich Ihre Bankverbindung geändert haben, teilen Sie mir das bitte kurz mit.');
+  } else if(nach){
+    absaetze.push('Es ergibt sich eine Nachzahlung in Höhe von <strong>'+money(x.saldo)+'</strong>. '+
+      'Ich bitte Sie, den Betrag bis zum '+dfmt.format(faellig)+' zu überweisen'+
+      (o.iban?' auf das Konto '+esc(o.iban)+'.':'.'));
+  } else {
+    absaetze.push('Die geleisteten Vorauszahlungen entsprechen den tatsächlichen Kosten. Es ergibt sich weder eine Nachzahlung noch eine Erstattung.');
+  }
+
+  if(!x.pauschale && nach && x.vz>0 && x.saldo/x.vz>0.25 && x.monate>0){
+    absaetze.push('Da die Nachzahlung mehr als ein Viertel Ihrer bisherigen Vorauszahlungen beträgt, passe ich die monatliche '+
+      'Vorauszahlung mit Wirkung ab dem auf diese Abrechnung folgenden Monat auf '+money(x.gesamt/x.monate)+' an (§ 560 Abs. 4 BGB). '+
+      'Damit vermeiden wir künftig größere Nachforderungen.');
+  }
+
+  absaetze.push('Die zugrunde liegenden Belege können Sie nach Terminvereinbarung einsehen. '+
+    'Einwendungen gegen diese Abrechnung teilen Sie mir bitte innerhalb von zwölf Monaten nach Zugang schriftlich mit (§ 556 Abs. 3 Satz 5 BGB). '+
+    'Für Rückfragen stehe ich Ihnen gern zur Verfügung.');
+
+  return '<div class="brief">'+
+    (o.vermieter||o.vAdresse
+      ? '<div class="absender">'+esc(o.vermieter)+(o.vermieter&&o.vAdresse?' &middot; ':'')+esc(o.vAdresse)+'</div>'
+      : '<div class="absender">Absender: Vermietername und Anschrift im Register „Objekt“ eintragen</div>')+
+    '<div class="empf">'+esc(u.mieter||'Name der Mieterin oder des Mieters')+'<br>'+
+      esc(u.name)+(o.strasse?'<br>'+esc(o.strasse):'')+(o.ort?'<br>'+esc(o.ort):'')+'</div>'+
+    '<div class="datum">'+esc(o.ort?o.ort.replace(/^\d{4,5}\s*/,'')+', ':'')+heute+'</div>'+
+    '<h3>Betriebskostenabrechnung '+esc(state.jahr)+'</h3>'+
+    '<p>'+anrede(u.mieter)+'</p>'+
+    absaetze.map(function(a){ return '<p>'+a+'</p>'; }).join('')+
+    '<p class="gruss">Mit freundlichen Grüßen</p>'+
+    '<p class="unterschrift">'+esc(o.vermieter||'')+'</p>'+
+  '</div>';
+}
+
 function renderDocs(c){
   var o=state.objekt, zr=dfmtStr(o.von)+' bis '+dfmtStr(o.bis);
   var druckbar=c.units.filter(function(x){ return unitTage(x.u)>0; });
@@ -1248,8 +1352,10 @@ function renderDocs(c){
     el('docs').innerHTML='<div class="note warn">Keine Einheit war im Abrechnungszeitraum vermietet. Es gibt nichts abzurechnen.</div>';
     return;
   }
+  var mitBrief = state.objekt.brief!==false;
   el('docs').innerHTML=druckbar.map(function(x){
     var u=x.u;
+    var brief = mitBrief ? briefHtml(x, c) : '';
     var zeilen=c.rows.filter(function(r){ return r.betrag>0; }).map(function(r){
       var s=KEYS[r.k.schluessel]?KEYS[r.k.schluessel].label:r.k.schluessel;
       var quote = r.betrag>0 ? r.anteile[u.id]/r.betrag*100 : 0;
@@ -1277,7 +1383,7 @@ function renderDocs(c){
         : '');
     }
     var nach=x.saldo>=0;
-    return '<div class="doc">'+
+    return brief+'<div class="doc">'+
       '<span class="eyebrow">Betriebskostenabrechnung</span>'+
       '<h2>'+esc(u.name)+'</h2>'+
       '<p class="meta">'+esc(u.mieter||'Mieter/in')+' &middot; '+esc(o.name)+(o.strasse?', '+esc(o.strasse):'')+(o.ort?', '+esc(o.ort):'')+'<br>'+
@@ -1519,9 +1625,12 @@ function bindTabs(){
 }
 
 function bindObjekt(){
-  [['oName','name'],['oStrasse','strasse'],['oOrt','ort'],['oVon','von'],['oBis','bis'],['oHeizart','heizart']].forEach(function(p){
+  [['oName','name'],['oStrasse','strasse'],['oOrt','ort'],['oVon','von'],['oBis','bis'],['oHeizart','heizart'],
+   ['oVermieter','vermieter'],['oVAdresse','vAdresse'],['oIban','iban']].forEach(function(p){
     el(p[0]).addEventListener('input',function(){ state.objekt[p[1]]=this.value; touch(); });
   });
+  el('oZiel').addEventListener('input',function(){ state.objekt.ziel=parseNum(this.value); touch(); });
+  el('briefAn').addEventListener('change',function(){ state.objekt.brief=this.checked; touch(); });
   el('oSelbst').addEventListener('change',function(){ state.objekt.selbst=this.checked; touch(); });
 }
 
@@ -1742,6 +1851,8 @@ function switchJahr(j){
 function migrate(s){
   var d=defaultState(s.jahr||new Date().getFullYear()-1);
   s.objekt=Object.assign({},d.objekt,s.objekt||{});
+  if(s.objekt.ziel===undefined||!parseNum(s.objekt.ziel)) s.objekt.ziel=30;
+  if(s.objekt.brief===undefined) s.objekt.brief=true;
   s.heizung=Object.assign({},d.heizung,s.heizung||{});
   s.oel=Object.assign({},d.oel,s.oel||{});
   if(!Array.isArray(s.oel.lieferungen)) s.oel.lieferungen=[];

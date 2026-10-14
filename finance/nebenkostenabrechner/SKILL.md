@@ -41,6 +41,25 @@ Mietrechtsanwalt.
    Fallen die Betriebskosten aus der Gegenleistung, sinkt die Quote um
    typischerweise zehn bis fünfzehn Prozentpunkte.
 
+## Workflow 0b — Anschreiben an den Mieter
+
+1. Im Register „Objekt“ Vermietername, Anschrift, IBAN und Zahlungsziel eintragen.
+2. Im Register „Abrechnung“ den Schalter **Anschreiben mitdrucken** setzen.
+3. Das Anschreiben wird je Mieter aus den tatsächlichen Zahlen erzeugt und erklärt
+   genau die Punkte, die sonst Rückfragen auslösen: zeitanteilige Abrechnung bei
+   unterjährigem Einzug, Leerstand im übrigen Gebäude, eine angesetzte
+   15-Prozent-Kürzung, der Zeitpunkt der Zählerinstallation, Ergebnis mit
+   Zahlungsweg und Frist, Belegeinsicht und Einwendungsfrist.
+4. Eine Anpassung der Vorauszahlung nach § 560 Abs. 4 BGB wird nur dann
+   angekündigt, wenn die Nachzahlung ein Viertel der Vorauszahlungen übersteigt.
+5. Die Anrede wird personalisiert, sobald der Mietername mit „Frau“ oder „Herr“
+   beginnt; sonst bleibt sie förmlich.
+
+**Bei Angehörigenvermietung besonders relevant:** Ein förmliches Anschreiben mit
+vollständiger Abrechnung ist Teil des Fremdvergleichs. Wer gegenüber einem
+Angehörigen so abrechnet wie gegenüber jedem anderen Mieter, liefert damit das
+beste Argument dafür, dass ein steuerlich anzuerkennendes Mietverhältnis vorliegt.
+
 ## Workflow 1 — Jahresabrechnung erstellen
 
 1. `assets/objekt-vorlage.json` kopieren, Stammdaten und Einheiten eintragen
@@ -177,5 +196,7 @@ Ohne Internet lädt lediglich die Webschrift nicht; die Anwendung rechnet unver�
 - Bei vereinbarter Vorauszahlung die Abrechnung unterlassen — der Mieter kann
   dann die gesamten Vorauszahlungen zurückfordern.
 - Die Abrechnung des Messdienstes ungeprüft übernehmen, ohne Summenabgleich.
+- Eine Abrechnung mit Kürzung oder Leerstandsanteil ohne erklärendes Anschreiben
+  verschicken — das erzeugt genau die Rückfrage, die der Brief vermeidet.
 - Bei unterjährigem Zählereinbau nach Kalendertagen statt nach Gradtagzahlen teilen.
 - Leerstandskosten auf die verbleibenden Mieter umlegen, statt sie selbst zu tragen.
