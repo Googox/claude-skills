@@ -167,15 +167,6 @@ flächengerechten Betrag bei unveränderter Gesamtsumme.
 Beides wird nach § 560 Abs. 4 BGB schriftlich erklärt, unter Bezug auf die
 Abrechnung, mit Wirkung ab dem Folgemonat.
 
-## Workflow 8b — Alte Fassung
-
-1. Nach jeder Abrechnung prüfen, ob die Nachzahlung 25 Prozent der geleisteten
-   Vorauszahlung übersteigt.
-2. Ist das der Fall, Vorauszahlung nach § 560 Abs. 4 BGB auf ein Zwölftel der
-   tatsächlichen Jahreskosten anheben. Das Dashboard weist den Wert je Einheit aus.
-3. Anpassung schriftlich und unter Bezug auf die Abrechnung erklären; sie wirkt
-   ab dem auf die Erklärung folgenden Monat.
-
 ## Workflow 9 — Streitfall Belegeinsicht
 
 1. Der Mieter hat Anspruch auf Einsicht in die Originalbelege.
