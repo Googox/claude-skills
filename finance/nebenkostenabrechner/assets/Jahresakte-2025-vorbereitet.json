@@ -1,0 +1,292 @@
+{
+  "format": "nebenkostenabrechner-sicherung",
+  "version": 1,
+  "erstellt": "2026-10-14T09:55:34",
+  "aktuellesJahr": 2025,
+  "jahre": [
+    2025
+  ],
+  "akten": {
+    "2025": {
+      "jahr": 2025,
+      "demo": false,
+      "objekt": {
+        "name": "Zweifamilienhaus",
+        "strasse": "",
+        "ort": "",
+        "von": "2025-01-01",
+        "bis": "2025-12-31",
+        "heizart": "Öl-Zentralheizung",
+        "selbst": false
+      },
+      "einheiten": [
+        {
+          "id": "og",
+          "name": "Wohnung Obergeschoss",
+          "mieter": "",
+          "flaeche": 101,
+          "personen": 1,
+          "von": "2026-01-01",
+          "bis": "",
+          "kaltmiete": 1100,
+          "vzNK": 0,
+          "vzHeiz": 0,
+          "vHeiz": 0,
+          "vWW": 0,
+          "angehoerig": false,
+          "ortsQm": 0,
+          "extHeiz": 0,
+          "extWW": 0,
+          "art": "vorauszahlung"
+        },
+        {
+          "id": "eg",
+          "name": "Wohnung Erdgeschoss",
+          "mieter": "",
+          "flaeche": 149,
+          "personen": 1,
+          "von": "2025-10-01",
+          "bis": "",
+          "kaltmiete": 1100,
+          "vzNK": 0,
+          "vzHeiz": 0,
+          "vHeiz": 0,
+          "vWW": 0,
+          "angehoerig": true,
+          "ortsQm": 0,
+          "extHeiz": 0,
+          "extWW": 0,
+          "art": "vorauszahlung"
+        }
+      ],
+      "kosten": [
+        {
+          "id": "p00",
+          "nr": "1",
+          "pos": "Grundsteuer",
+          "schluessel": "flaeche",
+          "betrag": 0,
+          "beleg": "",
+          "notiz": "",
+          "direkt": {}
+        },
+        {
+          "id": "p01",
+          "nr": "2",
+          "pos": "Wasserversorgung",
+          "schluessel": "direkt",
+          "betrag": 0,
+          "beleg": "",
+          "notiz": "Zählerstände je Wohnung eintragen",
+          "direkt": {}
+        },
+        {
+          "id": "p02",
+          "nr": "3",
+          "pos": "Entwässerung / Niederschlagswasser",
+          "schluessel": "direkt",
+          "betrag": 0,
+          "beleg": "",
+          "notiz": "folgt dem Frischwasserverbrauch",
+          "direkt": {}
+        },
+        {
+          "id": "p03",
+          "nr": "4",
+          "pos": "Heizung (Wärmeversorgung)",
+          "schluessel": "heizung",
+          "betrag": 0,
+          "beleg": "",
+          "notiz": "wird im Heizkostenmodul erfasst",
+          "direkt": {}
+        },
+        {
+          "id": "p04",
+          "nr": "5",
+          "pos": "Warmwasserversorgung",
+          "schluessel": "heizung",
+          "betrag": 0,
+          "beleg": "",
+          "notiz": "wird im Heizkostenmodul erfasst",
+          "direkt": {}
+        },
+        {
+          "id": "p05",
+          "nr": "6",
+          "pos": "Verbundene Heiz- und Warmwasseranlagen",
+          "schluessel": "heizung",
+          "betrag": 0,
+          "beleg": "",
+          "notiz": "wird im Heizkostenmodul erfasst",
+          "direkt": {}
+        },
+        {
+          "id": "p06",
+          "nr": "7",
+          "pos": "Aufzug",
+          "schluessel": "einheiten",
+          "betrag": 0,
+          "beleg": "",
+          "notiz": "nicht vorhanden",
+          "direkt": {}
+        },
+        {
+          "id": "p07",
+          "nr": "8",
+          "pos": "Straßenreinigung und Müllbeseitigung",
+          "schluessel": "flaeche",
+          "betrag": 0,
+          "beleg": "",
+          "notiz": "Schlüssel gegen Mietvertrag prüfen",
+          "direkt": {}
+        },
+        {
+          "id": "p08",
+          "nr": "9",
+          "pos": "Gebäudereinigung und Ungezieferbekämpfung",
+          "schluessel": "flaeche",
+          "betrag": 0,
+          "beleg": "",
+          "notiz": "",
+          "direkt": {}
+        },
+        {
+          "id": "p09",
+          "nr": "10",
+          "pos": "Gartenpflege",
+          "schluessel": "flaeche",
+          "betrag": 0,
+          "beleg": "",
+          "notiz": "",
+          "direkt": {}
+        },
+        {
+          "id": "p10",
+          "nr": "11",
+          "pos": "Beleuchtung (Allgemeinstrom)",
+          "schluessel": "flaeche",
+          "betrag": 0,
+          "beleg": "",
+          "notiz": "",
+          "direkt": {}
+        },
+        {
+          "id": "p11",
+          "nr": "12",
+          "pos": "Schornsteinreinigung",
+          "schluessel": "heizung",
+          "betrag": 0,
+          "beleg": "",
+          "notiz": "in warmen Kosten enthalten",
+          "direkt": {}
+        },
+        {
+          "id": "p12",
+          "nr": "13",
+          "pos": "Sach- und Haftpflichtversicherung",
+          "schluessel": "flaeche",
+          "betrag": 0,
+          "beleg": "",
+          "notiz": "",
+          "direkt": {}
+        },
+        {
+          "id": "p13",
+          "nr": "14",
+          "pos": "Hauswart",
+          "schluessel": "flaeche",
+          "betrag": 0,
+          "beleg": "",
+          "notiz": "nur Betriebsanteil, keine Reparaturen",
+          "direkt": {}
+        },
+        {
+          "id": "p14",
+          "nr": "15",
+          "pos": "Gemeinschaftsantenne / Breitband",
+          "schluessel": "einheiten",
+          "betrag": 0,
+          "beleg": "",
+          "notiz": "Kabel-TV seit 30.06.2024 nicht mehr umlagefähig",
+          "direkt": {}
+        },
+        {
+          "id": "p15",
+          "nr": "16",
+          "pos": "Wascheinrichtungen",
+          "schluessel": "einheiten",
+          "betrag": 0,
+          "beleg": "",
+          "notiz": "",
+          "direkt": {}
+        },
+        {
+          "id": "p16",
+          "nr": "17",
+          "pos": "Sonstige Betriebskosten",
+          "schluessel": "flaeche",
+          "betrag": 0,
+          "beleg": "",
+          "notiz": "nur bei konkreter Benennung im Mietvertrag",
+          "direkt": {}
+        },
+        {
+          "id": "p17",
+          "nr": "—",
+          "pos": "Instandhaltung und Reparaturen",
+          "schluessel": "nicht",
+          "betrag": 0,
+          "beleg": "",
+          "notiz": "§ 1 Abs. 2 BetrKV — Vermietersache",
+          "direkt": {}
+        },
+        {
+          "id": "p18",
+          "nr": "—",
+          "pos": "Verwaltungskosten",
+          "schluessel": "nicht",
+          "betrag": 0,
+          "beleg": "",
+          "notiz": "§ 1 Abs. 2 BetrKV — Vermietersache",
+          "direkt": {}
+        },
+        {
+          "id": "p19",
+          "nr": "—",
+          "pos": "Kontoführung, Zinsen, Rechtsschutz",
+          "schluessel": "nicht",
+          "betrag": 0,
+          "beleg": "",
+          "notiz": "nicht umlagefähig",
+          "direkt": {}
+        }
+      ],
+      "heizung": {
+        "brenn": 0,
+        "strom": 0,
+        "wartung": 0,
+        "mess": 0,
+        "schorn": 0,
+        "tank": 0,
+        "grund": 30,
+        "ww": 18,
+        "co2Kosten": 0,
+        "co2Menge": 0,
+        "co2Proz": 0,
+        "extern": false,
+        "zaehlerSeit": "2026-09-29",
+        "ohneErfassung": true,
+        "kuerzung15": true
+      },
+      "oel": {
+        "aktiv": true,
+        "methode": "schnitt",
+        "anfangL": 0,
+        "anfangEur": 0,
+        "endeL": 0,
+        "faktor": 2.66,
+        "lieferungen": []
+      }
+    }
+  }
+}

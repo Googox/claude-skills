@@ -24,7 +24,9 @@ Mietrechtsanwalt.
 | `scripts/nebenkosten.py` | CLI-Rechner ohne externe Abhängigkeiten. Liest eine JSON-Akte, gibt Abrechnung als Text, JSON oder CSV aus. |
 | `references/betriebskosten-recht.md` | Wissensbasis: 17 Positionen der BetrKV, nicht umlagefähige Kosten, Fristen, HeizkostenV, CO2KostAufG. |
 | `references/umlageschluessel.md` | Auswahl und Begründung des richtigen Umlagemaßstabs je Kostenart. |
-| `assets/objekt-vorlage.json` | Leere Jahresakte zum Ausfüllen. |
+| `assets/objekt-vorlage.json` | Leere Jahresakte zum Ausfüllen (CLI-Format). |
+| `assets/Jahresakte-2025-vorbereitet.json` | Vorbereitete Sicherungsdatei zum Einlesen über „Laden“, Beispiel für eine Jahresakte mit Leerstand, fehlender Verbrauchserfassung und angesetzter Kürzung. |
+| `assets/belege-2025-zusammenstellen.md` | Belegliste als Muster für die Zusammenstellung eines Abrechnungsjahres. |
 | `assets/beleg-checkliste.md` | Checkliste vor dem Versand an den Mieter. |
 
 ## Workflow 0 — Vorab klären: Vorauszahlung oder Pauschale
