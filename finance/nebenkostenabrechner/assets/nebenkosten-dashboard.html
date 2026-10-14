@@ -247,6 +247,7 @@ svg{display:block;max-width:100%;height:auto}
   <!-- ============ ÜBERSICHT ============ -->
   <section id="tab-uebersicht" class="stack">
     <div class="kpis" id="kpiRow"></div>
+    <div id="speicherBox"></div>
     <div id="fristBox"></div>
     <div id="leerBox"></div>
     <div id="pflichtBox"></div>
@@ -729,23 +730,38 @@ var db=null, saving=false, saveTimer=null;
 function setSave(cls,txt){ el('saveDot').className='dot '+cls; el('saveTxt').textContent=txt; }
 function lsKey(j){ return 'nka.'+j; }
 function lsJahre(){ try{ return JSON.parse(localStorage.getItem('nka.jahre')||'[]'); }catch(e){ return []; } }
+var speicherWarnungGezeigt=false, lokalVerfuegbar=true;
+function lokalStatus(){ return lokalVerfuegbar ? ['ok','lokal gespeichert'] : ['off','nicht gespeichert']; }
 function persistLocal(){
   try{
     localStorage.setItem(lsKey(state.jahr), JSON.stringify(state));
     localStorage.setItem('nka.jahre', JSON.stringify(jahre));
     localStorage.setItem('nka.last', String(state.jahr));
-  }catch(e){}
+    lokalVerfuegbar=true;
+    return true;
+  }catch(e){
+    lokalVerfuegbar=false;
+    if(!speicherWarnungGezeigt){
+      speicherWarnungGezeigt=true;
+      var box=el('speicherBox');
+      if(box) box.innerHTML='<div class="note crit"><strong>Dieser Browser speichert hier nichts.</strong> '+
+        'Deine Eingaben gehen beim Schließen oder Neuladen verloren. Das passiert in eingebetteten Ansichten, '+
+        'privaten Fenstern oder wenn Websitedaten blockiert sind. '+
+        'Öffne die Datei direkt im Browser oder nutze das Online-Dashboard — und sichere in jedem Fall über <strong>Sichern</strong>, bevor du aufhörst.</div>';
+    }
+    return false;
+  }
 }
 function queueSave(){
   persistLocal();
-  if(!db) { setSave('ok','lokal gespeichert'); return; }
+  if(!db) { setSave.apply(null, lokalStatus()); return; }
   setSave('busy','speichert…');
   clearTimeout(saveTimer);
   saveTimer=setTimeout(function(){
     db.doc('abrechnungen/'+state.jahr).set(JSON.parse(JSON.stringify(state))).then(function(){
       setSave('ok','gesichert · '+state.jahr);
-    }).catch(function(e){
-      setSave('off', e && e.code==='revoked' ? 'nur lokal' : 'nur lokal');
+    }).catch(function(){
+      setSave('off', lokalVerfuegbar ? 'nur lokal' : 'nicht gespeichert');
     });
   },700);
 }
@@ -1937,10 +1953,15 @@ renderJahrSel();
 bindTabs(); bindObjekt(); bindUnitTable(); bindKostTable(); bindHeiz(); bindOel(); bindAngeh(); bindMisc();
 renderLegal();
 rebuildAll();
-setSave('','lokal');
+(function(){
+  try{ localStorage.setItem('nka.probe','1'); localStorage.removeItem('nka.probe'); lokalVerfuegbar=true; }
+  catch(e){ lokalVerfuegbar=false; }
+  if(!lokalVerfuegbar){ persistLocal(); setSave('off','nicht gespeichert'); }
+  else setSave('','lokal');
+})();
 
 cap('db').then(function(d){
-  if(!d){ setSave('ok','lokal gespeichert'); return; }
+  if(!d){ setSave.apply(null, lokalStatus()); return; }
   db=d;
   setSave('busy','synchronisiert…');
   return db.collection('abrechnungen').get().then(function(snap){
@@ -1966,7 +1987,7 @@ cap('db').then(function(d){
       state=migrate(incoming); rebuildAll(); persistLocal();
     },function(){ setSave('off','nur lokal'); });
   });
-}).catch(function(){ setSave('ok','lokal gespeichert'); });
+}).catch(function(){ setSave.apply(null, lokalStatus()); });
 
 })();
 </script>
