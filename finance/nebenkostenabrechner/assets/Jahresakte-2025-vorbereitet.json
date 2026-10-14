@@ -74,20 +74,20 @@
           "id": "p01",
           "nr": "2",
           "pos": "Wasserversorgung",
-          "schluessel": "direkt",
+          "schluessel": "flaeche",
           "betrag": 0,
           "beleg": "",
-          "notiz": "Zählerstände je Wohnung eintragen",
+          "notiz": "2025 noch keine Wasserzähler — Schlüssel gegen Mietvertrag prüfen",
           "direkt": {}
         },
         {
           "id": "p02",
           "nr": "3",
           "pos": "Entwässerung / Niederschlagswasser",
-          "schluessel": "direkt",
+          "schluessel": "flaeche",
           "betrag": 0,
           "beleg": "",
-          "notiz": "folgt dem Frischwasserverbrauch",
+          "notiz": "folgt dem Frischwasser; 2025 keine Zähler",
           "direkt": {}
         },
         {

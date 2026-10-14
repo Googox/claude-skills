@@ -14,7 +14,7 @@ Werte. Die Aufteilung macht das Dashboard.
 | Position | Beleg | Anmerkung |
 |----------|-------|-----------|
 | Grundsteuer | Grundsteuerbescheid 2025 | Jahresbetrag |
-| Wasser und Abwasser | Jahresrechnung der Kommune oder des Versorgers | siehe Hinweis unten |
+| Wasser und Abwasser | Jahresrechnung der Kommune oder des Versorgers | 2025 ohne Zähler, Verteilung nach Wohnfläche |
 | Müllbeseitigung | Gebührenbescheid 2025 | |
 | Straßenreinigung | Gebührenbescheid oder Rechnung | oft im Müllbescheid enthalten |
 | Gebäude- und Haftpflichtversicherung | Police und Beitragsrechnung 2025 | nur Sach- und Haftpflicht, keine Rechtsschutz |
@@ -26,10 +26,29 @@ Werte. Die Aufteilung macht das Dashboard.
 
 ## Hinweis Wasser
 
-Im Dashboard stehen Wasser und Abwasser auf verbrauchsgenauer Abrechnung, weil
-Zähler vorhanden sind. **Prüfe, ob die Wasserzähler 2025 schon installiert
-waren.** Waren sie es nicht, stelle den Umlageschlüssel für 2025 auf Wohnfläche
-oder Personen um — je nachdem, was der Mietvertrag vorsieht.
+Die Wasserzähler wurden erst im September 2026 installiert. Für 2025 gab es
+keine Verbrauchserfassung, der Umlageschlüssel steht deshalb in der
+vorbereiteten Jahresakte auf **Wohnfläche**. Das ist der gesetzliche Regelfall
+nach § 556a Abs. 1 BGB. Sieht dein Mietvertrag einen Personenschlüssel vor,
+stelle entsprechend um.
+
+**Die Falle dabei:** Steht eine Position auf verbrauchsgenauer Abrechnung, bildet
+sich ihr Gesamtbetrag aus den Einzelwerten je Wohnung. Trägst du keine ein,
+bleibt die Position bei null und die Kosten werden stillschweigend gar nicht
+umgelegt. Das Dashboard warnt inzwischen davor, aber der Reflex gehört
+trainiert: verbrauchsgenau nur dort, wo wirklich Zähler standen.
+
+## Auch 2026 ist betroffen
+
+Die Wasserzähler laufen erst seit September 2026, die Heizkostenverteiler seit
+dem 29.09.2026. Für das Abrechnungsjahr 2026 fehlen damit bei beiden die Werte
+für die ersten drei Quartale.
+
+Empfehlung: **Wasser für 2026 durchgehend nach Wohnfläche abrechnen**, ab 2027
+verbrauchsgenau. Eine Zweiteilung für drei Monate kostet mehr Aufwand und
+Angriffsfläche, als sie an Genauigkeit bringt. Bei den Heizkosten liegt der Fall
+anders, weil dort die Heizsaison genau in den erfassten Zeitraum fällt — die
+Aufteilung dort rechnet der Messdienst nach Gradtagzahlen.
 
 ## Hinweis Heizöl, und das ist der kritische Punkt
 

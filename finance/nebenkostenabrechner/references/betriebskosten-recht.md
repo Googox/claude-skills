@@ -245,6 +245,19 @@ Wirtschaftlich identisch, sobald gekürzt wird; der zweite Weg nimmt den Streit
 vorweg. Ob im Einzelfall ein Ausnahmetatbestand greift, gehört zur
 mietrechtlichen Prüfung und nicht in eine Rechenhilfe.
 
+**Wasserzähler unterjährig.** Bei Wasser ist der Verbrauch über das Jahr
+deutlich gleichmäßiger verteilt als bei Heizung. Trotzdem gilt: Für Zeiträume
+ohne Zähler gibt es keine Verbrauchswerte. Praktikabel und streitarm ist, das
+Jahr der Installation noch vollständig nach Wohnfläche abzurechnen und erst ab
+dem Folgejahr verbrauchsgenau. Eine Zweiteilung für wenige Monate erhöht den
+Aufwand und die Angriffsfläche stärker, als sie an Genauigkeit bringt.
+
+**Stille Falle bei verbrauchsgenauer Abrechnung.** Steht eine Position auf
+direkter Zuordnung, bildet sich der Gesamtbetrag aus den Einzelwerten je
+Wohnung. Fehlen diese, bleibt die Position bei null und die Kosten entfallen
+unbemerkt aus der Umlage. Wer den Schlüssel umstellt, ohne Werte zu erfassen,
+verschenkt die Position vollständig.
+
 **Nachrüstpflicht.** Nicht fernablesbare Erfassungsgeräte im Bestand sind
 nachzurüsten oder zu ersetzen. Wer die Frist nutzt, sollte zugleich den Punkt
 Kauf gegen Miete klären: Mietkosten sind umlagefähig, Anschaffungskosten nicht.

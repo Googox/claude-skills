@@ -250,6 +250,7 @@ svg{display:block;max-width:100%;height:auto}
     <div id="fristBox"></div>
     <div id="leerBox"></div>
     <div id="pflichtBox"></div>
+    <div id="direktBox"></div>
     <div class="charts" id="chartRow"></div>
     <div class="panel">
       <header><h2>Ergebnis je Einheit</h2><p>Umlagefähige Kosten abzüglich geleisteter Vorauszahlungen für den gewählten Abrechnungszeitraum.</p></header>
@@ -1048,6 +1049,7 @@ function refresh(){
   renderFrist();
   renderLeerBox(c);
   renderPflichtBox(c);
+  renderDirektBox(c);
   renderCharts(c);
   renderResults(c);
   renderDocs(c);
@@ -1069,6 +1071,17 @@ function renderPflichtBox(c){
     'der Mieter kann die geleisteten Vorauszahlungen in voller Höhe zurückverlangen. '+
     'Eine Pauschale wäre abrechnungsfrei; dann trage sie oben in der Spalte „Nebenkosten als“ ein. '+
     'Was tatsächlich vereinbart ist, steht im Mietvertrag und ist nicht wählbar.</div>';
+}
+
+function renderDirektBox(c){
+  var offen=c.rows.filter(function(r){ return r.k.schluessel==='direkt' && r.betrag<=0.005; });
+  if(!offen.length){ el('direktBox').innerHTML=''; return; }
+  el('direktBox').innerHTML=
+    '<div class="note crit"><strong>'+offen.length+' Position'+(offen.length>1?'en stehen':' steht')+' auf verbrauchsgenauer Abrechnung, '+
+    (offen.length>1?'haben':'hat')+' aber keinen Betrag je Einheit: '+
+    offen.map(function(r){ return esc(r.k.pos); }).join(', ')+'. '+
+    'Diese Kosten werden derzeit <strong>gar nicht umgelegt</strong> — ohne weitere Warnung, weil der Gesamtbetrag aus den Einzelwerten gebildet wird. '+
+    'Entweder Zählerstände je Wohnung eintragen, oder den Umlageschlüssel auf Wohnfläche oder Personen umstellen, wenn im Zeitraum keine Zähler vorhanden waren.</div>';
 }
 
 function renderLeerBox(c){

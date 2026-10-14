@@ -284,6 +284,11 @@ class Abrechnung:
                                      "gegen tatsaechliche Kosten {} EUR, Differenz {} EUR traegst du."
                           .format(e["name"], euro(e["vorauszahlung"]), euro(e["gesamt"]),
                                   euro(e["deckung"]))))
+        offen = [z for z in r["zeilen"] if z["schluessel"] == "direkt" and z["betrag"] <= 0.005]
+        if offen:
+            p.append(("FEHLER", "Verbrauchsgenaue Position(en) ohne Betrag je Einheit: {}. Diese Kosten "
+                                "werden nicht umgelegt. Zaehlerstaende eintragen oder Umlageschluessel "
+                                "aendern.".format(", ".join(z["pos"] for z in offen))))
         if r["summe_leerstand"] > 0.005:
             p.append(("HINWEIS", "Leerstandsanteil {} EUR wird nicht umgelegt und bleibt beim "
                                  "Eigentuemer.".format(euro(r["summe_leerstand"]))))
