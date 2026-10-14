@@ -280,3 +280,36 @@ Ohne diesen Nachweis kann das Finanzamt den Abzug versagen.
 Nachmieter tragen jeweils ihren Zeitanteil, Leerstandstage dazwischen bleiben
 beim Eigentümer. Verbrauchsabhängige Positionen werden dabei über eine
 Zwischenablesung getrennt, nicht über Zeitanteile.
+
+## 14. Vorauszahlung oder Pauschale: was im Vertrag steht, entscheidet
+
+Die beiden Modelle sehen im Mietvertrag ähnlich aus und haben völlig
+unterschiedliche Folgen.
+
+**Betriebskostenvorauszahlung.** Der Mieter zahlt monatlich einen Abschlag, der
+Vermieter rechnet jährlich ab. Die Abrechnungspflicht ist zwingend. Rechnet der
+Vermieter nicht innerhalb von zwölf Monaten nach Ende des Abrechnungszeitraums
+ab, verliert er nicht nur das Recht auf Nachforderungen — der Mieter kann die
+geleisteten Vorauszahlungen **in voller Höhe zurückverlangen**. Nicht nur ein
+etwaiges Guthaben, sondern alles. Wer eine Abrechnung scheut, weil ein Guthaben
+droht, tauscht damit einen kleinen Betrag gegen einen großen.
+
+**Betriebskostenpauschale.** Der Mieter zahlt einen festen Betrag, mit dem die
+Betriebskosten abgegolten sind. Es wird nicht abgerechnet, es gibt weder
+Nachzahlung noch Erstattung. Der Vermieter trägt dafür das volle Kostenrisiko:
+steigen die Kosten, kann er nur erhöhen, wenn der Vertrag das ausdrücklich
+vorsieht. Heizkosten dürfen in aller Regel nicht pauschaliert werden, solange
+die HeizkostenV gilt.
+
+**Welches Modell vereinbart ist, ergibt sich aus dem Mietvertrag und ist nicht
+wählbar.** Eine Vorauszahlung wird nicht dadurch zur Pauschale, dass man die
+Abrechnung unterlässt. Umgekehrt begründet eine Pauschale keine
+Abrechnungspflicht, auch wenn der Mieter danach fragt.
+
+**Bei Angehörigen kommt die steuerliche Seite hinzu.** Für die 66-Prozent-Grenze
+des § 21 Abs. 2 EStG zählt die Warmmiete. Werden Betriebskosten nicht Teil der
+Gegenleistung, fällt die Quote um die Größenordnung der umlagefähigen Kosten,
+typischerweise zehn bis fünfzehn Prozentpunkte. Ob eine unterlassene Abrechnung
+bei vereinbarter Vorauszahlung diesen Effekt auslöst, ist eine Frage für den
+Steuerberater; das Risiko besteht und sollte vor der Entscheidung geklärt
+werden, nicht danach.

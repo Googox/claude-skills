@@ -27,6 +27,18 @@ Mietrechtsanwalt.
 | `assets/objekt-vorlage.json` | Leere Jahresakte zum Ausfüllen. |
 | `assets/beleg-checkliste.md` | Checkliste vor dem Versand an den Mieter. |
 
+## Workflow 0 — Vorab klären: Vorauszahlung oder Pauschale
+
+1. Mietvertrag je Einheit prüfen und in der Spalte „Nebenkosten als“ eintragen.
+2. **Vorauszahlung**: Abrechnungspflicht zwingend. Unterbleibt die Abrechnung
+   innerhalb der Zwölfmonatsfrist, kann der Mieter die geleisteten
+   Vorauszahlungen in voller Höhe zurückfordern, nicht nur ein Guthaben.
+3. **Pauschale**: keine Abrechnungspflicht, kein Saldo. Das Dashboard weist
+   stattdessen aus, ob die Pauschale die tatsächlichen Kosten deckt.
+4. Bei Angehörigen zusätzlich die Wirkung auf die 66-Prozent-Quote prüfen:
+   Fallen die Betriebskosten aus der Gegenleistung, sinkt die Quote um
+   typischerweise zehn bis fünfzehn Prozentpunkte.
+
 ## Workflow 1 — Jahresabrechnung erstellen
 
 1. `assets/objekt-vorlage.json` kopieren, Stammdaten und Einheiten eintragen
@@ -160,6 +172,8 @@ Ohne Internet lädt lediglich die Webschrift nicht; die Anwendung rechnet unver�
 - Gegenüber Angehörigen auf die Nebenkostenabrechnung verzichten — das senkt die
   Quote nach § 21 Abs. 2 EStG und gefährdet den Werbungskostenabzug.
 - Sich auf den Browserspeicher als Archiv verlassen, ohne je zu sichern.
+- Bei vereinbarter Vorauszahlung die Abrechnung unterlassen — der Mieter kann
+  dann die gesamten Vorauszahlungen zurückfordern.
 - Die Abrechnung des Messdienstes ungeprüft übernehmen, ohne Summenabgleich.
 - Bei unterjährigem Zählereinbau nach Kalendertagen statt nach Gradtagzahlen teilen.
 - Leerstandskosten auf die verbleibenden Mieter umlegen, statt sie selbst zu tragen.

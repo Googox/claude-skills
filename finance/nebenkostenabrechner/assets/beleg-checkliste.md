@@ -1,5 +1,13 @@
 # Checkliste vor dem Versand der Betriebskostenabrechnung
 
+## Vorab: Ist überhaupt abzurechnen?
+
+- [ ] Mietvertrag geprüft: Vorauszahlung oder Pauschale vereinbart?
+- [ ] Bei Vorauszahlung: Abrechnungspflicht besteht zwingend. Ohne Abrechnung
+      innerhalb der Frist kann der Mieter die gesamten Vorauszahlungen zurückfordern
+- [ ] Bei Pauschale: keine Abrechnungspflicht, Kostenrisiko trägt der Vermieter
+- [ ] Heizkosten sind in aller Regel nicht pauschalierbar
+
 ## Formalien (Fehler hier machen die Abrechnung unwirksam)
 
 - [ ] Abrechnungszeitraum eindeutig benannt, maximal zwölf Monate

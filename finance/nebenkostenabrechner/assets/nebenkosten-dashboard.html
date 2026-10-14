@@ -236,6 +236,7 @@ svg{display:block;max-width:100%;height:auto}
     <div class="kpis" id="kpiRow"></div>
     <div id="fristBox"></div>
     <div id="leerBox"></div>
+    <div id="pflichtBox"></div>
     <div class="charts" id="chartRow"></div>
     <div class="panel">
       <header><h2>Ergebnis je Einheit</h2><p>Umlagefähige Kosten abzüglich geleisteter Vorauszahlungen für den gewählten Abrechnungszeitraum.</p></header>
@@ -276,10 +277,11 @@ svg{display:block;max-width:100%;height:auto}
           <th style="min-width:150px">Einheit</th><th style="min-width:150px">Mieter</th>
           <th class="r">Wohnfläche m²</th><th class="r">Personen</th>
           <th>Nutzung von</th><th>Nutzung bis</th>
+          <th style="min-width:140px">Nebenkosten als</th>
           <th class="r">Kaltmiete<br>€/Monat</th><th class="r">Vorauszahlung<br>Betriebskosten €/Monat</th><th class="r">Vorauszahlung<br>Heizung €/Monat</th>
           <th class="r">€/m²</th><th></th>
         </tr></thead><tbody></tbody>
-        <tfoot><tr><td colspan="2">Summe</td><td class="n" id="uSumFl"></td><td class="n" id="uSumPe"></td>
+        <tfoot><tr><td colspan="3">Summe</td><td class="n" id="uSumFl"></td><td class="n" id="uSumPe"></td>
           <td colspan="2"></td><td class="n" id="uSumMiete"></td><td class="n" id="uSumVzN"></td><td class="n" id="uSumVzH"></td><td colspan="2"></td></tr></tfoot>
       </table></div></div>
     </div>
@@ -517,10 +519,10 @@ function defaultState(jahr){
     objekt:{ name:'Zweifamilienhaus', strasse:'', ort:'',
       von: jahr+'-01-01', bis: jahr+'-12-31', heizart:'Öl-Zentralheizung', selbst:false },
     einheiten:[
-      {id:'og',name:'Wohnung Obergeschoss',mieter:'',flaeche:101,personen:2,von:'',bis:'',
-       kaltmiete:1100,vzNK:120,vzHeiz:110,vHeiz:4200,vWW:38,angehoerig:false,ortsQm:0,extHeiz:0,extWW:0},
-      {id:'eg',name:'Wohnung Erdgeschoss',mieter:'',flaeche:149,personen:3,von:'',bis:'',
-       kaltmiete:1100,vzNK:170,vzHeiz:160,vHeiz:5800,vWW:54,angehoerig:true,ortsQm:0,extHeiz:0,extWW:0}
+      {id:'og',name:'Wohnung Obergeschoss',mieter:'',flaeche:101,personen:2,von:'2026-01-01',bis:'',
+       kaltmiete:1100,vzNK:120,vzHeiz:110,vHeiz:4200,vWW:38,angehoerig:false,ortsQm:0,extHeiz:0,extWW:0,art:'vorauszahlung'},
+      {id:'eg',name:'Wohnung Erdgeschoss',mieter:'',flaeche:149,personen:3,von:'2025-10-01',bis:'',
+       kaltmiete:1100,vzNK:170,vzHeiz:160,vHeiz:5800,vWW:54,angehoerig:true,ortsQm:0,extHeiz:0,extWW:0,art:'vorauszahlung'}
     ],
     kosten: katalog.fix(katalog()),
     heizung:{ brenn:3800, strom:140, wartung:190, mess:210, schorn:95, tank:0,
@@ -685,7 +687,9 @@ function compute(){
     var mon=unitMonate(u);
     var vz=(parseNum(u.vzNK)+parseNum(u.vzHeiz))*mon;
     var ges=kalt+warm;
-    return {u:u,kalt:kalt,warm:warm,gesamt:ges,vz:vz,saldo:ges-vz,monate:mon,
+    var pausch = u.art==='pauschale';
+    return {u:u,kalt:kalt,warm:warm,gesamt:ges,vz:vz,saldo:pausch?0:ges-vz,
+      pauschale:pausch, deckung:pausch?vz-ges:0, monate:mon,
       proQm: parseNum(u.flaeche)>0 && mon>0 ? ges/parseNum(u.flaeche)/mon : 0};
   });
 
@@ -748,6 +752,9 @@ function renderUnitTable(){
       '<td><input type="text" class="qty" data-f="personen" value="'+num0.format(parseNum(u.personen))+'"></td>'+
       '<td><input type="date" data-f="von" value="'+esc(u.von)+'"></td>'+
       '<td><input type="date" data-f="bis" value="'+esc(u.bis)+'"></td>'+
+      '<td><select data-f="art">'+
+        '<option value="vorauszahlung"'+(u.art!=='pauschale'?' selected':'')+'>Vorauszahlung</option>'+
+        '<option value="pauschale"'+(u.art==='pauschale'?' selected':'')+'>Pauschale</option></select></td>'+
       '<td><input type="text" class="money" data-f="kaltmiete" value="'+n2(u.kaltmiete)+'"></td>'+
       '<td><input type="text" class="money" data-f="vzNK" value="'+n2(u.vzNK)+'"></td>'+
       '<td><input type="text" class="money" data-f="vzHeiz" value="'+n2(u.vzHeiz)+'"></td>'+
@@ -1015,12 +1022,28 @@ function refresh(){
   renderKpis(c);
   renderFrist();
   renderLeerBox(c);
+  renderPflichtBox(c);
   renderCharts(c);
   renderResults(c);
   renderDocs(c);
   renderAngeh(c);
   renderMietspiegel();
   el('demoBanner').hidden = !state.demo;
+}
+
+function renderPflichtBox(c){
+  var vzU=c.units.filter(function(x){ return !x.pauschale && x.vz>0 && unitTage(x.u)>0; });
+  var bis=dparse(state.objekt.bis);
+  if(!vzU.length || !bis){ el('pflichtBox').innerHTML=''; return; }
+  var frist=new Date(bis.getTime()); frist.setFullYear(frist.getFullYear()+1);
+  var summe=vzU.reduce(function(a,x){return a+x.vz;},0);
+  el('pflichtBox').innerHTML=
+    '<div class="note warn"><strong>Vorauszahlung vereinbart heißt Abrechnungspflicht.</strong> '+
+    'Für '+vzU.length+' '+(vzU.length>1?'Einheiten wurden':'Einheit wurden')+' in diesem Zeitraum '+money(summe)+' an Vorauszahlungen geleistet. '+
+    'Rechnest du bis zum '+dfmt.format(frist)+' nicht ab, verlierst du nicht nur das Recht auf Nachforderungen — '+
+    'der Mieter kann die geleisteten Vorauszahlungen in voller Höhe zurückverlangen. '+
+    'Eine Pauschale wäre abrechnungsfrei; dann trage sie oben in der Spalte „Nebenkosten als“ ein. '+
+    'Was tatsächlich vereinbart ist, steht im Mietvertrag und ist nicht wählbar.</div>';
 }
 
 function renderLeerBox(c){
@@ -1179,6 +1202,25 @@ function renderCharts(c){
 
 function renderResults(c){
   el('resultRow').innerHTML=c.units.map(function(x){
+    if(x.pauschale){
+      var deck=x.deckung;
+      return '<div class="rescard" style="border-left:4px solid var(--ink-3)">'+
+        '<div class="head"><h3>'+esc(x.u.name)+'</h3><span>'+n2(x.u.flaeche)+' m²</span></div>'+
+        '<dl>'+
+          '<dt>Kalte Betriebskosten</dt><dd>'+n2(x.kalt)+' €</dd>'+
+          '<dt>Heizung und Warmwasser</dt><dd>'+n2(x.warm)+' €</dd>'+
+          '<dt>Tatsächliche Kosten</dt><dd><strong>'+n2(x.gesamt)+' €</strong></dd>'+
+          '<dt>Pauschale ('+n2(x.monate)+' Monate)</dt><dd>'+n2(x.vz)+' €</dd>'+
+          '<dt>je m² und Monat</dt><dd>'+n2(x.proQm)+' €</dd>'+
+        '</dl>'+
+        '<div class="final"><span class="pill neutral">Pauschale</span>'+
+          '<b style="color:'+(deck>=0?'var(--good)':'var(--crit)')+'">'+(deck>=0?'+':'')+money(deck)+'</b></div>'+
+        '<div style="padding:0 16px 13px"><span style="font-size:12.5px;color:var(--ink-3)">'+
+        (deck>=0
+          ? 'Die Pauschale deckt die Kosten. Der Überschuss verbleibt bei dir, es wird nicht abgerechnet.'
+          : 'Die Pauschale deckt die Kosten nicht. Die Differenz trägst du; nachfordern kannst du bei einer Pauschale nicht.')+
+        '</span></div></div>';
+    }
     var nach=x.saldo>=0;
     return '<div class="rescard '+(nach?'pay':'ref')+'">'+
       '<div class="head"><h3>'+esc(x.u.name)+'</h3><span>'+n2(x.u.flaeche)+' m²</span></div>'+
@@ -1246,9 +1288,12 @@ function renderDocs(c){
       '<tbody>'+zeilen+warm+'</tbody>'+
       '<tfoot>'+
         '<tr><td colspan="4">Summe umlagefähiger Betriebskosten</td><td class="n">'+n2(x.gesamt)+'</td></tr>'+
-        '<tr><td colspan="4">abzüglich geleisteter Vorauszahlungen ('+n2(x.monate)+' Monate)</td><td class="n">− '+n2(x.vz)+'</td></tr>'+
-        '<tr><td colspan="4"><strong>'+(nach?'Nachzahlung durch den Mieter':'Guthaben zugunsten des Mieters')+'</strong></td>'+
-          '<td class="n" style="font-size:16px;color:'+(nach?'var(--good)':'var(--crit)')+'"><strong>'+n2(Math.abs(x.saldo))+'</strong></td></tr>'+
+        (x.pauschale
+          ? '<tr><td colspan="4">gezahlte Betriebskostenpauschale ('+n2(x.monate)+' Monate)</td><td class="n">'+n2(x.vz)+'</td></tr>'+
+            '<tr><td colspan="4"><strong>Keine Nachzahlung und keine Erstattung</strong> — die Betriebskosten sind durch die vereinbarte Pauschale abgegolten</td><td class="n">0,00</td></tr>'
+          : '<tr><td colspan="4">abzüglich geleisteter Vorauszahlungen ('+n2(x.monate)+' Monate)</td><td class="n">− '+n2(x.vz)+'</td></tr>'+
+            '<tr><td colspan="4"><strong>'+(nach?'Nachzahlung durch den Mieter':'Guthaben zugunsten des Mieters')+'</strong></td>'+
+            '<td class="n" style="font-size:16px;color:'+(nach?'var(--good)':'var(--crit)')+'"><strong>'+n2(Math.abs(x.saldo))+'</strong></td></tr>')+
       '</tfoot></table></div>'+
       '<p style="font-size:12.5px;color:var(--ink-3);margin-top:14px;max-width:78ch">Die Belege können nach Terminvereinbarung eingesehen werden. Einwendungen gegen diese Abrechnung sind nach § 556 Abs. 3 Satz 5 BGB innerhalb von zwölf Monaten nach Zugang schriftlich mitzuteilen.</p>'+
       '<div class="sig"><div>Ort, Datum</div><div>Unterschrift Vermieter</div></div>'+
@@ -1260,7 +1305,7 @@ function renderAngeh(c){
   var tb=el('angehTable').querySelector('tbody');
   tb.innerHTML=state.einheiten.map(function(u){
     var e=c.units.filter(function(x){return x.u.id===u.id;})[0];
-    var bkM = e && e.monate>0 ? e.gesamt/e.monate : 0;
+    var bkM = e && e.monate>0 ? (u.art==='pauschale' ? e.vz/e.monate : e.gesamt/e.monate) : 0;
     var istWarm = parseNum(u.kaltmiete)+bkM;
     var ortsKalt = parseNum(u.ortsQm)*parseNum(u.flaeche);
     var hat = ortsKalt>0;
@@ -1483,11 +1528,11 @@ function bindObjekt(){
 function bindUnitTable(){
   var t=el('unitTable');
   t.addEventListener('input',function(e){
-    var inp=e.target.closest('input'); if(!inp) return;
+    var inp=e.target.closest('input,select'); if(!inp) return;
     var tr=inp.closest('tr'); var u=state.einheiten.filter(function(x){return x.id===tr.dataset.u;})[0];
     if(!u) return;
     var f=inp.dataset.f;
-    u[f] = inp.classList.contains('money')||inp.classList.contains('qty') ? parseNum(inp.value) : inp.value;
+    u[f] = (inp.classList.contains('money')||inp.classList.contains('qty')) ? parseNum(inp.value) : inp.value;
     touch();
   });
   t.addEventListener('change',function(e){
@@ -1706,6 +1751,7 @@ function migrate(s){
     if(u.ortsQm===undefined) u.ortsQm=0;
     if(u.extHeiz===undefined) u.extHeiz=0;
     if(u.extWW===undefined) u.extWW=0;
+    if(!u.art) u.art='vorauszahlung';
   });
   (s.einheiten||[]).forEach(function(u){ if(!u.direkt) u.direkt={}; });
   (s.kosten||[]).forEach(function(k){ if(!k.direkt) k.direkt={}; });

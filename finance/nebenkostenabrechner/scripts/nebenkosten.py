@@ -235,11 +235,13 @@ class Abrechnung:
             vz = (float(u.get("vzNK", 0)) + float(u.get("vzHeiz", 0))) * mon
             ges = kalt + warm
             fl = float(u.get("flaeche", 0))
+            pausch = u.get("art") == "pauschale"
             ergebnis.append({
                 "id": u["id"], "name": u.get("name", u["id"]), "mieter": u.get("mieter", ""),
                 "flaeche": fl, "tage": self.unit_tage(u), "monate": round(mon, 2),
                 "kalt": kalt, "warm": warm, "gesamt": ges, "vorauszahlung": vz,
-                "saldo": ges - vz,
+                "pauschale": pausch, "deckung": (vz - ges) if pausch else 0.0,
+                "saldo": 0.0 if pausch else ges - vz,
                 "pro_qm_monat": (ges / fl / mon) if fl > 0 and mon > 0 else 0.0,
             })
         return {"zeilen": zeilen, "heizung": heiz, "einheiten": ergebnis,
@@ -266,6 +268,22 @@ class Abrechnung:
             else:
                 p.append(("HINWEIS", "Messdienst rechnet ab. Verteilte Kosten {} EUR stimmen mit der "
                                      "eigenen Kostenseite ueberein.".format(euro(hz["umlage"]))))
+        bis_f = d(self.o.get("bis"))
+        vz_units = [e for e in r["einheiten"]
+                    if not e["pauschale"] and e["vorauszahlung"] > 0 and e["tage"] > 0]
+        if vz_units and bis_f:
+            frist = bis_f.replace(year=bis_f.year + 1)
+            summe_vz = sum(e["vorauszahlung"] for e in vz_units)
+            p.append(("WARNUNG", "Vorauszahlung vereinbart heisst Abrechnungspflicht. {} EUR geleistet. "
+                                 "Ohne Abrechnung bis {} kann der Mieter die Vorauszahlungen in voller "
+                                 "Hoehe zurueckverlangen."
+                      .format(euro(summe_vz), frist.isoformat())))
+        for e in r["einheiten"]:
+            if e["pauschale"] and e["tage"] > 0:
+                p.append(("HINWEIS", "{}: Pauschale vereinbart, keine Abrechnungspflicht. Pauschale {} EUR "
+                                     "gegen tatsaechliche Kosten {} EUR, Differenz {} EUR traegst du."
+                          .format(e["name"], euro(e["vorauszahlung"]), euro(e["gesamt"]),
+                                  euro(e["deckung"]))))
         if r["summe_leerstand"] > 0.005:
             p.append(("HINWEIS", "Leerstandsanteil {} EUR wird nicht umgelegt und bleibt beim "
                                  "Eigentuemer.".format(euro(r["summe_leerstand"]))))
@@ -339,7 +357,8 @@ class Abrechnung:
             if not u.get("angehoerig"):
                 continue
             e = [x for x in r["einheiten"] if x["id"] == u["id"]][0]
-            bk_m = e["gesamt"] / e["monate"] if e["monate"] else 0.0
+            bk_m = ((e["vorauszahlung"] if u.get("art") == "pauschale" else e["gesamt"])
+                    / e["monate"]) if e["monate"] else 0.0
             orts_kalt = float(u.get("ortsQm", 0)) * float(u.get("flaeche", 0))
             if orts_kalt <= 0:
                 p.append(("WARNUNG", "{}: an Angehoerige vermietet, aber keine ortsuebliche "
@@ -414,10 +433,18 @@ def als_text(ab, r):
                     "-" + euro(h["kuerzung"][e["id"]])))
         w("-" * 78 + "\n")
         w("{:<62}{:>16}\n".format("Summe umlagefaehig", euro(e["gesamt"])))
-        w("{:<62}{:>16}\n".format(
-            "abzgl. Vorauszahlungen ({:.2f} Monate)".format(e["monate"]), "-" + euro(e["vorauszahlung"])))
-        label = "NACHZAHLUNG DURCH MIETER" if e["saldo"] >= 0 else "GUTHABEN FUER MIETER"
-        w("{:<62}{:>16}\n".format(label, euro(abs(e["saldo"]))))
+        if e["pauschale"]:
+            w("{:<62}{:>16}\n".format(
+                "gezahlte Betriebskostenpauschale ({:.2f} Monate)".format(e["monate"]),
+                euro(e["vorauszahlung"])))
+            w("{:<62}{:>16}\n".format(
+                "KEINE NACHZAHLUNG, KEINE ERSTATTUNG (Pauschale)", euro(0)))
+        else:
+            w("{:<62}{:>16}\n".format(
+                "abzgl. Vorauszahlungen ({:.2f} Monate)".format(e["monate"]),
+                "-" + euro(e["vorauszahlung"])))
+            label = "NACHZAHLUNG DURCH MIETER" if e["saldo"] >= 0 else "GUTHABEN FUER MIETER"
+            w("{:<62}{:>16}\n".format(label, euro(abs(e["saldo"]))))
         w("je m2 und Monat: {} EUR\n\n".format(euro(e["pro_qm_monat"])))
     w("=" * 78 + "\n")
     w("{:<62}{:>16}\n".format("Umlagefaehig gesamt", euro(r["summe_gesamt"])))
