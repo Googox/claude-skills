@@ -193,3 +193,58 @@ Finanzamt damit gleich den Vergleichsmaßstab.
 Die ortsübliche Miete ist im Streitfall nachzuweisen: örtlicher Mietspiegel,
 Vergleichswohnungen oder Sachverständigengutachten. Die Beurteilung gehört zum
 Steuerberater, nicht in eine Rechenhilfe.
+
+## 11. Messdienst rechnet ab: Rollenverteilung und Prüfpflicht
+
+Übernimmt ein Messdienst (Techem, Ista, Brunata) die Heiz- und
+Warmwasserabrechnung, verschiebt sich die Arbeit, nicht die Verantwortung. Der
+Vermieter bleibt gegenüber dem Mieter Schuldner einer korrekten Abrechnung.
+
+**Was der Vermieter liefern muss:**
+
+- Brennstoffkosten des Abrechnungszeitraums. Bei Öl der **verbrauchte** Bestand
+  aus der Bestandsrechnung, nicht die Tankrechnung. Wer die Tankrechnung meldet,
+  bekommt eine falsche Abrechnung zurück und merkt es nicht.
+- CO2-Menge und CO2-Kosten aus der Lieferantenrechnung. Fehlen sie, rechnet der
+  Messdienst den Vermieteranteil nicht heraus und es wird zu viel umgelegt.
+- Betriebsstrom, Wartung, Schornsteinfeger, soweit sie in die Verteilung sollen.
+- Wohnflächen und Nutzerwechsel mit Datum.
+
+**Was zu prüfen ist, bevor die Abrechnung an den Mieter geht:**
+
+1. **Summenabgleich.** Verteilt der Messdienst denselben Betrag, den man ihm an
+   Kosten gemeldet hat? Eine Differenz ist nie Rundung, sondern eine fehlende
+   Rechnung auf der einen oder eine ungemeldete Position auf der anderen Seite.
+2. Stimmt der Abrechnungszeitraum mit dem eigenen überein?
+3. Stimmen die Wohnflächen?
+4. Liegt der Grundkostenanteil im Korridor von 30 bis 50 Prozent?
+5. Ist der CO2-Vermieteranteil abgezogen und mit welchem Prozentsatz?
+6. Sind die Kosten des Messdienstes selbst als umlagefähige Position ausgewiesen
+   und nicht zusätzlich in der eigenen Aufstellung geführt, sonst zählt man sie
+   doppelt.
+
+## 12. Zähler kommen unterjährig oder gar nicht
+
+**Einbau während des Abrechnungszeitraums.** Für die Zeit vor dem Einbau gibt es
+keine Verbrauchswerte. Der Zeitraum ist deshalb zu teilen: davor Verteilung nach
+Wohnfläche, danach verbrauchsabhängig. Die Aufteilung der Kosten auf die beiden
+Abschnitte erfolgt **nach Gradtagzahlen**, nicht nach Kalendertagen — die
+Heizkosten fallen nicht gleichmäßig über das Jahr an. Der Messdienst wendet
+dieses Verfahren routinemäßig an; die Aufteilung sollte man von ihm rechnen
+lassen und die Endbeträge übernehmen.
+
+**Kein Zähler im gesamten Zeitraum.** Bei vermieteten Wohnungen schreibt die
+HeizkostenV verbrauchsabhängige Abrechnung zwingend vor. Fehlt die Erfassung,
+darf der Mieter seinen Anteil an den Heiz- und Warmwasserkosten nach § 12 Abs. 1
+HeizkostenV um **15 Prozent kürzen**. Das Kürzungsrecht besteht unabhängig
+davon, ob der Mieter ein Angehöriger ist.
+
+Zwei Wege im Umgang damit: nach Wohnfläche umlegen und abwarten, ob gekürzt
+wird, oder die 15 Prozent von sich aus abziehen und in der Abrechnung ausweisen.
+Wirtschaftlich identisch, sobald gekürzt wird; der zweite Weg nimmt den Streit
+vorweg. Ob im Einzelfall ein Ausnahmetatbestand greift, gehört zur
+mietrechtlichen Prüfung und nicht in eine Rechenhilfe.
+
+**Nachrüstpflicht.** Nicht fernablesbare Erfassungsgeräte im Bestand sind
+nachzurüsten oder zu ersetzen. Wer die Frist nutzt, sollte zugleich den Punkt
+Kauf gegen Miete klären: Mietkosten sind umlagefähig, Anschaffungskosten nicht.

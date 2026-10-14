@@ -161,13 +161,22 @@ class Abrechnung:
                 out[u["id"]] = grund * fl[u["id"]] + verbr * vq
             return out
 
-        a_hz, a_ww = split(pot_hz, "vHeiz"), split(pot_ww, "vWW")
+        eigen, abweichung = umlage, 0.0
+        if h.get("extern"):
+            a_hz = {u["id"]: float(u.get("extHeiz", 0)) for u in self.units}
+            a_ww = {u["id"]: float(u.get("extWW", 0)) for u in self.units}
+            pot_hz, pot_ww = sum(a_hz.values()), sum(a_ww.values())
+            umlage = pot_hz + pot_ww
+            abweichung = umlage - eigen
+        else:
+            a_hz, a_ww = split(pot_hz, "vHeiz"), split(pot_ww, "vWW")
         fg = self.flaeche_gesamt()
         kennwert = float(h.get("co2Menge", 0)) / fg if fg > 0 else 0.0
         return {"brutto": brutto, "co2_vermieter": co2_v, "umlage": umlage,
                 "pot_hz": pot_hz, "pot_ww": pot_ww, "a_hz": a_hz, "a_ww": a_ww,
                 "ges": {u["id"]: a_hz[u["id"]] + a_ww[u["id"]] for u in self.units},
-                "kennwert": kennwert, "grund_q": grund_q, "oel": oel}
+                "kennwert": kennwert, "grund_q": grund_q, "oel": oel,
+                "extern": bool(h.get("extern")), "eigen": eigen, "abweichung": abweichung}
 
     # ---------- Gesamtrechnung ----------
     def rechne(self):
@@ -224,7 +233,31 @@ class Abrechnung:
         p = []
         grund = float(self.h.get("grund", 30))
         selbst = bool(self.o.get("selbst"))
-        if r["heizung"]["umlage"] > 0 and not (30 <= grund <= 50) and not selbst:
+        hz = r["heizung"]
+        if hz["extern"]:
+            toleranz = max(5.0, hz["eigen"] * 0.01)
+            if abs(hz["abweichung"]) > toleranz:
+                p.append(("FEHLER", "Messdienst verteilt {} EUR, erfasste eigene Kosten nach CO2-Abzug "
+                                    "{} EUR. Differenz {} EUR. Vor der Abrechnung klaeren."
+                          .format(euro(hz["umlage"]), euro(hz["eigen"]), euro(hz["abweichung"]))))
+            else:
+                p.append(("HINWEIS", "Messdienst rechnet ab. Verteilte Kosten {} EUR stimmen mit der "
+                                     "eigenen Kostenseite ueberein.".format(euro(hz["umlage"]))))
+        z = d(self.h.get("zaehlerSeit"))
+        von, bis_z = d(self.o.get("von")), d(self.o.get("bis"))
+        if z and bis_z and z > bis_z and not selbst:
+            p.append(("FEHLER", "Zaehler erst seit {} in Betrieb, Zeitraum endet {}. In diesem Zeitraum "
+                                "gab es keine Verbrauchserfassung. Kuerzungsrecht des Mieters nach "
+                                "Paragraf 12 Abs. 1 HeizkostenV: 15 Prozent, rund {} EUR."
+                      .format(z.isoformat(), bis_z.isoformat(), euro(hz["umlage"] * 0.15))))
+        if z and von and bis_z and von < z <= bis_z:
+            nach = (bis_z - z).days + 1
+            ges_t = self.gesamttage()
+            p.append(("WARNUNG", "Zaehler erst seit {} in Betrieb. Fuer {} von {} Tagen fehlen "
+                                 "Verbrauchswerte. Zeitraum teilen: davor nach Flaeche, danach nach "
+                                 "Verbrauch. Zeitanteilige Aufteilung nach Gradtagzahlen, nicht nach "
+                                 "Kalendertagen.".format(z.isoformat(), ges_t - nach, ges_t)))
+        if hz["umlage"] > 0 and not hz["extern"] and not (30 <= grund <= 50) and not selbst:
             p.append(("FEHLER", "Grundkostenanteil {:.0f} % liegt ausserhalb 30 bis 50 %. "
                                 "Paragraf 7 HeizkostenV verlangt 50 bis 70 % verbrauchsabhaengig."
                       .format(grund)))

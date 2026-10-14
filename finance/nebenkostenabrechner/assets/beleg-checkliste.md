@@ -46,6 +46,17 @@
 - [ ] Kopie der versandten Abrechnung archiviert
 - [ ] Belegordner für Einsichtnahme bereitgelegt
 
+## Wenn der Messdienst abrechnet
+
+- [ ] Gemeldete Brennstoffkosten = verbrauchter Bestand, nicht die Tankrechnung
+- [ ] CO2-Menge und CO2-Kosten an den Messdienst gemeldet
+- [ ] Summenabgleich: verteilter Betrag = gemeldete Kostenseite
+- [ ] Abrechnungszeitraum und Wohnflächen stimmen überein
+- [ ] Grundkostenanteil im Korridor 30 bis 50 Prozent
+- [ ] CO2-Vermieteranteil abgezogen, Prozentsatz nachvollziehbar
+- [ ] Messdienstgebühr genau einmal in der Abrechnung, nicht doppelt
+- [ ] Bei unterjährigem Zählereinbau: Aufteilung nach Gradtagzahlen, nicht nach Tagen
+
 ## Steuer
 
 - [ ] Bei Vermietung an Angehörige: Quote gegen die ortsübliche Warmmiete geprüft

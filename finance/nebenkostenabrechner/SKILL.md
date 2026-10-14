@@ -68,7 +68,21 @@ Mietrechtsanwalt.
 Browserspeichers und Laden wurde über das `file://`-Protokoll in Chromium getestet.
 Ohne Internet lädt lediglich die Webschrift nicht; die Anwendung rechnet unverändert.
 
-## Workflow 4 — Ölabrechnung über die Bestandsrechnung
+## Workflow 4 — Abrechnung durch einen Messdienst übernehmen
+
+1. Im Register „Heizung“ den Schalter **Messdienst rechnet ab** setzen.
+2. Eigene Kostenseite trotzdem vollständig erfassen: Brennstoff aus der
+   Bestandsrechnung, Betriebsstrom, Wartung, Messdienstgebühr, Schornsteinfeger.
+   Diese Seite ist die Prüfgröße, nicht Dekoration.
+3. Endbeträge je Wohnung aus der Messdienstabrechnung in die Spalten
+   „Heizung € laut Messdienst“ und „Warmwasser € laut Messdienst“ übertragen.
+4. Den Summenabgleich lesen. Weicht der verteilte Betrag um mehr als ein Prozent
+   von der eigenen Kostenseite ab, erst klären, dann abrechnen.
+5. Datum der Zählerinbetriebnahme eintragen. Liegt es im Abrechnungszeitraum,
+   warnt das Dashboard vor der Zweiteilung und der Gradtagzahlen-Aufteilung;
+   liegt es danach, weist es auf das 15-Prozent-Kürzungsrecht hin.
+
+## Workflow 5 — Ölabrechnung über die Bestandsrechnung
 
 1. Tankpeilung zum Ende des Abrechnungszeitraums dokumentieren (Datum, Foto).
 2. Anfangsbestand in Litern und Euro aus der Vorjahresabrechnung übernehmen.
@@ -78,7 +92,7 @@ Ohne Internet lädt lediglich die Webschrift nicht; die Anwendung rechnet unver�
 5. Der errechnete Verbrauchswert ersetzt die Brennstoffkosten. Der Endbestandswert
    wird beim Anlegen der nächsten Jahresakte automatisch vorgetragen.
 
-## Workflow 5 — Angehörigenvermietung absichern
+## Workflow 6 — Angehörigenvermietung absichern
 
 1. Betroffene Einheit im Register „Objekt“ markieren.
 2. Ortsübliche Kaltmiete je Quadratmeter aus dem örtlichen Mietspiegel eintragen
@@ -90,7 +104,7 @@ Ohne Internet lädt lediglich die Webschrift nicht; die Anwendung rechnet unver�
    welchen Beitrag die Abrechnung zur steuerlichen Absicherung leistet.
 5. Prüfung jährlich wiederholen — die ortsübliche Miete steigt, die vereinbarte nicht.
 
-## Workflow 6 — Vorauszahlungen anpassen
+## Workflow 7 — Vorauszahlungen anpassen
 
 1. Nach jeder Abrechnung prüfen, ob die Nachzahlung 25 Prozent der geleisteten
    Vorauszahlung übersteigt.
@@ -99,7 +113,7 @@ Ohne Internet lädt lediglich die Webschrift nicht; die Anwendung rechnet unver�
 3. Anpassung schriftlich und unter Bezug auf die Abrechnung erklären; sie wirkt
    ab dem auf die Erklärung folgenden Monat.
 
-## Workflow 7 — Streitfall Belegeinsicht
+## Workflow 8 — Streitfall Belegeinsicht
 
 1. Der Mieter hat Anspruch auf Einsicht in die Originalbelege.
 2. Beleg-Nummern aus dem Kostenkatalog gegen die abgelegten Rechnungen prüfen.
@@ -132,3 +146,5 @@ Ohne Internet lädt lediglich die Webschrift nicht; die Anwendung rechnet unver�
 - Gegenüber Angehörigen auf die Nebenkostenabrechnung verzichten — das senkt die
   Quote nach § 21 Abs. 2 EStG und gefährdet den Werbungskostenabzug.
 - Sich auf den Browserspeicher als Archiv verlassen, ohne je zu sichern.
+- Die Abrechnung des Messdienstes ungeprüft übernehmen, ohne Summenabgleich.
+- Bei unterjährigem Zählereinbau nach Kalendertagen statt nach Gradtagzahlen teilen.

@@ -364,7 +364,11 @@ svg{display:block;max-width:100%;height:auto}
     </div>
 
     <div class="panel">
-      <header><h2>Warme Betriebskosten</h2><p>Heiz- und Warmwasserkosten werden nach HeizkostenV getrennt abgerechnet: 50 bis 70 % verbrauchsabhängig, der Rest nach Wohnfläche.</p></header>
+      <header>
+        <div><h2>Warme Betriebskosten</h2><p>Heiz- und Warmwasserkosten werden nach HeizkostenV getrennt abgerechnet: 50 bis 70 % verbrauchsabhängig, der Rest nach Wohnfläche.</p></div>
+        <label style="display:flex;gap:8px;align-items:center;font-size:13.5px;cursor:pointer;white-space:nowrap">
+          <input type="checkbox" id="hExtern" style="width:auto"> Messdienst rechnet ab</label>
+      </header>
       <div class="body">
         <div class="grid3">
           <div class="field"><label for="hBrenn">Brennstoff / Fernwärme €</label><input type="text" class="money" id="hBrenn"></div>
@@ -373,24 +377,23 @@ svg{display:block;max-width:100%;height:auto}
           <div class="field"><label for="hMess">Messdienst / Ablesung €</label><input type="text" class="money" id="hMess"></div>
           <div class="field"><label for="hSchorn">Schornsteinfeger €</label><input type="text" class="money" id="hSchorn"></div>
           <div class="field"><label for="hTank">Tankreinigung / Sonstiges €</label><input type="text" class="money" id="hTank"></div>
+          <div class="field"><label for="hZaehler">Zähler in Betrieb seit</label><input type="date" id="hZaehler"></div>
         </div>
         <div class="grid3" style="margin-top:18px">
           <div class="field"><label for="hGrund">Grundkosten-Anteil % (Fläche)</label><input type="text" class="qty" id="hGrund"></div>
           <div class="field"><label for="hWW">Warmwasser-Anteil an Brennstoff %</label><input type="text" class="qty" id="hWW"></div>
           <div class="field"><label>Verbrauchsanteil %</label><input type="text" class="qty" id="hVerbrAnz" readonly></div>
         </div>
+        <div id="externBox" style="margin-top:14px"></div>
         <div id="hkvoBox" style="margin-top:14px"></div>
         <div id="messBox" style="margin-top:10px"></div>
       </div>
     </div>
 
     <div class="panel">
-      <header><h2>Verbrauchswerte je Einheit</h2><p>Heizung in Einheiten des Messdienstes (HKV-Striche, kWh oder m³), Warmwasser in m³ oder kWh.</p></header>
+      <header><div><h2>Verbrauchswerte je Einheit</h2><p id="verbHint">Heizung in Einheiten des Messdienstes (HKV-Striche, kWh oder m³), Warmwasser in m³ oder kWh.</p></div></header>
       <div class="body flush"><div class="twrap"><table id="verbTable">
-        <thead><tr><th style="min-width:170px">Einheit</th><th class="r">Wohnfläche m²</th>
-          <th class="r">Verbrauch Heizung</th><th class="r">Verbrauch Warmwasser</th>
-          <th class="r">Anteil Heizung €</th><th class="r">Anteil Warmwasser €</th><th class="r">Summe warm €</th></tr></thead>
-        <tbody></tbody>
+        <thead></thead><tbody></tbody>
         <tfoot><tr><td>Summe</td><td class="n" id="vFl"></td><td class="n" id="vH"></td><td class="n" id="vW"></td>
           <td class="n" id="vAH"></td><td class="n" id="vAW"></td><td class="n" id="vAS"></td></tr></tfoot>
       </table></div></div>
@@ -521,13 +524,14 @@ function defaultState(jahr){
       von: jahr+'-01-01', bis: jahr+'-12-31', heizart:'Öl-Zentralheizung', selbst:false },
     einheiten:[
       {id:'og',name:'Wohnung Obergeschoss',mieter:'',flaeche:101,personen:2,von:'',bis:'',
-       kaltmiete:1100,vzNK:120,vzHeiz:110,vHeiz:4200,vWW:38,angehoerig:false,ortsQm:0},
+       kaltmiete:1100,vzNK:120,vzHeiz:110,vHeiz:4200,vWW:38,angehoerig:false,ortsQm:0,extHeiz:0,extWW:0},
       {id:'eg',name:'Wohnung Erdgeschoss',mieter:'',flaeche:149,personen:3,von:'',bis:'',
-       kaltmiete:1100,vzNK:170,vzHeiz:160,vHeiz:5800,vWW:54,angehoerig:true,ortsQm:0}
+       kaltmiete:1100,vzNK:170,vzHeiz:160,vHeiz:5800,vWW:54,angehoerig:true,ortsQm:0,extHeiz:0,extWW:0}
     ],
     kosten: katalog.fix(katalog()),
     heizung:{ brenn:3800, strom:140, wartung:190, mess:210, schorn:95, tank:0,
-              grund:30, ww:18, co2Kosten:0, co2Menge:0, co2Proz:0 },
+              grund:30, ww:18, co2Kosten:0, co2Menge:0, co2Proz:0,
+              extern:false, zaehlerSeit:'' },
     oel:{ aktiv:true, methode:'schnitt', anfangL:1800, anfangEur:1710, endeL:1200, faktor:2.66,
           lieferungen:[{id:'l1',datum:jahr+'-03-14',liter:2500,eur:2375,beleg:''}] }
   };
@@ -619,11 +623,22 @@ function computeHeiz(){
     });
     return res;
   }
-  var aHZ = split(potHZ,'vHeiz'), aWW = split(potWW,'vWW'), ges={};
+  var aHZ, aWW, ges={}, eigen=umlage, abweichung=0;
+  if(h.extern){
+    aHZ={}; aWW={};
+    state.einheiten.forEach(function(u){ aHZ[u.id]=parseNum(u.extHeiz); aWW[u.id]=parseNum(u.extWW); });
+    potHZ=state.einheiten.reduce(function(a,u){return a+parseNum(u.extHeiz);},0);
+    potWW=state.einheiten.reduce(function(a,u){return a+parseNum(u.extWW);},0);
+    umlage=potHZ+potWW;
+    abweichung=umlage-eigen;
+  } else {
+    aHZ = split(potHZ,'vHeiz'); aWW = split(potWW,'vWW');
+  }
   state.einheiten.forEach(function(u){ ges[u.id]=aHZ[u.id]+aWW[u.id]; });
   var kennwert = flaecheGesamt()>0 ? parseNum(h.co2Menge)/flaecheGesamt() : 0;
   return {brutto:brutto, co2Vermieter:co2Vermieter, umlage:umlage, potHZ:potHZ, potWW:potWW,
-          aHZ:aHZ, aWW:aWW, ges:ges, kennwert:kennwert, grundQ:grundQ, oel:oel};
+          aHZ:aHZ, aWW:aWW, ges:ges, kennwert:kennwert, grundQ:grundQ, oel:oel,
+          extern:!!h.extern, eigen:eigen, abweichung:abweichung};
 }
 
 function compute(){
@@ -766,6 +781,8 @@ function renderHeizInputs(){
    ['hGrund','grund'],['hWW','ww'],['cKosten','co2Kosten'],['cMenge','co2Menge'],['cProz','co2Proz']].forEach(function(p){
     el(p[0]).value = n2(h[p[1]]);
   });
+  el('hExtern').checked=!!h.extern;
+  el('hZaehler').value=h.zaehlerSeit||'';
 }
 function renderOelInputs(){
   var o=state.oel;
@@ -820,6 +837,16 @@ function renderMessBox(){
 }
 
 function renderVerbTable(){
+  var ext=!!state.heizung.extern;
+  el('verbHint').textContent = ext
+    ? 'Übertrage die Endbeträge je Wohnung aus der Abrechnung des Messdienstes. Die Verbrauchswerte daneben dienen der Dokumentation und der Plausibilitätsprüfung.'
+    : 'Heizung in Einheiten des Messdienstes (HKV-Striche, kWh oder m³), Warmwasser in m³ oder kWh.';
+  el('verbTable').querySelector('thead').innerHTML=
+    '<tr><th style="min-width:170px">Einheit</th><th class="r">Wohnfläche m²</th>'+
+    '<th class="r">Verbrauch Heizung</th><th class="r">Verbrauch Warmwasser</th>'+
+    '<th class="r">'+(ext?'Heizung € laut Messdienst':'Anteil Heizung €')+'</th>'+
+    '<th class="r">'+(ext?'Warmwasser € laut Messdienst':'Anteil Warmwasser €')+'</th>'+
+    '<th class="r">Summe warm €</th></tr>';
   var tb=el('verbTable').querySelector('tbody');
   tb.innerHTML=state.einheiten.map(function(u){
     return '<tr data-u="'+u.id+'">'+
@@ -827,7 +854,11 @@ function renderVerbTable(){
       '<td class="n" data-calc="fl"></td>'+
       '<td><input type="text" class="qty" data-f="vHeiz" value="'+n2(u.vHeiz)+'"></td>'+
       '<td><input type="text" class="qty" data-f="vWW" value="'+n2(u.vWW)+'"></td>'+
-      '<td class="n" data-calc="ah"></td><td class="n" data-calc="aw"></td><td class="n" data-calc="as"></td></tr>';
+      (ext
+        ? '<td><input type="text" class="money" data-f="extHeiz" value="'+n2(u.extHeiz)+'"></td>'+
+          '<td><input type="text" class="money" data-f="extWW" value="'+n2(u.extWW)+'"></td>'
+        : '<td class="n" data-calc="ah"></td><td class="n" data-calc="aw"></td>')+
+      '<td class="n" data-calc="as"></td></tr>';
   }).join('');
 }
 
@@ -935,11 +966,14 @@ function refresh(){
 
   /* Heizung */
   el('hVerbrAnz').value=n2(100-Math.min(100,Math.max(0,parseNum(state.heizung.grund))));
+  el('hGrund').disabled=!!state.heizung.extern;
+  el('hWW').disabled=!!state.heizung.extern;
   state.einheiten.forEach(function(u){
     var tr=el('verbTable').querySelector('tr[data-u="'+u.id+'"]'); if(!tr) return;
     tr.querySelector('[data-calc="fl"]').textContent=n2(u.flaeche);
-    tr.querySelector('[data-calc="ah"]').textContent=n2(c.heiz.aHZ[u.id]);
-    tr.querySelector('[data-calc="aw"]').textContent=n2(c.heiz.aWW[u.id]);
+    var ah=tr.querySelector('[data-calc="ah"]'), aw=tr.querySelector('[data-calc="aw"]');
+    if(ah) ah.textContent=n2(c.heiz.aHZ[u.id]);
+    if(aw) aw.textContent=n2(c.heiz.aWW[u.id]);
     tr.querySelector('[data-calc="as"]').textContent=n2(c.heiz.ges[u.id]);
   });
   el('vFl').textContent=n2(flG);
@@ -948,6 +982,7 @@ function refresh(){
   el('vAH').textContent=n2(c.heiz.potHZ); el('vAW').textContent=n2(c.heiz.potWW); el('vAS').textContent=n2(c.heiz.umlage);
 
   renderOelBox(c);
+  renderExternBox(c);
   renderMessBox();
   renderHkvoHinweis(c);
   renderCo2Box(c);
@@ -964,8 +999,55 @@ function refresh(){
   el('demoBanner').hidden = !state.demo;
 }
 
+function renderExternBox(c){
+  var h=state.heizung, out='';
+  if(h.extern){
+    var abw=c.heiz.abweichung;
+    out+='<div class="note"><strong>Der Messdienst rechnet ab.</strong> Die Verteilung nach HeizkostenV macht der Messdienst. '+
+      'Du überträgst nur die Endbeträge je Wohnung und prüfst sie gegen deine eigene Kostenseite. '+
+      'Grundkostenanteil und Warmwasserquote unten werden dabei nicht angewandt.</div>';
+    if(c.heiz.eigen>0 || c.heiz.umlage>0){
+      var cls = Math.abs(abw)<=Math.max(5,c.heiz.eigen*0.01) ? '' : 'crit';
+      out+='<div class="note '+cls+'"><strong>Abgleich.</strong> Deine erfassten Kosten abzüglich CO₂-Vermieteranteil: '+money(c.heiz.eigen)+'. '+
+        'Vom Messdienst verteilt: '+money(c.heiz.umlage)+'. Differenz: '+(abw>=0?'+':'')+money(abw)+'. '+
+        (Math.abs(abw)<=Math.max(5,c.heiz.eigen*0.01)
+          ? 'Im Rahmen, Rundung.'
+          : (abw>0
+             ? 'Der Messdienst verteilt <strong>mehr</strong>, als du an Kosten erfasst hast. Entweder fehlt dir eine Rechnung, oder es wurden Positionen verteilt, die du nicht gemeldet hast. Erst klären, dann abrechnen.'
+             : 'Der Messdienst verteilt <strong>weniger</strong>, als du erfasst hast. Die Differenz bleibt bei dir hängen. Prüfe, ob du Brennstoffkosten, Wartung oder Betriebsstrom nicht gemeldet hast.'))+
+        '</div>';
+    }
+    out+='<div class="note warn"><strong>Was du dem Messdienst liefern musst.</strong> Brennstoffkosten des Zeitraums — bei Öl den <strong>verbrauchten</strong> Bestand aus der Bestandsrechnung oben, nicht die Tankrechnung — sowie CO₂-Menge und CO₂-Kosten aus der Lieferantenrechnung. '+
+      'Ohne die CO₂-Angaben rechnet der Messdienst den Vermieteranteil nicht heraus, und du legst zu viel um.</div>';
+  }
+  // unterjaehriger Zaehlereinbau
+  var z=dparse(h.zaehlerSeit), von=dparse(state.objekt.von), bis=dparse(state.objekt.bis);
+  if(z && von && bis && z>bis && !state.objekt.selbst){
+    out+='<div class="note crit"><strong>In diesem Abrechnungszeitraum gab es noch keine Verbrauchserfassung.</strong> '+
+      'Die Zähler laufen erst seit '+dfmt.format(z)+', der Zeitraum endet am '+dfmt.format(bis)+'. '+
+      'Bei vermieteten Wohnungen schreibt die HeizkostenV verbrauchsabhängige Abrechnung zwingend vor. '+
+      'Fehlt sie, darf der Mieter seinen Heizkostenanteil nach § 12 Abs. 1 HeizkostenV um <strong>15 Prozent kürzen</strong> — '+
+      'bei den hier erfassten Kosten rund '+money(c.heiz.umlage*0.15)+'.</div>'+
+      '<div class="note warn"><strong>Was jetzt zu entscheiden ist.</strong> Zwei Wege: Du legst die Heizkosten nach Wohnfläche um und wartest ab, ob der Mieter kürzt. '+
+      'Oder du ziehst die 15 Prozent von dir aus ab und weist das in der Abrechnung aus. '+
+      'Der zweite Weg kostet dasselbe, wenn gekürzt wird, nimmt aber den Streit vorweg und wirkt gegenüber deiner Tochter wie gegenüber dem anderen Mieter gleich sauber. '+
+      'Lass die Frage für die Altjahre von einem Mietrechtler bestätigen, bevor du verschickst — ich kann dir nicht sagen, ob in deinem Fall ein Ausnahmetatbestand greift.</div>';
+  }
+  if(z && von && bis && z>von && z<=bis){
+    var tageNach=Math.round((bis-z)/86400000)+1, tageGes=gesamtTage();
+    out+='<div class="note crit"><strong>Zähler erst im laufenden Abrechnungszeitraum in Betrieb ('+dfmt.format(z)+').</strong> '+
+      'Für '+num0.format(tageGes-tageNach)+' Tage davor liegen keine Verbrauchswerte vor, für '+num0.format(tageNach)+' Tage danach schon. '+
+      'Der Zeitraum ist deshalb zu teilen: davor Verteilung nach Wohnfläche, danach verbrauchsabhängig.</div>'+
+      '<div class="note warn"><strong>Nicht nach Tagen aufteilen.</strong> '+num0.format(tageNach)+' von '+num0.format(tageGes)+' Tagen sind '+n2(tageNach/tageGes*100)+' % der Zeit, aber ein weit größerer Anteil der Heizkosten, weil die Heizsaison in diesem Abschnitt liegt. '+
+      'Die zeitanteilige Aufteilung erfolgt nach <strong>Gradtagzahlen</strong>. Der Messdienst wendet diese Tabelle routinemäßig an — lass die Aufteilung von ihm rechnen und übernimm die Endbeträge. '+
+      'Ich hinterlege die Tabellenwerte hier bewusst nicht, weil ich sie von hier aus nicht gegen die amtliche Fassung prüfen kann.</div>';
+  }
+  el('externBox').innerHTML=out;
+}
+
 function renderHkvoHinweis(c){
   var g=parseNum(state.heizung.grund), out='';
+  if(state.heizung.extern){ el('hkvoBox').innerHTML=''; return; }
   if(state.objekt.selbst && state.einheiten.length<=2){
     out+='<div class="note">Bei einem Zweifamilienhaus, in dem du selbst eine Wohnung bewohnst, gilt die Ausnahme des § 2 HeizkostenV: Die verbrauchsabhängige Abrechnung ist dann nicht zwingend. Die 50/50-Aufteilung unten kannst du trotzdem nutzen — sie ist meist die fairere und streitärmere Lösung.</div>';
   } else if(g<30||g>50){
@@ -1080,7 +1162,8 @@ function renderDocs(c){
     }).join('');
     var warm='';
     if(c.heiz.umlage>0){
-      warm='<tr><td colspan="5" style="padding-top:12px"><span class="eyebrow">Heizung und Warmwasser nach HeizkostenV</span></td></tr>'+
+      warm='<tr><td colspan="5" style="padding-top:12px"><span class="eyebrow">Heizung und Warmwasser nach HeizkostenV'+
+        (c.heiz.extern?' — Verteilung durch den Messdienst':'')+'</span></td></tr>'+
       '<tr><td>Heizkosten ('+n2(c.heiz.grundQ*100)+' % Fläche / '+n2(100-c.heiz.grundQ*100)+' % Verbrauch)</td><td style="font-size:12.5px;color:var(--ink-2)">Grund + Verbrauch</td>'+
         '<td class="n">'+n2(c.heiz.potHZ)+'</td><td class="n">'+(c.heiz.potHZ>0?n2(c.heiz.aHZ[u.id]/c.heiz.potHZ*100):'0,00')+' %</td><td class="n"><strong>'+n2(c.heiz.aHZ[u.id])+'</strong></td></tr>'+
       (c.heiz.potWW>0?'<tr><td>Warmwasserkosten</td><td style="font-size:12.5px;color:var(--ink-2)">Grund + Verbrauch</td>'+
@@ -1399,6 +1482,13 @@ function bindHeiz(){
     e.addEventListener('input',function(){ state.heizung[p[1]]=parseNum(this.value); touch(); });
     e.addEventListener('change',function(){ this.value=n2(parseNum(this.value)); });
   });
+  el('hExtern').addEventListener('change',function(){
+    state.heizung.extern=this.checked; state.demo=false;
+    renderVerbTable(); refresh(); queueSave();
+  });
+  el('hZaehler').addEventListener('change',function(){
+    state.heizung.zaehlerSeit=this.value; touch();
+  });
   el('verbTable').addEventListener('input',function(e){
     var inp=e.target.closest('input'); if(!inp) return;
     var tr=inp.closest('tr'); var u=state.einheiten.filter(function(x){return x.id===tr.dataset.u;})[0]; if(!u) return;
@@ -1539,6 +1629,8 @@ function migrate(s){
   (s.einheiten||[]).forEach(function(u){
     if(u.angehoerig===undefined) u.angehoerig=false;
     if(u.ortsQm===undefined) u.ortsQm=0;
+    if(u.extHeiz===undefined) u.extHeiz=0;
+    if(u.extWW===undefined) u.extWW=0;
   });
   (s.einheiten||[]).forEach(function(u){ if(!u.direkt) u.direkt={}; });
   (s.kosten||[]).forEach(function(k){ if(!k.direkt) k.direkt={}; });
