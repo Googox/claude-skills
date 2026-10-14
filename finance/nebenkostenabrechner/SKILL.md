@@ -152,6 +152,23 @@ Ohne Internet lädt lediglich die Webschrift nicht; die Anwendung rechnet unver�
 
 ## Workflow 8 — Vorauszahlungen anpassen
 
+**Zwei getrennte Fragen, die oft verwechselt werden.**
+
+*Reicht die Gesamtvorauszahlung?* Wenn die Nachzahlung ein Viertel der
+geleisteten Vorauszahlungen übersteigt, weist das Dashboard den Zwölftelwert der
+tatsächlichen Jahreskosten je Einheit aus.
+
+*Stimmt die Verteilung zwischen den Einheiten?* Unabhängig davon prüft die
+Übersicht, ob der Anteil an den Vorauszahlungen zum Anteil an den Kosten passt.
+Gleiche Beträge bei ungleichen Flächen erzeugen dauerhaft Nachforderung in der
+einen und Erstattung in der anderen Wohnung. Die Tabelle zeigt den
+flächengerechten Betrag bei unveränderter Gesamtsumme.
+
+Beides wird nach § 560 Abs. 4 BGB schriftlich erklärt, unter Bezug auf die
+Abrechnung, mit Wirkung ab dem Folgemonat.
+
+## Workflow 8b — Alte Fassung
+
 1. Nach jeder Abrechnung prüfen, ob die Nachzahlung 25 Prozent der geleisteten
    Vorauszahlung übersteigt.
 2. Ist das der Fall, Vorauszahlung nach § 560 Abs. 4 BGB auf ein Zwölftel der

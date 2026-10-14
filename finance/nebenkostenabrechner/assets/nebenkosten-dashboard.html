@@ -251,6 +251,7 @@ svg{display:block;max-width:100%;height:auto}
     <div id="leerBox"></div>
     <div id="pflichtBox"></div>
     <div id="direktBox"></div>
+    <div id="vzBox"></div>
     <div class="charts" id="chartRow"></div>
     <div class="panel">
       <header><h2>Ergebnis je Einheit</h2><p>Umlagefähige Kosten abzüglich geleisteter Vorauszahlungen für den gewählten Abrechnungszeitraum.</p></header>
@@ -1050,6 +1051,7 @@ function refresh(){
   renderLeerBox(c);
   renderPflichtBox(c);
   renderDirektBox(c);
+  renderVzStrukturBox(c);
   renderCharts(c);
   renderResults(c);
   renderDocs(c);
@@ -1071,6 +1073,37 @@ function renderPflichtBox(c){
     'der Mieter kann die geleisteten Vorauszahlungen in voller Höhe zurückverlangen. '+
     'Eine Pauschale wäre abrechnungsfrei; dann trage sie oben in der Spalte „Nebenkosten als“ ein. '+
     'Was tatsächlich vereinbart ist, steht im Mietvertrag und ist nicht wählbar.</div>';
+}
+
+function renderVzStrukturBox(c){
+  var aktiv=c.units.filter(function(x){ return !x.pauschale && unitTage(x.u)>0 && x.vz>0; });
+  if(aktiv.length<2 || c.sumGes<=0 || c.sumVz<=0){ el('vzBox').innerHTML=''; return; }
+  var zeilen=aktiv.map(function(x){
+    var kAnteil=x.gesamt/c.sumGes*100;
+    var vAnteil=x.vz/c.sumVz*100;
+    var soll=x.monate>0 ? (c.sumVz/12)*(x.gesamt/c.sumGes)*12/x.monate : 0;
+    var ist=x.monate>0 ? x.vz/x.monate : 0;
+    return {name:x.u.name, k:kAnteil, v:vAnteil, soll:soll, ist:ist, diff:kAnteil-vAnteil};
+  });
+  var max=Math.max.apply(null, zeilen.map(function(z){ return Math.abs(z.diff); }));
+  if(max<4){ el('vzBox').innerHTML=''; return; }
+  var tab='<div class="twrap"><table style="min-width:520px"><thead><tr>'+
+    '<th>Einheit</th><th class="r">Anteil an den Kosten</th><th class="r">Anteil an den Vorauszahlungen</th>'+
+    '<th class="r">Vorauszahlung ist</th><th class="r">flächengerecht wäre</th></tr></thead><tbody>'+
+    zeilen.map(function(z){
+      return '<tr><td>'+esc(z.name)+'</td><td class="n">'+n2(z.k)+' %</td><td class="n">'+n2(z.v)+' %</td>'+
+        '<td class="n">'+n2(z.ist)+' €</td><td class="n"><strong>'+n2(z.soll)+' €</strong></td></tr>';
+    }).join('')+'</tbody></table></div>';
+  var schlechteste=zeilen.slice().sort(function(a,b){ return Math.abs(b.diff)-Math.abs(a.diff); })[0];
+  el('vzBox').innerHTML=
+    '<div class="note warn"><strong>Die Vorauszahlungen passen nicht zur Kostenverteilung.</strong> '+
+    esc(schlechteste.name)+' trägt '+n2(schlechteste.k)+' % der Kosten, leistet aber '+n2(schlechteste.v)+' % der Vorauszahlungen. '+
+    (schlechteste.diff>0
+      ? 'Diese Einheit zahlt systematisch zu wenig voraus und bekommt deshalb jedes Jahr eine Nachforderung, auch wenn an den Kosten nichts ungewöhnlich ist.'
+      : 'Diese Einheit zahlt systematisch zu viel voraus und bekommt deshalb jedes Jahr eine Erstattung.')+
+    ' Nach einer ordnungsgemäßen Abrechnung darfst du die Vorauszahlungen nach § 560 Abs. 4 BGB auf ein Zwölftel der tatsächlichen Jahreskosten anpassen.</div>'+
+    tab+
+    '<div class="note" style="margin-top:10px">Die Spalte „flächengerecht wäre“ verteilt die heutige Gesamtvorauszahlung nach dem tatsächlichen Kostenanteil um. Sie ändert also nicht, was du insgesamt einnimmst, sondern nur die Verteilung zwischen den Wohnungen.</div>';
 }
 
 function renderDirektBox(c){

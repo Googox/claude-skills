@@ -326,3 +326,31 @@ typischerweise zehn bis fünfzehn Prozentpunkte. Ob eine unterlassene Abrechnung
 bei vereinbarter Vorauszahlung diesen Effekt auslöst, ist eine Frage für den
 Steuerberater; das Risiko besteht und sollte vor der Entscheidung geklärt
 werden, nicht danach.
+
+
+## 15. Gleiche Vorauszahlung bei ungleicher Fläche
+
+Wird in beiden Wohnungen dieselbe Vorauszahlung vereinbart, obwohl die Flächen
+unterschiedlich sind, entsteht eine dauerhafte Schieflage. Die größere Wohnung
+trägt den größeren Kostenanteil, leistet aber nur die Hälfte der Vorauszahlungen.
+Ergebnis: jedes Jahr eine Nachforderung in der größeren und eine Erstattung in
+der kleineren Wohnung, ohne dass an den Kosten etwas ungewöhnlich wäre.
+
+Das ist kein Rechtsfehler, aber ein Konstruktionsfehler. Es kostet jedes Jahr
+zwei Überweisungen, erzeugt vermeidbare Rückfragen und lässt die Abrechnung beim
+Mieter so aussehen, als hätte jemand falsch gerechnet.
+
+**Abhilfe:** Nach einer ordnungsgemäßen Abrechnung darf die Vorauszahlung nach
+§ 560 Abs. 4 BGB auf ein Zwölftel der tatsächlichen Jahreskosten angepasst
+werden. Die Anpassung ist schriftlich zu erklären, unter Bezug auf die
+Abrechnung, und wirkt ab dem auf die Erklärung folgenden Monat.
+
+Die Umverteilung ändert nichts an der Gesamteinnahme, nur an der Verteilung
+zwischen den Wohnungen. Für den Mieter, dessen Vorauszahlung steigt, bleibt die
+Jahresbelastung gleich; sie verteilt sich nur gleichmäßiger.
+
+**Kein steuerlicher Nebeneffekt.** Für die 66-Prozent-Grenze des § 21 Abs. 2
+EStG zählen bei vereinbarter Vorauszahlung die tatsächlich angefallenen
+umlagefähigen Kosten, nicht die Höhe des Abschlags. Eine Anpassung der
+Vorauszahlung verschiebt die Quote daher nicht. Anders bei einer Pauschale: dort
+ist der vereinbarte Betrag selbst die Gegenleistung.
