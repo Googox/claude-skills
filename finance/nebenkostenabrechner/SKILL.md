@@ -18,7 +18,9 @@ Mietrechtsanwalt.
 
 | Datei | Zweck |
 |-------|-------|
-| `assets/nebenkosten-dashboard.html` | Interaktives Dashboard, als Artifact publizierbar. Jahresakten, Kostenkatalog, Heizkostenmodul, Charts, druckfertige Mieterabrechnung, CSV-Export. |
+| `assets/nebenkosten-dashboard.html` | Interaktives Dashboard als Artifact-Fragment. Jahresakten, Kostenkatalog, Heizkostenmodul, Charts, druckfertige Mieterabrechnung, CSV-Export, Sicherung als JSON. |
+| `assets/nebenkostenabrechner.html` | Generierte Standalone-Datei für den Offline-Betrieb per Doppelklick. Wird von `scripts/build-standalone.py` erzeugt, nicht von Hand bearbeiten. |
+| `scripts/build-standalone.py` | Ergänzt das Artifact-Fragment um die HTML-Hülle, die der Viewer sonst beisteuert. |
 | `scripts/nebenkosten.py` | CLI-Rechner ohne externe Abhängigkeiten. Liest eine JSON-Akte, gibt Abrechnung als Text, JSON oder CSV aus. |
 | `references/betriebskosten-recht.md` | Wissensbasis: 17 Positionen der BetrKV, nicht umlagefähige Kosten, Fristen, HeizkostenV, CO2KostAufG. |
 | `references/umlageschluessel.md` | Auswahl und Begründung des richtigen Umlagemaßstabs je Kostenart. |
@@ -48,7 +50,25 @@ Mietrechtsanwalt.
 4. Am Jahresende Register „Abrechnung“ öffnen, drucken oder als CSV
    an den Steuerberater übergeben.
 
-## Workflow 3 — Ölabrechnung über die Bestandsrechnung
+## Workflow 3 — Offline auf dem eigenen Rechner betreiben
+
+1. `python3 scripts/build-standalone.py` ausführen oder `assets/nebenkostenabrechner.html`
+   direkt herunterladen.
+2. Datei in einen festen Ordner legen, etwa `Dokumente/Haus/Nebenkosten`, und per
+   Doppelklick im Browser öffnen. Keine Installation, kein Server, kein Internet nötig.
+3. Eingaben werden im Browserspeicher gehalten. Dieser überlebt Neustarts, aber nicht
+   das Löschen der Browserdaten, einen Browserwechsel oder einen neuen Rechner.
+4. Nach jeder Sitzung **Sichern** klicken. Die erzeugte Datei
+   `Nebenkosten-Sicherung-JJJJ-MM-TT.json` enthält alle Jahresakten.
+5. Mit **Laden** den Stand auf einem beliebigen Rechner wiederherstellen.
+6. Je Abrechnungsjahr einen Ordner mit PDF-Druck, CSV-Export, JSON-Sicherung und
+   gescannten Belegen führen. Das trägt Belegeinsicht und Betriebsprüfung.
+
+**Verifiziert:** Der vollständige Zyklus aus Eingabe, Sichern, Löschen des
+Browserspeichers und Laden wurde über das `file://`-Protokoll in Chromium getestet.
+Ohne Internet lädt lediglich die Webschrift nicht; die Anwendung rechnet unverändert.
+
+## Workflow 4 — Ölabrechnung über die Bestandsrechnung
 
 1. Tankpeilung zum Ende des Abrechnungszeitraums dokumentieren (Datum, Foto).
 2. Anfangsbestand in Litern und Euro aus der Vorjahresabrechnung übernehmen.
@@ -58,7 +78,7 @@ Mietrechtsanwalt.
 5. Der errechnete Verbrauchswert ersetzt die Brennstoffkosten. Der Endbestandswert
    wird beim Anlegen der nächsten Jahresakte automatisch vorgetragen.
 
-## Workflow 4 — Angehörigenvermietung absichern
+## Workflow 5 — Angehörigenvermietung absichern
 
 1. Betroffene Einheit im Register „Objekt“ markieren.
 2. Ortsübliche Kaltmiete je Quadratmeter aus dem örtlichen Mietspiegel eintragen
@@ -70,7 +90,7 @@ Mietrechtsanwalt.
    welchen Beitrag die Abrechnung zur steuerlichen Absicherung leistet.
 5. Prüfung jährlich wiederholen — die ortsübliche Miete steigt, die vereinbarte nicht.
 
-## Workflow 5 — Vorauszahlungen anpassen
+## Workflow 6 — Vorauszahlungen anpassen
 
 1. Nach jeder Abrechnung prüfen, ob die Nachzahlung 25 Prozent der geleisteten
    Vorauszahlung übersteigt.
@@ -79,7 +99,7 @@ Mietrechtsanwalt.
 3. Anpassung schriftlich und unter Bezug auf die Abrechnung erklären; sie wirkt
    ab dem auf die Erklärung folgenden Monat.
 
-## Workflow 6 — Streitfall Belegeinsicht
+## Workflow 7 — Streitfall Belegeinsicht
 
 1. Der Mieter hat Anspruch auf Einsicht in die Originalbelege.
 2. Beleg-Nummern aus dem Kostenkatalog gegen die abgelegten Rechnungen prüfen.
@@ -96,6 +116,7 @@ Mietrechtsanwalt.
 - Bei Angehörigenvermietung ist die Quote gegen die ortsübliche Warmmiete belegt.
 - Nicht umlagefähige Kosten sind erfasst, aber nicht verteilt.
 - Die Abrechnung ist innerhalb der Zwölfmonatsfrist zugegangen.
+- Nach jeder Sitzung liegt eine JSON-Sicherung außerhalb des Browserspeichers.
 
 ## Anti-Patterns
 
@@ -110,3 +131,4 @@ Mietrechtsanwalt.
   (drei Prozent Kürzungsrecht des Mieters).
 - Gegenüber Angehörigen auf die Nebenkostenabrechnung verzichten — das senkt die
   Quote nach § 21 Abs. 2 EStG und gefährdet den Werbungskostenabzug.
+- Sich auf den Browserspeicher als Archiv verlassen, ohne je zu sichern.

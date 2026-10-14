@@ -209,6 +209,9 @@ svg{display:block;max-width:100%;height:auto}
     </div>
     <button class="btn sm" id="jahrNeu" title="Neue Abrechnungsperiode anlegen">+ Jahr</button>
     <span class="savestate"><span class="dot" id="saveDot"></span><span id="saveTxt">lokal</span></span>
+    <button class="btn sm" id="backupBtn" title="Alle Jahresakten als Datei sichern">Sichern</button>
+    <button class="btn sm" id="restoreBtn" title="Gesicherte Datei einlesen">Laden</button>
+    <input type="file" id="restoreFile" accept=".json,application/json" hidden>
     <button class="btn sm ghost" id="themeBtn" title="Hell / Dunkel umschalten" aria-label="Farbschema umschalten">◐</button>
   </div>
 </div>
@@ -272,7 +275,7 @@ svg{display:block;max-width:100%;height:auto}
           <th style="min-width:150px">Einheit</th><th style="min-width:150px">Mieter</th>
           <th class="r">Wohnfläche m²</th><th class="r">Personen</th>
           <th>Nutzung von</th><th>Nutzung bis</th>
-          <th class="r">Kaltmiete €/M</th><th class="r">VZ kalte NK €/M</th><th class="r">VZ Heizung €/M</th>
+          <th class="r">Kaltmiete<br>€/Monat</th><th class="r">Vorauszahlung<br>Betriebskosten €/Monat</th><th class="r">Vorauszahlung<br>Heizung €/Monat</th>
           <th class="r">€/m²</th><th></th>
         </tr></thead><tbody></tbody>
         <tfoot><tr><td colspan="2">Summe</td><td class="n" id="uSumFl"></td><td class="n" id="uSumPe"></td>
@@ -407,6 +410,16 @@ svg{display:block;max-width:100%;height:auto}
 
   <!-- ============ RECHT ============ -->
   <section id="tab-recht" class="stack" hidden>
+    <div class="panel">
+      <header><h2>Offline nutzen und Daten sichern</h2><p>Die Datei läuft ohne Internet in jedem Browser. Wie du sie dauerhaft behältst.</p></header>
+      <div class="body">
+        <div class="note"><strong>Herunterladen und starten.</strong> Speichere die Datei <code>nebenkostenabrechner.html</code> in einem Ordner deiner Wahl, zum Beispiel <code>Dokumente\Haus\Nebenkosten</code>, und öffne sie mit Doppelklick. Es wird nichts installiert, kein Internet benötigt, keine Daten verlassen deinen Rechner. Ohne Internet lädt nur die Schriftart nicht, die Anwendung rechnet unverändert.</div>
+        <div class="note warn"><strong>Verlass dich nicht auf den Browserspeicher.</strong> Die Anwendung merkt sich deine Eingaben im Speicher des Browsers. Der ist weg, sobald du Browserdaten löschst, den Browser wechselst oder den Rechner neu aufsetzt. Für eine Abrechnung, die du zehn Jahre aufbewahren musst, ist das zu wenig.</div>
+        <div class="note"><strong>So sicherst du richtig.</strong> Klicke oben rechts auf <strong>Sichern</strong>. Du bekommst eine Datei <code>Nebenkosten-Sicherung-JJJJ-MM-TT.json</code> mit allen Jahresakten. Lege sie neben die HTML-Datei und in deine Cloud oder auf einen Stick. Mit <strong>Laden</strong> holst du den Stand jederzeit zurück, auch auf einem anderen Rechner. Sichere nach jeder Abrechnung und jedes Mal, wenn du Belege nachgetragen hast.</div>
+        <div class="note"><strong>Was du zusätzlich archivierst.</strong> Zur fertigen Abrechnung gehören die Belege. Lege je Jahr einen Ordner an mit der gedruckten Abrechnung als PDF, dem CSV-Export, der JSON-Sicherung und den gescannten Rechnungen. Dann hältst du die Belegeinsicht des Mieters und eine Betriebsprüfung ohne Suchen aus.</div>
+      </div>
+    </div>
+
     <div class="panel"><header><h2>Fristen, Schlüssel und Fallstricke</h2><p>Kurzreferenz für die eigene Abrechnung. Ersetzt keine Rechtsberatung.</p></header>
       <div class="body"><dl class="legal" id="legalList"></dl></div>
     </div>
@@ -1209,6 +1222,80 @@ function buildCsv(){
   return '﻿'+L.join('\r\n');
 }
 
+/* ================= Sichern und Laden ================= */
+function dateiAnbieten(name, inhalt, typ){
+  return cap('downloads').then(function(d){
+    if(!d) throw {code:'kein_viewer'};
+    return d.save({filename:name, data:inhalt});
+  }).catch(function(err){
+    if(err && err.code==='declined') throw err;
+    var url=URL.createObjectURL(new Blob([inhalt],{type:typ||'application/octet-stream'}));
+    var a=document.createElement('a'); a.href=url; a.download=name;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function(){ URL.revokeObjectURL(url); },1500);
+    return {status:'saved'};
+  });
+}
+
+function alleJahreSammeln(){
+  var akten={};
+  jahre.forEach(function(j){
+    var d = (j===state.jahr) ? state : loadLocal(j);
+    if(d) akten[j]=d;
+  });
+  akten[state.jahr]=state;
+  return akten;
+}
+
+function sicherungErstellen(){
+  var paket={ format:'nebenkostenabrechner-sicherung', version:1,
+    erstellt:new Date().toISOString(), aktuellesJahr:state.jahr,
+    jahre:Object.keys(alleJahreSammeln()).map(Number).sort(function(a,b){return a-b;}),
+    akten:alleJahreSammeln() };
+  var d=new Date(), p2=function(x){ return (x<10?'0':'')+x; };
+  var name='Nebenkosten-Sicherung-'+d.getFullYear()+'-'+p2(d.getMonth()+1)+'-'+p2(d.getDate())+'.json';
+  var btn=el('backupBtn'), alt=btn.textContent;
+  dateiAnbieten(name, JSON.stringify(paket,null,2), 'application/json').then(function(){
+    btn.textContent='Gesichert'; setTimeout(function(){ btn.textContent=alt; },2200);
+  }).catch(function(e){
+    if(e && e.code==='declined'){ return; }
+    btn.textContent='Nicht möglich'; setTimeout(function(){ btn.textContent=alt; },2600);
+  });
+}
+
+function sicherungEinlesen(file){
+  var btn=el('restoreBtn'), alt=btn.textContent;
+  var fr=new FileReader();
+  fr.onerror=function(){ btn.textContent='Datei unlesbar'; setTimeout(function(){ btn.textContent=alt; },2600); };
+  fr.onload=function(){
+    var paket;
+    try{ paket=JSON.parse(fr.result); }
+    catch(e){ btn.textContent='Keine gültige Datei'; setTimeout(function(){ btn.textContent=alt; },2600); return; }
+    var akten = paket && paket.akten;
+    if(!akten && paket && paket.jahr && paket.einheiten){ akten={}; akten[paket.jahr]=paket; }
+    if(!akten || typeof akten!=='object' || !Object.keys(akten).length){
+      btn.textContent='Keine Jahresakte'; setTimeout(function(){ btn.textContent=alt; },2600); return;
+    }
+    var geladen=[];
+    Object.keys(akten).forEach(function(k){
+      var j=parseInt(k,10); if(!isFinite(j)) return;
+      var akte=akten[k]; if(!akte || !akte.einheiten) return;
+      akte.jahr=j;
+      try{ localStorage.setItem(lsKey(j), JSON.stringify(akte)); }catch(e){}
+      if(jahre.indexOf(j)<0) jahre.push(j);
+      geladen.push(j);
+    });
+    if(!geladen.length){ btn.textContent='Keine Jahresakte'; setTimeout(function(){ btn.textContent=alt; },2600); return; }
+    jahre.sort(function(a,b){return a-b;});
+    var ziel = (paket.aktuellesJahr && geladen.indexOf(paket.aktuellesJahr)>-1) ? paket.aktuellesJahr : geladen[geladen.length-1];
+    state=migrate(loadLocal(ziel));
+    renderJahrSel(); rebuildAll(); persistLocal(); queueSave();
+    btn.textContent=geladen.length+' Jahr'+(geladen.length>1?'e':'')+' geladen';
+    setTimeout(function(){ btn.textContent=alt; },3000);
+  };
+  fr.readAsText(file);
+}
+
 /* ================= Ereignisse ================= */
 function touch(){ state.demo=false; refresh(); queueSave(); }
 
@@ -1373,23 +1460,19 @@ function bindMisc(){
   });
   el('printBtn').addEventListener('click',function(){ window.print(); });
   el('csvBtn').addEventListener('click',function(){
-    var csv=buildCsv(), name='Nebenkosten_'+state.jahr+'.csv';
-    cap('downloads').then(function(d){
-      if(!d) throw 0;
-      return d.save({filename:name,data:csv});
-    }).then(function(){
-      el('csvBtn').textContent='CSV gespeichert'; setTimeout(function(){ el('csvBtn').textContent='CSV exportieren'; },2200);
-    }).catch(function(err){
-      if(err && err.code==='declined'){ return; }
-      try{
-        var url=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
-        var a=document.createElement('a'); a.href=url; a.download=name; a.click();
-        setTimeout(function(){ URL.revokeObjectURL(url); },1000);
-      }catch(e){
-        el('csvBtn').textContent='Export hier nicht möglich';
-        setTimeout(function(){ el('csvBtn').textContent='CSV exportieren'; },2600);
-      }
+    var b=el('csvBtn');
+    dateiAnbieten('Nebenkosten_'+state.jahr+'.csv', buildCsv(), 'text/csv').then(function(){
+      b.textContent='CSV gespeichert'; setTimeout(function(){ b.textContent='CSV exportieren'; },2200);
+    }).catch(function(e){
+      if(e && e.code==='declined') return;
+      b.textContent='Export nicht möglich'; setTimeout(function(){ b.textContent='CSV exportieren'; },2600);
     });
+  });
+  el('backupBtn').addEventListener('click', sicherungErstellen);
+  el('restoreBtn').addEventListener('click', function(){ el('restoreFile').click(); });
+  el('restoreFile').addEventListener('change', function(){
+    if(this.files && this.files[0]) sicherungEinlesen(this.files[0]);
+    this.value='';
   });
   el('themeBtn').addEventListener('click',function(){
     var r=document.documentElement, cur=r.getAttribute('data-theme');
