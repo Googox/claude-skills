@@ -296,13 +296,13 @@ svg{display:block;max-width:100%;height:auto}
         <thead><tr>
           <th style="min-width:150px">Einheit</th><th style="min-width:150px">Mieter</th>
           <th class="r">Wohnfläche m²</th><th class="r">Personen</th>
-          <th>Nutzung von</th><th>Nutzung bis</th>
+          <th>Nutzung von</th><th>Nutzung bis</th><th class="r">Tage</th>
           <th style="min-width:140px">Nebenkosten als</th>
           <th class="r">Kaltmiete<br>€/Monat</th><th class="r">Vorauszahlung<br>Betriebskosten €/Monat</th><th class="r">Vorauszahlung<br>Heizung €/Monat</th>
           <th class="r">€/m²</th><th></th>
         </tr></thead><tbody></tbody>
         <tfoot><tr><td colspan="3">Summe</td><td class="n" id="uSumFl"></td><td class="n" id="uSumPe"></td>
-          <td colspan="2"></td><td class="n" id="uSumMiete"></td><td class="n" id="uSumVzN"></td><td class="n" id="uSumVzH"></td><td colspan="2"></td></tr></tfoot>
+          <td colspan="3"></td><td class="n" id="uSumMiete"></td><td class="n" id="uSumVzN"></td><td class="n" id="uSumVzH"></td><td colspan="2"></td></tr></tfoot>
       </table></div></div>
     </div>
     <div class="panel">
@@ -795,6 +795,7 @@ function renderUnitTable(){
       '<td><input type="text" class="qty" data-f="personen" value="'+num0.format(parseNum(u.personen))+'"></td>'+
       '<td><input type="date" data-f="von" value="'+esc(u.von)+'"></td>'+
       '<td><input type="date" data-f="bis" value="'+esc(u.bis)+'"></td>'+
+      '<td class="n" data-calc="tage"></td>'+
       '<td><select data-f="art">'+
         '<option value="vorauszahlung"'+(u.art!=='pauschale'?' selected':'')+'>Vorauszahlung</option>'+
         '<option value="pauschale"'+(u.art==='pauschale'?' selected':'')+'>Pauschale</option></select></td>'+
@@ -812,7 +813,11 @@ function renderKostTable(){
   var head=el('kostTable').querySelector('thead');
   head.innerHTML='<tr><th style="min-width:240px">Position</th><th style="min-width:180px">Umlageschlüssel</th>'+
     '<th class="r" style="min-width:112px">Betrag €</th><th style="min-width:100px">Beleg-Nr.</th>'+
-    state.einheiten.map(function(u){ return '<th class="r" style="min-width:104px">'+esc(u.name)+'</th>'; }).join('')+
+    state.einheiten.map(function(u){
+      var tg=unitTage(u), zus = tg===0
+        ? '<br><span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--crit)">nicht vermietet</span>'
+        : (tg<gesamtTage() ? '<br><span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--warn)">'+num0.format(tg)+' von '+num0.format(gesamtTage())+' Tagen</span>' : '');
+      return '<th class="r" style="min-width:110px">'+esc(u.name)+zus+'</th>'; }).join('')+
     '<th></th></tr>';
   var opts=Object.keys(KEYS).map(function(k){ return {k:k,l:KEYS[k].label}; });
   var tb=el('kostTable').querySelector('tbody');
@@ -1014,6 +1019,12 @@ function refresh(){
     var tr=el('unitTable').querySelector('tr[data-u="'+u.id+'"]'); if(!tr) return;
     var q=tr.querySelector('[data-calc="qm"]');
     if(q) q.textContent = parseNum(u.flaeche)>0 ? n2(parseNum(u.kaltmiete)/parseNum(u.flaeche)) : '—';
+    var td=tr.querySelector('[data-calc="tage"]'), tg=unitTage(u);
+    if(td){
+      td.textContent = num0.format(tg)+' / '+num0.format(gesamtTage());
+      td.style.color = tg===0 ? 'var(--crit)' : (tg<gesamtTage() ? 'var(--warn)' : '');
+      td.title = tg===0 ? 'Im Abrechnungszeitraum nicht vermietet' : '';
+    }
   });
   el('uSumFl').textContent=n2(flG);
   el('uSumPe').textContent=num0.format(state.einheiten.reduce(function(a,u){return a+parseNum(u.personen);},0));
@@ -1289,6 +1300,16 @@ function renderCharts(c){
 
 function renderResults(c){
   el('resultRow').innerHTML=c.units.map(function(x){
+    if(unitTage(x.u)===0){
+      return '<div class="rescard" style="border-left:4px solid var(--ink-3)">'+
+        '<div class="head"><h3>'+esc(x.u.name)+'</h3><span>'+n2(x.u.flaeche)+' m²</span></div>'+
+        '<dl><dt>Nutzungstage im Zeitraum</dt><dd>0 von '+num0.format(gesamtTage())+'</dd>'+
+        '<dt>umlagefähiger Anteil</dt><dd>0,00 €</dd></dl>'+
+        '<div class="final"><span class="pill neutral">nicht vermietet</span><b style="font-size:14px;color:var(--ink-3)">keine Abrechnung</b></div>'+
+        '<div style="padding:0 16px 13px"><span style="font-size:12.5px;color:var(--ink-3)">'+
+        'Diese Einheit war im Abrechnungszeitraum nicht vermietet. Ihr Kostenanteil wird nicht auf die übrigen Mieter verteilt, sondern vom Eigentümer getragen und auf der Übersicht als Leerstand ausgewiesen.'+
+        '</span></div></div>';
+    }
     if(x.pauschale){
       var deck=x.deckung;
       return '<div class="rescard" style="border-left:4px solid var(--ink-3)">'+

@@ -9,6 +9,14 @@ trägst du als Leerstandsanteil selbst.
 Du brauchst also die **Gesamtkosten des Hauses für 2025**, nicht anteilige
 Werte. Die Aufteilung macht das Dashboard.
 
+**Was das in der Anzeige bedeutet.** Bei der Obergeschosswohnung steht in jeder
+Kostenzeile null, und sie bekommt keine Abrechnung. Das ist kein Fehler, sondern
+die Folge von null Nutzungstagen. Beispiel Grundsteuer: Von 980 Euro entfallen
+147,22 Euro auf das Erdgeschoss, die restlichen 832,78 Euro sind Leerstandsanteil
+und bleiben bei dir. Das Dashboard kennzeichnet nicht vermietete Einheiten
+inzwischen in der Spaltenüberschrift, in der Einheitentabelle über die
+Nutzungstage und auf der Ergebniskarte.
+
 ## Belege je Kostenposition
 
 | Position | Beleg | Anmerkung |
