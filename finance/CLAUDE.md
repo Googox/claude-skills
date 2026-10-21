@@ -7,8 +7,9 @@ This guide covers the finance skills and their Python automation tools.
 **Available Skills:**
 1. **financial-analyst/** - Financial statement analysis, ratio analysis, DCF valuation, budgeting, forecasting (4 Python tools)
 2. **steuerrechner-selbststaendigkeit/** - German tax calculator for self-employed sole traders (EÜR): USt, GewSt (configurable Hebesatz), ESt, Soli, KiSt incl. §35 EStG credit, plus monthly Qonto reserve transfers (1 Python tool, German-language docs)
+3. **cfd-intraday-analyst/** - Opening-range-breakout analysis for XAU/USD and NAS100 CFDs (London + NY open, long and short): entry signal on bar close, exit plan, lot sizing, 10,000-run replay plus real-session history, daily-limit PASS/BLOCK. Analysis only, never places orders (1 Python tool, German-language docs)
 
-**Total Tools:** 5 Python automation tools, 6 knowledge bases, 7 templates
+**Total Tools:** 6 Python automation tools, 9 knowledge bases, 8 templates
 
 ## Python Automation Tools
 
@@ -99,6 +100,30 @@ python3 steuerrechner-selbststaendigkeit/scripts/steuerrechner.py --tabelle 6000
 python3 steuerrechner-selbststaendigkeit/scripts/steuerrechner.py --umsatz 12500 --ausgaben 2800 --format json
 ```
 
+### 6. CFD Intraday Analyst (`cfd-intraday-analyst/scripts/cfd_analyst.py`)
+
+**Purpose:** Opening-range-breakout workflow for XAU/USD and NAS100 CFDs (e.g. Vantage/MT5), from signal to sized, risk-checked plan, without any broker connection
+
+**Features:**
+- London (08:00 London) and NY (09:30 New York) sessions with built-in EU/UK/US DST rules, output in German time
+- Long and short signals on 5-minute bar close outside the opening range
+- Stops: range midpoint, opposite side, ATR, percent, price; targets as R multiple
+- Lot sizing from risk per trade, stop distance, spread and broker contract specs (required config, never defaulted)
+- Replay: 10,000 bootstrapped sessions (fixed seed) plus the same rule on every past session, break-even verdict
+- Risk gate: reward:risk, entry window, signal age, trades per day, daily loss limit, spread share
+- Data: Yahoo GC=F/NQ=F futures as proxy, or MT5 CSV export (M1/M5, server-time offset)
+- Offline self-test on synthetic data
+
+**Usage:**
+```bash
+python3 cfd-intraday-analyst/scripts/cfd_analyst.py selftest
+python3 cfd-intraday-analyst/scripts/cfd_analyst.py entry --instrument XAUUSD --session london --write
+python3 cfd-intraday-analyst/scripts/cfd_analyst.py exit --stop or-mid --target 2R --write
+python3 cfd-intraday-analyst/scripts/cfd_analyst.py replay --format json
+```
+
+**Documented exception:** `fetch` (and the automatic refresh in `entry`/`exit`/`replay`) calls Yahoo Finance over the network; everything else runs locally, and `--data` / `mt5-import` work fully offline.
+
 ## Quality Standards
 
 **All finance Python tools must:**
@@ -117,6 +142,6 @@ python3 steuerrechner-selbststaendigkeit/scripts/steuerrechner.py --umsatz 12500
 
 ---
 
-**Last Updated:** August 2026
-**Skills Deployed:** 2/2 finance skills production-ready
-**Total Tools:** 5 Python automation tools
+**Last Updated:** October 2026
+**Skills Deployed:** 3/3 finance skills production-ready
+**Total Tools:** 6 Python automation tools

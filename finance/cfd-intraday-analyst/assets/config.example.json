@@ -1,0 +1,54 @@
+{
+  "_hinweis": "Kopieren nach cfd/config.json. Alle null-Werte selbst aus MT5 eintragen (Marktuebersicht > Rechtsklick Symbol > Spezifikation). Nichts davon ist vorbelegt, weil falsche Werte die Positionsgroesse verfaelschen.",
+  "account": {
+    "currency": "USD",
+    "balance_usd": null
+  },
+  "risk": {
+    "risk_per_trade_usd": null,
+    "risk_per_trade_pct": 0.5,
+    "max_daily_loss_usd": null,
+    "max_trades_per_day": 3,
+    "min_reward_risk": 1.5,
+    "max_signal_age_bars": 2,
+    "max_spread_share_of_stop": 0.2
+  },
+  "instruments": {
+    "XAUUSD": {
+      "yahoo_symbol": "GC=F",
+      "contract_size": null,
+      "min_lot": null,
+      "lot_step": null,
+      "max_lot": null,
+      "price_decimals": 2,
+      "spread": null,
+      "leverage": null
+    },
+    "NAS100": {
+      "yahoo_symbol": "NQ=F",
+      "contract_size": null,
+      "min_lot": null,
+      "lot_step": null,
+      "max_lot": null,
+      "price_decimals": 2,
+      "spread": null,
+      "leverage": null
+    }
+  },
+  "sessions": {
+    "london": {
+      "tz": "Europe/London",
+      "open": "08:00",
+      "or_minutes": 15,
+      "no_entries_after": "11:00",
+      "flat_by": "16:00"
+    },
+    "ny": {
+      "tz": "America/New_York",
+      "open": "09:30",
+      "or_minutes": 15,
+      "no_entries_after": "11:30",
+      "flat_by": "15:55"
+    }
+  }
+}
