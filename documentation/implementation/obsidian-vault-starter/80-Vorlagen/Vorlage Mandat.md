@@ -12,6 +12,7 @@ start_am:
 ziel_platzierung_am:
 kandidaten: []
 zahlung_status: offen
+gewichtung_abweichend:
 ---
 
 ## Anforderungsprofil

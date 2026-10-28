@@ -18,6 +18,13 @@ assessment_score:
 assessment_stand: nicht_bewertet
 knockout: false
 knockout_grund:
+sig_ertragsmechanik:
+sig_herstellerspannung:
+sig_fachkraefte:
+sig_entscheidung:
+sig_inhaberfamilie:
+sig_flaeche:
+sig_transformation:
 quelle:
 vertraulich_ref:
 ---

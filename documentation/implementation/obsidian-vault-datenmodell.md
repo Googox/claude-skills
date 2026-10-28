@@ -141,7 +141,14 @@ mandat: "[[M-2026-001 Muster GF Vertrieb]]"
 assessment_score:                        # 0-100, leer bis Methodik vorliegt
 assessment_stand: nicht_bewertet         # nicht_bewertet | vorlaeufig | final
 knockout: false
-knockout_grund:
+knockout_grund:                          # integritaet | lustlosigkeit | zahlenkenntnis
+sig_ertragsmechanik:
+sig_herstellerspannung:
+sig_fachkraefte:
+sig_entscheidung:
+sig_inhaberfamilie:
+sig_flaeche:
+sig_transformation:
 quelle: "Automobilwoche Personalien 2026-10-14"
 vertraulich_ref: K-0042
 ---
@@ -151,6 +158,13 @@ vertraulich_ref: K-0042
 ## Journal
 ## Offene Punkte
 ```
+
+**Die sieben `sig_*`-Felder sind Pflicht, sobald ein Score gesetzt wird.** Ein
+Gesamtscore ohne die Einzelachsen ist nicht nachvollziehbar und damit im Zweifel
+wertlos. Die Gewichte je Achse stehen in
+`aa-executive-search/aa-assessment/SKILL.md` und hängen vom Mandatsprofil ab,
+weshalb ein Score nur zusammen mit `gewichtung_abweichend` des zugehörigen
+Mandats interpretierbar ist.
 
 **`pipeline_rang` ist für Skills schreibgeschützt.** `aa-pipeline-review` sagt
 wörtlich, die Reihenfolge sei von Aaron gesetzt und werde nicht neu verhandelt.
@@ -208,6 +222,7 @@ start_am: 2026-11-01
 ziel_platzierung_am: 2027-02-01
 kandidaten: []
 zahlung_status: offen                    # offen | teilzahlung | vollstaendig
+gewichtung_abweichend:                   # sanierung | nachfolge | wachstum | markenwechsel
 ---
 
 ## Anforderungsprofil
@@ -462,9 +477,20 @@ Wahrscheinlichkeit widersprüchlicher Stände.
    `- 2026-10-21 (telefon) Kurzbeschreibung, Ergebnis.`
 3. Frontmatter-Felder per `patch_content` einzeln ändern, nicht den ganzen
    Block neu schreiben.
-4. `pipeline_rang` nie automatisch ändern.
-5. Keine Datei verschieben, keine Datei löschen.
-6. Bei fehlenden Pflicht-Überschriften: Überschrift anlegen, dann schreiben.
+4. **Statusfelder werden überschrieben, nicht nur gefüllt.** Eine Schreiblogik,
+   die nur leere Felder belegt, hinterlässt widersprüchliche Dateien: Ein Score
+   von 86 neben `assessment_stand: nicht_bewertet`, oder eine neue
+   `naechste_aktion` neben dem alten `naechste_aktion_am`. Betroffen sind
+   `status`, `temperatur`, `assessment_stand`, `letzte_interaktion_am`,
+   `naechste_aktion` und `naechste_aktion_am`. Diese Felder tragen immer einen
+   Vorgabewert, sind also nie leer, und ein "fülle nur Lücken"-Ansatz fasst sie
+   nie an.
+5. Felder, die zusammengehören, immer gemeinsam schreiben: `assessment_score`
+   nur mit allen sieben `sig_*` und dem passenden `assessment_stand`;
+   `naechste_aktion` nur mit `naechste_aktion_am`.
+6. `pipeline_rang` nie automatisch ändern.
+7. Keine Datei verschieben, keine Datei löschen.
+8. Bei fehlenden Pflicht-Überschriften: Überschrift anlegen, dann schreiben.
    Nicht an das Dateiende anhängen.
 
 ---
