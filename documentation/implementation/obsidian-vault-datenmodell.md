@@ -103,6 +103,8 @@ Tool-Set, siehe 1.1.
 
 Fünf Entitäten. Jede Datei trägt `typ` und `geschaeft` als Pflichtfelder.
 
+**Alle Beispielwerte in diesem Abschnitt sind frei erfunden.** Keine Namen, Unternehmen oder Aktenzeichen in den Schemata beziehen sich auf reale Kontakte der Pipeline. Wer ein Beispiel für einen Datensatz hält, arbeitet mit erfundenen Daten.
+
 `geschaeft: aa` ist kein Dekor: `aa-mandate-kickoff` und
 `aa-market-intelligence` verlangen beide ausdrücklich die Trennung von
 Alexandras separaten Geschäftsideen. Ein Feld macht diese Trennung abfragbar
@@ -128,14 +130,14 @@ status: aktiv                            # aktiv | ruhend | pitch_terminiert | p
 temperatur: warm                         # kalt | warm | heiss
 welle: kern                              # kern | vibe
 pipeline_rang: 3                         # 1-14, nur welle=kern, von Aaron gesetzt
-unternehmen: "[[Autohaus Senger]]"
+unternehmen: "[[Muster Automobile GmbH]]"
 position: "Geschaeftsfuehrer Vertrieb"
 region: Nord
 erstkontakt_am: 2026-10-14
 letzte_interaktion_am: 2026-10-21
 naechste_aktion: "Rueckruf zu Mandatsunterlagen"
 naechste_aktion_am: 2026-11-04
-mandat: "[[M-2026-001 Senger GF Vertrieb]]"
+mandat: "[[M-2026-001 Muster GF Vertrieb]]"
 assessment_score:                        # 0-100, leer bis Methodik vorliegt
 assessment_stand: nicht_bewertet         # nicht_bewertet | vorlaeufig | final
 knockout: false
@@ -166,16 +168,16 @@ anhängen, ohne die Datei zu überschreiben.
 typ: arbeitgeber
 geschaeft: aa
 status: ziel                             # ziel | im_gespraech | mandant | kein_bedarf
-gruppe: "Senger Gruppe"
+gruppe: "Muster Gruppe"
 marken: [BMW, MINI]
 standorte: 12
 region: Nord
-entscheider: ["[[Scheele, Jan]]"]
+entscheider: ["[[Beispiel, Erika]]"]
 bedarf_hypothese: "Nachfolge mittleres Management"
 letzte_interaktion_am: 2026-10-21
 naechste_aktion: "Termin bestaetigen"
 naechste_aktion_am: 2026-11-06
-mandate: ["[[M-2026-001 Senger GF Vertrieb]]"]
+mandate: ["[[M-2026-001 Muster GF Vertrieb]]"]
 quelle: "Unternehmenswebsite, Handelsblatt 2026-09-30"
 ---
 
@@ -196,7 +198,7 @@ konkrete Haus. Der Feldname trägt diese Pflicht.
 typ: mandat
 geschaeft: aa
 aktenzeichen: M-2026-001
-mandant: "[[Autohaus Senger]]"
+mandant: "[[Muster Automobile GmbH]]"
 position: "Geschaeftsfuehrer Vertrieb"
 fee_modell: model_a_hybrid               # model_a_hybrid | model_b_retained
 honorar_mindest: 15000
@@ -229,8 +231,8 @@ typ: ereignis
 geschaeft: aa
 datum: 2026-10-21
 kanal: termin_vor_ort                    # telefon | mail | termin_vor_ort | video | messe | empfehlung
-kontakt: "[[Scheele, Jan]]"
-unternehmen: "[[Autohaus Senger]]"
+kontakt: "[[Beispiel, Erika]]"
+unternehmen: "[[Muster Automobile GmbH]]"
 mandat:
 anlass: "Pitch Erstgespraech"
 ergebnis: positiv                        # positiv | neutral | negativ | kein_erreichen
@@ -262,9 +264,9 @@ zugesagt" strukturell sichtbar.
 typ: marktbeobachtung
 geschaeft: aa
 erfasst_am: 2026-10-28
-person: "Mueller, Thomas"
-unternehmen_neu: "[[Autohaus Hahn]]"
-unternehmen_alt: "[[Autohaus Scherer]]"
+person: "Beispiel, Max"
+unternehmen_neu: "[[Muster Automobile Nord]]"
+unternehmen_alt: "[[Muster Automobile Sued]]"
 rolle_neu: "Geschaeftsfuehrer"
 anlass: wechsel                          # wechsel | neubesetzung | abgang | befoerderung
 quelle: "Automobilwoche Personalien"
@@ -292,15 +294,15 @@ wird nicht automatisch Kandidat; die Aufnahme ist Aarons Entscheidung.
 
 | Entität | Muster | Beispiel |
 |---------|--------|----------|
-| Kontakt | `Nachname, Vorname` | `Scheele, Jan.md` |
-| Kontakt bei Dublette | `Nachname, Vorname (Unternehmen)` | `Mueller, Thomas (Hahn).md` |
-| Arbeitgeber | `Firmenname` | `Autohaus Senger.md` |
-| Mandat | `M-JJJJ-NNN Kuerzel Position` | `M-2026-001 Senger GF Vertrieb.md` |
-| Ereignis | `JJJJ-MM-TT Nachname Kanal` | `2026-10-21 Scheele termin.md` |
-| Marktbeobachtung | `JJJJ-MM-TT Nachname Anlass` | `2026-10-28 Mueller wechsel.md` |
+| Kontakt | `Nachname, Vorname` | `Beispiel, Erika.md` |
+| Kontakt bei Dublette | `Nachname, Vorname (Unternehmen)` | `Beispiel, Max (Muster Nord).md` |
+| Arbeitgeber | `Firmenname` | `Muster Automobile GmbH.md` |
+| Mandat | `M-JJJJ-NNN Kuerzel Position` | `M-2026-001 Muster GF Vertrieb.md` |
+| Ereignis | `JJJJ-MM-TT Nachname Kanal` | `2026-10-21 Beispiel termin.md` |
+| Marktbeobachtung | `JJJJ-MM-TT Nachname Anlass` | `2026-10-28 Beispiel wechsel.md` |
 
 Kontaktdateien tragen keine ID im Namen, weil der Dateiname in Obsidian der
-Linktext ist: `[[Scheele, Jan]]` liest sich, `[[K-0042]]` nicht. Mandate tragen
+Linktext ist: `[[Beispiel, Erika]]` liest sich, `[[K-0042]]` nicht. Mandate tragen
 ein Aktenzeichen, weil sie Aktencharakter haben und über Jahre referenziert
 werden.
 
