@@ -359,7 +359,129 @@ setzen. Keinen Klarnamen in diese Datei schreiben, wenn es vermeidbar ist.
 ## Einschaetzungen Dritter
 """
 
+ANLEITUNG = """# Start hier
+
+Dieser Ordner ist dein Vault fuer A/A Executive Search. Du musst nichts
+installieren ausser Obsidian selbst, und du brauchst kein Konto.
+
+## 1 Vault oeffnen
+
+Obsidian starten, dann "Open folder as vault" und auf diesen Ordner zeigen
+(AA-Search). Nicht auf den uebergeordneten Ordner.
+
+## 2 Dataview installieren
+
+Einstellungen, Community-Plugins, "Turn on community plugins" bestaetigen,
+dann "Browse", nach "Dataview" suchen, installieren und aktivieren.
+
+Ohne Dataview bleibt 00-Steuerung/Pipeline.md leer. Das ist dann kein Fehler,
+sondern das fehlende Plugin.
+
+## 3 Pipeline oeffnen
+
+00-Steuerung/Pipeline.md ist deine Startseite. Dort rechnen die Sichten
+automatisch: ueberfaellige Aktionen, diese Woche, bestaetigte Pitch-Termine,
+offene Information nach Art. 14 DSGVO, faellige Loeschpruefungen.
+
+## 4 Deine drei Termine vervollstaendigen
+
+In 10-Kontakte liegen Scheele, Reichl und Scherer, in 20-Arbeitgeber die
+zugehoerigen Haeuser. Bei jedem steht unter "Offene Punkte", was noch fehlt:
+Vorname, Position, Termindatum, Pipeline-Rang.
+
+Wichtig ist das Feld naechste_aktion_am. Solange es leer ist, erscheint der
+Kontakt in keiner Terminsicht.
+
+## 5 Spaeter: Verbindung zu Claude
+
+Erst wenn der Vault steht: Plugin "Local REST API" installieren, HTTP-Server
+aktivieren, API-Key kopieren. Dann das Diagnose-Skript laufen lassen.
+
+Der zweite Vault AA-Vertraulich wird NIE mit Claude verbunden.
+
+## Neue Eintraege anlegen
+
+Vorlagen liegen in 80-Vorlagen. Datei kopieren, umbenennen, Felder fuellen.
+Namenskonvention: Kontakte "Nachname, Vorname", Arbeitgeber "Firmenname",
+Mandate "M-2026-001 Kuerzel Position".
+"""
+
+H_KONTAKTE = """# 10-Kontakte
+
+Hier liegen alle Fuehrungskraefte: Kandidaten und Entscheider bei Arbeitgebern.
+Eine Person, eine Datei, auch wenn sie heute Gespraechspartner und morgen
+Kandidat ist.
+
+Dateiname: "Nachname, Vorname". Bei Namensgleichheit zusaetzlich das
+Unternehmen in Klammern.
+
+Vorlage: 80-Vorlagen/Vorlage Kontakt.md
+"""
+
+H_ARBEITGEBER = """# 20-Arbeitgeber
+
+Unternehmen und Gruppen. Dateiname ist der Firmenname.
+
+Vorlage: 80-Vorlagen/Vorlage Arbeitgeber.md
+"""
+
+H_MANDATE = """# 30-Mandate
+
+Suchauftraege mit Aktenzeichen. Dateiname: "M-2026-001 Kuerzel Position".
+
+Das Feld phase fuehrt durch Kickoff, Longlist, Shortlist, Interviews,
+Platzierung. Steht ein abweichendes Gewichtungsprofil fuer das Assessment an,
+gehoert es in gewichtung_abweichend.
+
+Vorlage: 80-Vorlagen/Vorlage Mandat.md
+"""
+
+H_EREIGNISSE = """# 40-Ereignisse
+
+Nur bewertungsrelevante Interaktionen bekommen eine eigene Datei: Gespraech,
+Termin, Pitch, Mandatsgespraech, Referenzauskunft.
+
+Kurze Mails, Erinnerungen und erfolglose Rueckrufe gehoeren NICHT hierher,
+sondern als eine Zeile unter "Journal" in die Kontaktdatei. Sonst entstehen
+hunderte Dateien im Jahr, die niemand abfragt.
+
+Dateiname: "2026-10-28 Nachname kanal".
+
+Vorlage: 80-Vorlagen/Vorlage Ereignis.md
+"""
+
+H_MARKT = """# 50-Markt
+
+Marktbeobachtungen: Fuehrungswechsel, Neubesetzungen, Abgaenge.
+
+Pflicht sind quelle, quelle_url und belegbar. Was sich nicht belegen laesst,
+wird als unbelegbar gekennzeichnet, nicht weggelassen.
+
+Eine Beobachtung wird nicht automatisch Kandidat. Das Feld kontakt_angelegt
+bleibt false, bis die Aufnahme entschieden ist.
+
+Dateiname: "2026-10-28 Nachname anlass".
+
+Vorlage: 80-Vorlagen/Vorlage Marktbeobachtung.md
+"""
+
+H_PLAYBOOKS = """# 90-Playbooks
+
+Wiederverwendbares Material: Pitch-Argumente, Fee-Modelle, Formulierungen,
+Mustertexte.
+
+Hier gehoert auch der Mustertext fuer die Information nach Art. 14 DSGVO hin,
+sobald er vorliegt. Er wird bei jedem neuen Kontakt gebraucht.
+"""
+
 FILES_OPEN = {
+    "ANLEITUNG.md": ANLEITUNG,
+    "10-Kontakte/_Hinweis.md": H_KONTAKTE,
+    "20-Arbeitgeber/_Hinweis.md": H_ARBEITGEBER,
+    "30-Mandate/_Hinweis.md": H_MANDATE,
+    "40-Ereignisse/_Hinweis.md": H_EREIGNISSE,
+    "50-Markt/_Hinweis.md": H_MARKT,
+    "90-Playbooks/_Hinweis.md": H_PLAYBOOKS,
     "00-Steuerung/Pipeline.md": PIPELINE,
     "00-Steuerung/Ziele.md": ZIELE,
     "00-Steuerung/Wochenreview.md": WOCHENREVIEW,
