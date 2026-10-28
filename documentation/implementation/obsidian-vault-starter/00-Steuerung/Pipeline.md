@@ -91,3 +91,29 @@ WHERE typ = "kontakt" AND status = "aktiv"
   AND letzte_interaktion_am < date(today) - dur(30 days)
 SORT letzte_interaktion_am ASC
 ```
+
+## Compliance: Information nach Art. 14 DSGVO offen
+
+```dataview
+TABLE unternehmen AS "Unternehmen",
+      file.ctime AS "Erfasst am",
+      quelle AS "Quelle"
+FROM "10-Kontakte"
+WHERE typ = "kontakt" AND !info_art14_am
+SORT file.ctime ASC
+```
+
+Frist: ein Monat ab Erfassung, spaetestens bei der ersten Kontaktaufnahme. Die
+Quelle muss in der Information genannt werden, deshalb steht sie in der Sicht.
+
+## Compliance: Loeschpruefung faellig
+
+```dataview
+TABLE unternehmen AS "Unternehmen",
+      letzte_interaktion_am AS "Letzte Interaktion",
+      loeschpruefung_am AS "Pruefung faellig"
+FROM "10-Kontakte"
+WHERE typ = "kontakt" AND loeschpruefung_am
+  AND loeschpruefung_am <= date(today)
+SORT loeschpruefung_am ASC
+```

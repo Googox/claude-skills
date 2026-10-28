@@ -25,6 +25,9 @@ sig_entscheidung:
 sig_inhaberfamilie:
 sig_flaeche:
 sig_transformation:
+rechtsgrundlage: berechtigtes_interesse
+info_art14_am:
+loeschpruefung_am:
 quelle:
 vertraulich_ref:
 ---

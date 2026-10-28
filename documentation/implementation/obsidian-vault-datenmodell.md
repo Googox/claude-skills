@@ -149,6 +149,9 @@ sig_entscheidung:
 sig_inhaberfamilie:
 sig_flaeche:
 sig_transformation:
+rechtsgrundlage: berechtigtes_interesse  # berechtigtes_interesse | einwilligung | vertrag
+info_art14_am:                           # Datum der Information nach Art. 14 DSGVO
+loeschpruefung_am:                       # Pruefdatum, Vorschlag: +24 Monate ab Anlage
 quelle: "Automobilwoche Personalien 2026-10-14"
 vertraulich_ref: K-0042
 ---
@@ -158,6 +161,14 @@ vertraulich_ref: K-0042
 ## Journal
 ## Offene Punkte
 ```
+
+**Die drei Compliance-Felder sind Pflicht bei jedem Kontakt.**
+`rechtsgrundlage` dokumentiert, worauf die Verarbeitung dieser Person beruht.
+`info_art14_am` hält fest, wann die Person nach Art. 14 DSGVO informiert wurde;
+die Frist läuft ab Erfassung und endet nach einem Monat oder bei der ersten
+Kontaktaufnahme. `loeschpruefung_am` verhindert eine faktisch unbegrenzte
+Speicherung. Begründung und Risikobewertung stehen in
+`obsidian-vault-dsgvo.md`.
 
 **Die sieben `sig_*`-Felder sind Pflicht, sobald ein Score gesetzt wird.** Ein
 Gesamtscore ohne die Einzelachsen ist nicht nachvollziehbar und damit im Zweifel
@@ -441,6 +452,12 @@ Kontakte ohne Berührung seit 30 Tagen (Leck-Erkennung):
       AND letzte_interaktion_am < date(today) - dur(30 days)
     SORT letzte_interaktion_am ASC
     ```
+
+Zwei Compliance-Sichten gehören dazu, weil die zugehörigen Felder sonst Deko
+bleiben: offene Information nach Art. 14 DSGVO (alle Kontakte ohne
+`info_art14_am`, sortiert nach `file.ctime` als Erfassungsdatum) und fällige
+Löschprüfungen (`loeschpruefung_am` in der Vergangenheit). `file.ctime` spart ein
+zusätzliches Erfassungsdatum-Feld, weil Obsidian es ohnehin führt.
 
 **Dataview rechnet, Claude liest.** Begründung: Das stdio-Tool-Set kennt keinen
 strukturierten Query. Lässt man Claude die Priorisierung aus Rohdateien
