@@ -13,6 +13,9 @@ Recherche-Beschleuniger fuer die Direktansprache im Premium-Automobilhandel DACH
 3. **Kandidaten erfassen:** `add --name ... --quelle "LinkedIn-Profil" --punkte 2,2,1,1`
 4. **Nachfassen:** `update 1 --status kontaktiert --followup 2026-12-08`, taeglich `due`.
 
+## Regions-Vorlagen
+`--region hamburg` oder `--region lueneburg` setzt PLZ, Radius und Orte (ueberschreibbar). Weitere Regionen im Dict `REGIONEN` im Skript ergaenzen.
+
 ## Fit-Score
 Vier Kriterien je 0 bis 2 Punkte: Markenerfahrung (Premium), Verantwortungsumfang, Wechselsignal (Uebernahme, Umstrukturierung, Neubesetzung), Erreichbarkeit. Summe 6+ = A, 4-5 = B, sonst C.
 

@@ -43,6 +43,15 @@ ROLLEN = {
                  "Geschäftsleitung", "Prokurist"],
 }
 
+REGIONEN = {
+    "hamburg": {"plz": "20095", "radius": 40,
+                "orte": ["Hamburg", "Norderstedt", "Pinneberg", "Ahrensburg",
+                         "Buchholz", "Stade"]},
+    "lueneburg": {"plz": "21335", "radius": 40,
+                  "orte": ["Lüneburg", "Winsen", "Uelzen", "Geesthacht",
+                           "Buchholz", "Hamburg"]},
+}
+
 STATUS = ["neu", "kontaktiert", "gespraech", "vorgestellt", "absage", "platziert"]
 FIT = "ABC"
 FIELDS = ["id", "name", "funktion", "autohaus", "marke", "ort", "datenquelle",
@@ -94,6 +103,16 @@ def build_queries(plz, radius, orte, marken, rollen):
 
 
 def cmd_queries(a):
+    if a.region:
+        r = REGIONEN.get(a.region.lower())
+        if not r:
+            raise SystemExit("Region: " + ", ".join(REGIONEN))
+        a.plz = a.plz or r["plz"]
+        a.radius = a.radius or r["radius"]
+        a.orte = a.orte or ",".join(r["orte"])
+    if not a.plz:
+        raise SystemExit("--plz oder --region angeben")
+    a.radius = a.radius or 50
     marken = [m.strip().lower() for m in a.marken.split(",") if m.strip()]
     rollen = [r.strip().lower() for r in a.rollen.split(",") if r.strip()]
     orte = [o.strip() for o in a.orte.split(",") if o.strip()] if a.orte else []
@@ -245,8 +264,9 @@ def main():
     sub = p.add_subparsers(dest="cmd", required=True)
 
     q = sub.add_parser("queries", help="Suchstrings erzeugen")
-    q.add_argument("--plz", required=True)
-    q.add_argument("--radius", type=int, default=50)
+    q.add_argument("--plz")
+    q.add_argument("--region", help="Vorlage: " + ", ".join(REGIONEN))
+    q.add_argument("--radius", type=int)
     q.add_argument("--orte", default="", help="Komma-getrennt, Orte im Umkreis")
     q.add_argument("--marken", default="audi,bmw,mercedes")
     q.add_argument("--rollen", default="verkaufsleiter,geschaeftsfuehrer,vorstand")
